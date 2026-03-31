@@ -60,7 +60,7 @@ WA_MSG_PATTERN = re.compile(
 
 def parse_whatsapp_export(filepath: str) -> list[dict]:
     """Parse a WhatsApp .txt export into structured message dicts."""
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
         raw = f.read()
 
     messages = []
@@ -773,5 +773,5 @@ def run_pipeline(chat_file: str, days: int = 2):
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
 chat_file = "chat.txt"  # Path to your WhatsApp export file
-run_pipeline(chat_file,1)
+# run_pipeline(chat_file,1)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
