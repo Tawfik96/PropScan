@@ -10,9 +10,6 @@ Real Estate Ad Extraction Pipeline
 4. Sends ads to Gemini for structured extraction
 5. Stores results in SQLite
 
-Usage:
-    pip install google-genai
-    python extractFromChatExport.py
 """
 
 import re
@@ -22,8 +19,6 @@ import sqlite3
 import time
 from datetime import datetime
 from typing import Optional
-from dotenv import load_dotenv
-
 
 # ─── Timing helpers ──────────────────────────────────────────────────────────
 
@@ -42,13 +37,9 @@ def _log(run_record: dict):
     with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(run_record, ensure_ascii=False) + "\n")
 
-
-# Load environment variables
-load_dotenv()
-
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
 DB_PATH        = "listings.db"
 BATCH_SIZE     = 10
@@ -69,7 +60,7 @@ WA_MSG_PATTERN = re.compile(
 
 def parse_whatsapp_export(filepath: str) -> list[dict]:
     """Parse a WhatsApp .txt export into structured message dicts."""
-    with open(chat_file, "r", encoding="utf-8", errors="ignore") as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         raw = f.read()
 
     messages = []
@@ -357,6 +348,8 @@ def filter_ads(messages: list[dict]) -> tuple[list[dict], dict]:
 
 def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
     """
+    MODIFIED (temporarily) returns messages from all available dates, without excluding the last one. 
+
     Return messages from the N most recent full days in the export.
     Excludes the very last date (may be incomplete) and takes the `days`
     dates before it. If the export has fewer dates than requested, returns
@@ -365,8 +358,8 @@ def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
     if not messages:
         return []
     dates = sorted(set(m["datetime"].date() for m in messages))
-    # Drop the last date (potentially incomplete), then take last `days` dates
-    full_dates = dates[:-1] if len(dates) > 1 else dates
+    # MODIFIEDD XXXX UNUSED->  Drop the last date (potentially incomplete), then take last `days` dates
+    full_dates = dates#[:-1] if len(dates) > 1 else dates
     target_dates = set(full_dates[-days:])
     return [m for m in messages if m["datetime"].date() in target_dates]
 
@@ -414,7 +407,8 @@ SCHEMA — every field is nullable (use null if not determinable):
   "reference_id": "<string, any code like U926440 or HPs160>",
   "confidence_score": <float 0-1, your confidence in the extraction>,
   "language": "ar|en|mixed",
-  "view": "<string, e.g. pool, fountain, garden>"
+  "view": "<string, e.g. pool, fountain, garden>",
+  "ad_snippet": "<string, the clean ad text only — strip greetings, sign-offs, unrelated chatter, and duplicate contact lines; keep the property description, specs, price, and location>"
 }
 
 RULES:
@@ -535,6 +529,7 @@ def init_db(db_path: str = DB_PATH) -> sqlite3.Connection:
             language TEXT,
             view TEXT,
             original_message TEXT,
+            ad_snippet TEXT,
             sender TEXT,
             ad_date TEXT,
             extracted_at TEXT DEFAULT (datetime('now')),
@@ -550,6 +545,12 @@ def init_db(db_path: str = DB_PATH) -> sqlite3.Connection:
         CREATE INDEX IF NOT EXISTS idx_ad_date          ON listings(ad_date);
     """)
     conn.commit()
+    # Migrate existing databases that predate ad_snippet
+    try:
+        conn.execute("ALTER TABLE listings ADD COLUMN ad_snippet TEXT")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # column already exists
     return conn
 
 
@@ -568,13 +569,13 @@ def insert_listing(conn: sqlite3.Connection, data: dict,
             payment_method, down_payment, installment_years, installment_amount,
             advertiser_type, phone_numbers, reference_id,
             confidence_score, language, view,
-            original_message, sender, ad_date, extraction_method
+            original_message, ad_snippet, sender, ad_date, extraction_method
         ) VALUES (
             ?,?,?,?,?, ?,?,?,?, ?,?,?,?,
             ?,?,?,?, ?,?,?,
             ?,?,?,?,?, ?,?,?,?,
             ?,?,?, ?,?,?,
-            ?,?,?,?
+            ?,?,?,?,?
         )
     """, (
         data.get("property_type"),      data.get("transaction_type"),
@@ -597,7 +598,7 @@ def insert_listing(conn: sqlite3.Connection, data: dict,
         data.get("reference_id"),
         data.get("confidence_score"),   data.get("language"),
         data.get("view"),
-        original_msg, sender, ad_date, GEMINI_MODEL,
+        original_msg, data.get("ad_snippet"), sender, ad_date, GEMINI_MODEL,
     ))
 
 
@@ -771,6 +772,6 @@ def run_pipeline(chat_file: str, days: int = 2):
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file="WhatsApp Chat with SELL & RENT.txt"
-# run_pipeline(chat_file,1)
+chat_file = "chat.txt"  # Path to your WhatsApp export file
+run_pipeline(chat_file,1)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
