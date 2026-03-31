@@ -89,6 +89,25 @@ function getOrganizedDetailsRows(listing) {
     { label: 'City', value: formatValue(listing.city) },
     { label: 'Deal', value: formatValue(listing.transaction_type) },
     { label: 'Type', value: formatValue(listing.property_type) },
+    // { 
+    //   label: 'District', 
+    //   value: (listing.district !== undefined && listing.district !== null && listing.district !== '') 
+    //     ? formatValue(listing.district) 
+    //     : '—' 
+    // },
+  
+
+    
+    
+    ...(listing.district !== undefined && listing.district !== null && listing.district !== ''
+      ? [{ label: 'District', value: formatValue(listing.district) }]
+      : []
+    ),
+    ...(listing.compound_name !== undefined && listing.compound_name !== null && listing.compound_name !== ''&& listing.compound_name !=listing.district
+      ? [{ label: 'Compund', value: formatValue(listing.compound_name) }]
+      : []
+    ),
+
   ];
 }
 
