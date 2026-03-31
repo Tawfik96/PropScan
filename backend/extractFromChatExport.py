@@ -408,10 +408,12 @@ SCHEMA — every field is nullable (use null if not determinable):
   "confidence_score": <float 0-1, your confidence in the extraction>,
   "language": "ar|en|mixed",
   "view": "<string, e.g. pool, fountain, garden>",
-  "ad_snippet": "<string, the clean ad text only — strip greetings, sign-offs, unrelated chatter, and duplicate contact lines; keep the property description, specs, price, and location>"
+  "ad_snippet": "<string, the clean ad text only, no duplicate contact lines or other ads from the same message>",
+  "source_ad_index": <int, the 1-based AD number from the input (e.g. 1 for '--- AD 1 ---') that this listing was extracted from. If one message contains multiple listings, all share the same source_ad_index>
 }
 
 RULES:
+- If a single AD block contains multiple distinct listings, return one JSON object per listing, all with the same source_ad_index.
 - Default currency is EGP unless stated otherwise.
 - Default city is Cairo / New Cairo for compounds like Hyde Park, Sodic East, etc.
 - "super lux" or "الترا سوبر لوكس" = luxury finishing.
@@ -681,14 +683,18 @@ def run_pipeline(chat_file: str, days: int = 2):
         batch_total = _elapsed(t_batch)
 
         t_db = _ts()
-        for i, result in enumerate(results):
-            if i < len(batch):
-                ad = batch[i]
-                insert_listing(conn, result,
-                               original_msg=ad["body"],
-                               sender=ad["sender"],
-                               ad_date=ad["datetime"].isoformat())
-                total_inserted += 1
+        for result in results:
+            src_idx = result.get("source_ad_index")
+            if src_idx is not None and 1 <= src_idx <= len(batch):
+                ad = batch[src_idx - 1]
+            else:
+                print(f"  [!] result missing valid source_ad_index ({src_idx!r}), skipping")
+                continue
+            insert_listing(conn, result,
+                           original_msg=ad["body"],
+                           sender=ad["sender"],
+                           ad_date=ad["datetime"].isoformat())
+            total_inserted += 1
         conn.commit()
         db_s = _elapsed(t_db)
 
@@ -772,6 +778,6 @@ def run_pipeline(chat_file: str, days: int = 2):
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "chat.txt"  # Path to your WhatsApp export file
-# run_pipeline(chat_file,1)
+chat_file = "mini_chat.txt"  # Path to your WhatsApp export file
+run_pipeline(chat_file,1)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
