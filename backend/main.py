@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import dbControl
 import extractFromChatExport
-import pipeline
 import os
 
 app = FastAPI(title="WhatsApp Real Estate Parser")
@@ -24,7 +23,6 @@ async def upload_chat(file: UploadFile = File(...)):
       file_path = os.path.join(os.path.dirname(__file__), file.filename)
       with open(file_path, "wb") as f:
         f.write(await file.read())
-        # pipeline.process_chat(file_path)
         extractFromChatExport.run_pipeline(file_path,1)
         return {"status": "ok", "message": "Chat processed successfully"}
     except Exception as e:

@@ -22,6 +22,8 @@ import sqlite3
 import time
 from datetime import datetime
 from typing import Optional
+from dotenv import load_dotenv
+
 
 # ─── Timing helpers ──────────────────────────────────────────────────────────
 
@@ -40,9 +42,13 @@ def _log(run_record: dict):
     with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(run_record, ensure_ascii=False) + "\n")
 
+
+# Load environment variables
+load_dotenv()
+
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-GEMINI_API_KEY = "AIzaSyCKFy6drY1SCoyQ7qYe_Byx6AfUM9nBhFY"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
 DB_PATH        = "listings.db"
 BATCH_SIZE     = 10
