@@ -19,6 +19,7 @@ import sqlite3
 import time
 from datetime import datetime
 from typing import Optional
+from dotenv import load_dotenv
 
 # ─── Timing helpers ──────────────────────────────────────────────────────────
 
@@ -37,12 +38,16 @@ def _log(run_record: dict):
     with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(run_record, ensure_ascii=False) + "\n")
 
+
+load_dotenv()
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+# GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# GEMINI_API_KEY = ""
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
 DB_PATH        = "listings.db"
-BATCH_SIZE     = 10
+BATCH_SIZE     = 15
 MAX_RETRIES    = 3
 
 # ─── 1. Parse WhatsApp Export ────────────────────────────────────────────────
@@ -608,7 +613,7 @@ def _b(val) -> Optional[int]:
 
 # ─── 5. Main Pipeline ────────────────────────────────────────────────────────
 
-def run_pipeline(chat_file: str, days: int = 2):
+def run_pipeline(chat_file: str, days: int = 1):
     run_start = _ts()
     run_ts    = datetime.now().isoformat(timespec="seconds")
 
