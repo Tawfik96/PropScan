@@ -127,6 +127,7 @@ function renderCards(listings) {
 
   grid.innerHTML = listings.map((l, i) => {
     const msg = l.ad_snippet || '';
+    const originalMsg = l.original_message || '';
     const highlighted = applyHighlights(msg, l.highlight_ranges);
     const organizedRows = getOrganizedDetailsRows(l);
     const organizedTable = buildOrganizedDetailsTable(organizedRows);
@@ -147,21 +148,24 @@ function renderCards(listings) {
       </div>
 
       <div class="card-view-toggle" role="tablist" aria-label="Listing card view">
-        <button class="view-toggle-btn active" data-view="message" type="button">Original Message</button>
-        <button class="view-toggle-btn" data-view="details" type="button">Organized Details</button>
+        <button class="view-toggle-btn active" data-view="details" type="button">Organized Details</button>
+        <button class="view-toggle-btn" data-view="message" type="button">Ad Snippet</button>
+        <button class="view-toggle-btn" data-view="original" type="button">Original Message</button>
       </div>
 
       <div class="card-view-content">
           <button
       class="btn-copy-floating"
-      data-copy="${escapeHtml(msg)}"
+      data-copy="${escapeHtml(organizedText)}"
       data-message-copy="${escapeHtml(msg)}"
       data-details-copy="${escapeHtml(organizedText)}"
+      data-original-copy="${escapeHtml(originalMsg)}"
     >
       ${SVG.copy}
     </button>
-        <div class="message-bubble" data-view-panel="message">${highlighted}</div>
-        <div class="details-table hidden" data-view-panel="details">${organizedTable}</div>
+        <div class="details-table" data-view-panel="details">${organizedTable}</div>
+        <div class="message-bubble hidden" data-view-panel="message">${highlighted}</div>
+        <div class="message-bubble hidden" data-view-panel="original">${escapeHtml(originalMsg)}</div>
       </div>
 
       <div class="card-footer">
@@ -190,7 +194,9 @@ function renderCards(listings) {
         if (copyBtn) {
           copyBtn.dataset.copy = view === 'details'
             ? copyBtn.dataset.detailsCopy || ''
-            : copyBtn.dataset.messageCopy || '';
+            : view === 'message'
+              ? copyBtn.dataset.messageCopy || ''
+              : copyBtn.dataset.originalCopy || '';
         }
       });
     });
