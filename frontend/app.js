@@ -126,7 +126,7 @@ function renderCards(listings) {
   count.innerHTML = `<strong>${listings.length}</strong> listing${listings.length !== 1 ? 's' : ''} found`;
 
   grid.innerHTML = listings.map((l, i) => {
-    const msg = l.original_message || '';
+    const msg = l.ad_snippet || '';
     const highlighted = applyHighlights(msg, l.highlight_ranges);
     const organizedRows = getOrganizedDetailsRows(l);
     const organizedTable = buildOrganizedDetailsTable(organizedRows);

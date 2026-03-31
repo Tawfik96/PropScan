@@ -42,9 +42,7 @@ def _log(run_record: dict):
 load_dotenv()
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-# GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# GEMINI_API_KEY = ""
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
 DB_PATH        = "listings.db"
 BATCH_SIZE     = 15
@@ -784,5 +782,5 @@ def run_pipeline(chat_file: str, days: int = 1):
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
 chat_file = "mini_chat.txt"  # Path to your WhatsApp export file
-run_pipeline(chat_file,1)
+# run_pipeline(chat_file,1)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
