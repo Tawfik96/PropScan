@@ -45,7 +45,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
 DB_PATH        = "listings.db"
-BATCH_SIZE     = 15
+BATCH_SIZE     = 10
 MAX_RETRIES    = 3
 
 # ─── 1. Parse WhatsApp Export ────────────────────────────────────────────────
@@ -380,7 +380,6 @@ SCHEMA — every field is nullable (use null if not determinable):
   "transaction_type": "sale|rent|daily_rent",
   "price": <number, no commas, normalize "4.5M" to 4500000, "25k" to 25000>,
   "currency": "EGP|USD|EUR",
-  "price_negotiable": <bool>,
   "area_sqm": <number, BUA/built-up area in sqm>,
   "land_area_sqm": <number, land area if different from BUA>,
   "bedrooms": <int, studio=0>,
@@ -389,43 +388,31 @@ SCHEMA — every field is nullable (use null if not determinable):
   "total_floors": <int>,
   "furnished": "furnished|semi_furnished|unfurnished",
   "finishing": "shell|core_and_shell|semi_finished|finished|luxury",
-  "has_elevator": <bool>,
   "has_garden": <bool>,
   "garden_area_sqm": <number>,
   "has_pool": <bool>,
   "has_balcony": <bool>,
-  "has_security": <bool>,
-  "has_parking": <bool>,
-  "amenities": [<strings: AC, smart home, kitchen, dressing, shutters, gas, etc.>],
   "city": "<string>",
   "district": "<string>",
   "compound_name": "<string>",
   "landmark_proximity": "<string>",
-  "payment_method": "cash|installment|both",
   "down_payment": <number>,
   "installment_years": <number>,
   "installment_amount": <number>,
-  "advertiser_type": "owner|broker|developer",
   "phone_numbers": [<strings, preserve original format>],
   "reference_id": "<string, any code like U926440 or HPs160>",
-  "confidence_score": <float 0-1, your confidence in the extraction>,
-  "language": "ar|en|mixed",
-  "view": "<string, e.g. pool, fountain, garden>",
+  "view": "<string, e.g. pool, garden, sea>",
   "ad_snippet": "<string, the clean ad text only, no duplicate contact lines or other ads from the same message>",
-  "source_ad_index": <int, the 1-based AD number from the input (e.g. 1 for '--- AD 1 ---') that this listing was extracted from. If one message contains multiple listings, all share the same source_ad_index>
+  "original_message": "<string, the full original message text>",
 }
 
 RULES:
 - If a single AD block contains multiple distinct listings, return one JSON object per listing, all with the same source_ad_index.
+- ONLY extract what is explicitly stated. If a detail is ambiguous or absent, use null. Never infer or assume.
 - Default currency is EGP unless stated otherwise.
-- Default city is Cairo / New Cairo for compounds like Hyde Park, Sodic East, etc.
 - "super lux" or "الترا سوبر لوكس" = luxury finishing.
-- "core and shell" or "core & shell" = core_and_shell finishing.
 - "لوكس" alone = finished.
 - Prices with commas like "35.000" in rental context mean 35,000 (not 35).
-- "مطبخ" = kitchen in amenities.
-- "تكيفات" = AC in amenities.
-- "شاتر" = shutters in amenities.
 - BUA = Built-Up Area = the main area field.
 - Return ONLY valid JSON. No markdown, no explanation."""
 
@@ -523,7 +510,6 @@ def init_db(db_path: str = DB_PATH) -> sqlite3.Connection:
             district TEXT,
             compound_name TEXT,
             landmark_proximity TEXT,
-            payment_method TEXT,
             down_payment REAL,
             installment_years REAL,
             installment_amount REAL,
@@ -561,46 +547,39 @@ def init_db(db_path: str = DB_PATH) -> sqlite3.Connection:
 
 def insert_listing(conn: sqlite3.Connection, data: dict,
                    original_msg: str, sender: str, ad_date: str):
-    amenities = json.dumps(data.get("amenities")     or [], ensure_ascii=False)
-    phones    = json.dumps(data.get("phone_numbers") or [], ensure_ascii=False)
+    phones = json.dumps(data.get("phone_numbers") or [], ensure_ascii=False)
     conn.execute("""
         INSERT INTO listings (
-            property_type, transaction_type, price, currency, price_negotiable,
+            property_type, transaction_type, price, currency,
             area_sqm, land_area_sqm, bedrooms, bathrooms,
             floor_number, total_floors, furnished, finishing,
-            has_elevator, has_garden, garden_area_sqm, has_pool,
-            has_balcony, has_security, has_parking,
-            amenities, city, district, compound_name, landmark_proximity,
-            payment_method, down_payment, installment_years, installment_amount,
-            advertiser_type, phone_numbers, reference_id,
+            has_garden, garden_area_sqm, has_pool, has_balcony,
+            city, district, compound_name, landmark_proximity,
+            down_payment, installment_years, installment_amount,
+            phone_numbers, reference_id,
             confidence_score, language, view,
             original_message, ad_snippet, sender, ad_date, extraction_method
         ) VALUES (
-            ?,?,?,?,?, ?,?,?,?, ?,?,?,?,
-            ?,?,?,?, ?,?,?,
-            ?,?,?,?,?, ?,?,?,?,
-            ?,?,?, ?,?,?,
+            ?,?,?,?,  ?,?,?,?,  ?,?,?,?,
+            ?,?,?,?,
+            ?,?,?,?,  ?,?,?,
+            ?,?,  ?,?,?,
             ?,?,?,?,?
         )
     """, (
         data.get("property_type"),      data.get("transaction_type"),
         data.get("price"),              data.get("currency", "EGP"),
-        _b(data.get("price_negotiable")),
         data.get("area_sqm"),           data.get("land_area_sqm"),
         data.get("bedrooms"),           data.get("bathrooms"),
         data.get("floor_number"),       data.get("total_floors"),
         data.get("furnished"),          data.get("finishing"),
-        _b(data.get("has_elevator")),   _b(data.get("has_garden")),
-        data.get("garden_area_sqm"),    _b(data.get("has_pool")),
-        _b(data.get("has_balcony")),    _b(data.get("has_security")),
-        _b(data.get("has_parking")),
-        amenities,                      data.get("city"),
-        data.get("district"),           data.get("compound_name"),
-        data.get("landmark_proximity"),
-        data.get("payment_method"),     data.get("down_payment"),
+        _b(data.get("has_garden")),     data.get("garden_area_sqm"),
+        _b(data.get("has_pool")),       _b(data.get("has_balcony")),
+        data.get("city"),               data.get("district"),
+        data.get("compound_name"),      data.get("landmark_proximity"),
+        data.get("down_payment"),
         data.get("installment_years"),  data.get("installment_amount"),
-        data.get("advertiser_type"),    phones,
-        data.get("reference_id"),
+        phones,                         data.get("reference_id"),
         data.get("confidence_score"),   data.get("language"),
         data.get("view"),
         original_msg, data.get("ad_snippet"), sender, ad_date, GEMINI_MODEL,
@@ -782,5 +761,5 @@ def run_pipeline(chat_file: str, days: int = 1):
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
 chat_file = "mini_chat.txt"  # Path to your WhatsApp export file
-# run_pipeline(chat_file,1)
+run_pipeline(chat_file,1)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
