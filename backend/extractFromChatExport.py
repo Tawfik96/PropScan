@@ -1,12 +1,9 @@
 """
 Real Estate Ad Extraction Pipeline
 ===================================
-1. Parses a WhatsApp chat export (.txt)
+1. Parses a WhatsApp chat export (.txt)          ← filter_chat.py
 2. Filters to a target day of messages
-3. Removes non-ad messages using a 3-gate filter:
-      Gate 1 — System messages (group events, media, calls)
-      Gate 2 — Blocklist  (buyer requests, spam, greetings)
-      Gate 3 — Allowlist  (must contain ≥1 real-estate keyword)
+3. Removes non-ad messages using a 3-gate filter ← filter_chat.py
 4. Sends ads to Gemini for structured extraction
 5. Stores results in SQLite
 
@@ -20,6 +17,13 @@ import time
 from datetime import datetime
 from typing import Optional
 from dotenv import load_dotenv
+
+# ── All parsing + filtering comes from filter_chat ───────────────────────────
+from filter_chat import (
+    parse_whatsapp_export,  # .txt → list[dict]  (datetime is a real datetime obj)
+    classify,               # msg → "pass" | "system" | "too_short" | "blocklist" | "no_keywords"
+    WA_MSG_PATTERN,         # regex used by crop_chat_by_date
+)
 
 # ─── Timing helpers ──────────────────────────────────────────────────────────
 
@@ -40,67 +44,14 @@ def _log(run_record: dict):
 
 
 load_dotenv()
+
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL   = "gemini-3.1-pro-preview"
+GEMINI_MODEL   = "gemini-2.5-flash-lite"
 DB_PATH        = "listings.db"
 BATCH_SIZE     = 10
 MAX_RETRIES    = 3
-
-# ─── 1. Parse WhatsApp Export ────────────────────────────────────────────────
-
-# WhatsApp uses U+202F (narrow no-break space) between time and am/pm in native
-# exports. \s already matches it, so this handles both native and converted files.
-WA_MSG_PATTERN = re.compile(
-    r"^(\d{1,2}/\d{1,2}/\d{2,4}),?\s+"         # date
-    r"(\d{1,2}:\d{2}(?::\d{2})?\s*[aApP][mM])"  # time  (U+202F covered by \s)
-    r"\s*-\s+"                                    # separator
-    r"(.+?):\s+"                                  # sender
-    r"([\s\S]*?)$"                                # body (first line)
-)
-
-
-def parse_whatsapp_export(filepath: str) -> list[dict]:
-    """Parse a WhatsApp .txt export into structured message dicts."""
-    with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
-        raw = f.read()
-
-    messages = []
-    current  = None
-
-    for line in raw.split("\n"):
-        m = WA_MSG_PATTERN.match(line)
-        if m:
-            if current:
-                messages.append(current)
-            date_str, time_str, sender, body = m.groups()
-            dt = _parse_datetime(date_str, time_str)
-            current = {"datetime": dt, "sender": sender.strip(), "body": body.strip()}
-        elif current:
-            current["body"] += "\n" + line
-
-    if current:
-        messages.append(current)
-    return messages
-
-
-def _parse_datetime(date_str: str, time_str: str) -> datetime:
-    combined = f"{date_str}, {time_str}".strip()
-    formats = [
-        "%d/%m/%Y, %I:%M %p",  "%d/%m/%Y, %I:%M%p",
-        "%d/%m/%y, %I:%M %p",  "%d/%m/%y, %I:%M%p",
-        "%m/%d/%Y, %I:%M %p",  "%m/%d/%y, %I:%M %p",
-        "%d/%m/%Y, %I:%M:%S %p",
-    ]
-    # Normalise casing of am/pm and try each format
-    clean = re.sub(r'[aApP][mM]', lambda x: x.group().upper(), combined)
-    for fmt in formats:
-        try:
-            return datetime.strptime(clean, fmt)
-        except ValueError:
-            continue
-    raise ValueError(f"Cannot parse datetime: {combined!r}")
 
 
 # ─── Date-range Crop Utility ─────────────────────────────────────────────────
@@ -130,9 +81,9 @@ def crop_chat_by_date(
     with open(filepath, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
-    out_lines:     list[str]       = []
-    current_block: list[str]       = []
-    in_range:      bool | None     = None
+    out_lines:     list[str]   = []
+    current_block: list[str]   = []
+    in_range:      bool | None = None
 
     def flush():
         if in_range:
@@ -144,9 +95,22 @@ def crop_chat_by_date(
             flush()
             current_block = [line]
             try:
-                dt = _parse_datetime(m.group(1), m.group(2))
-                in_range = start_date <= dt.date() <= end_date
-            except ValueError:
+                combined = f"{m.group(1)}, {m.group(2)}".strip()
+                clean    = re.sub(r'[aApP][mM]', lambda x: x.group().upper(), combined)
+                dt       = None
+                for fmt in [
+                    "%d/%m/%Y, %I:%M %p", "%d/%m/%Y, %I:%M%p",
+                    "%d/%m/%y, %I:%M %p", "%d/%m/%y, %I:%M%p",
+                    "%m/%d/%Y, %I:%M %p", "%m/%d/%y, %I:%M %p",
+                    "%d/%m/%Y, %I:%M:%S %p",
+                ]:
+                    try:
+                        dt = datetime.strptime(clean, fmt)
+                        break
+                    except ValueError:
+                        continue
+                in_range = (start_date <= dt.date() <= end_date) if dt else False
+            except Exception:
                 in_range = False
         else:
             current_block.append(line)
@@ -164,210 +128,42 @@ def crop_chat_by_date(
     return out_path
 
 
-# ─── 2. Filter Messages ──────────────────────────────────────────────────────
-#
-# Three-gate strategy:
-#   Gate 1 — SYSTEM_RE   : WhatsApp group-management events, media notices, etc.
-#             Drop unconditionally — these are never ads.
-#   Gate 2 — BLOCKLIST_RE: Buyer requests, financial spam, greetings.
-#             Drop even if an RE keyword happens to appear.
-#   Gate 3 — ALLOWLIST_RE: Must contain ≥1 real-estate keyword to pass.
-#             Anything without a property/transaction/location signal is dropped.
-#
-# This mirrors the notebook's allowlist approach while keeping your explicit
-# blocklist for patterns that would otherwise survive keyword matching.
+# ─── 2. Date filtering ───────────────────────────────────────────────────────
 
-# ── Gate 1: system messages ───────────────────────────────────────────────────
-_SYSTEM_PATTERNS = [
-    r"Messages and calls are end-to-end encrypted",
-    r"\badded\s+\+?\d",
-    r"\bleft$",
-    r"\bremoved\s+\+?\d",
-    r"changed the subject",
-    r"changed this group",
-    r"changed the group",
-    r"created group",
-    r"joined using this group",
-    r"security code changed",
-    r"Your security code with",
-    r"<[Mm]edia omitted>",
-    r"image omitted",
-    r"video omitted",
-    r"audio omitted",
-    r"sticker omitted",
-    r"document omitted",
-    r"Contact card omitted",
-    r"GIF omitted",
-    r"location:?\s*https?://",
-    r"This message was deleted",
-    r"You deleted this message",
-    r"Missed voice call",
-    r"Missed video call",
-    r"^null$",
-]
-SYSTEM_RE = re.compile("|".join(_SYSTEM_PATTERNS), re.IGNORECASE)
+def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
+    """
+    Return messages from the N most recent full days in the export.
+    (Last date is NOT excluded — matches original MODIFIED behaviour.)
+    """
+    if not messages:
+        return []
+    dates        = sorted(set(m["datetime"].date() for m in messages))
+    target_dates = set(dates[-days:])
+    return [m for m in messages if m["datetime"].date() in target_dates]
 
-# ── Gate 2: blocklist ─────────────────────────────────────────────────────────
-# Rejected even if RE keywords appear — these are never listings.
-_BLOCKLIST_PATTERNS = [
-    # Buyer requests — Arabic                                               # wanted/required (anywhere)
-    r"أبحث\s*عن|ابحث\s*عن",                               # I'm looking for
-    r"بدور\s*على|بدوّر\s*على",                             # looking for (colloquial)
-    r"محتاج\s*(شقة|شقه|فيلا|وحدة|وحده|أرض|ارض|محل)",
-    r"عايز\s*(أشتري|اشتري|اجار|ايجار|ايجاره)",
-    # Buyer requests — English / Franco
-    r"urgent\s*request",
-    r"\blooking\s+for\b",
-    r"\bwanted\b.{0,40}\b(apartment|villa|flat|unit|land|office)\b",
-    r"\b(3ayez|3ayz)\b",
-    # Financial spam
-    r"تمويلات?\s*بنكي",
-    r"قرض\s*شخصي",
-    r"كاش\s*باك",
-    r"#.*تمويل",
-    r"\busdt\b",
-    r"\bbitcoin\b|\bcrypto\b|\berc20\b",
-    # Recruitment / off-topic
-    r"we\s*are\s*hiring",
-    r"sales\s*team\s*leader",
-    r"chat\.whatsapp\.com",
-    r"not\s*spam\s*please",
-    r"ممنوع\s*الصور",
-    r"سيتم\s*الحذف",
-    # Pure greetings (full-message)
-    r"^(السلام\s*عليكم|وعليكم\s*السلام|صباح\s*الخير|صباح\s*النور|مساء\s*الخير)\s*$",
-    r"^good\s*(morning|evening|night)\s*$",
-    r"^(hi|hello|hey|ok|okay|تمام|ماشي)\s*$",
-    r"^\?\s*$",
-]
-BLOCKLIST_RE = re.compile("|".join(_BLOCKLIST_PATTERNS), re.IGNORECASE | re.MULTILINE)
 
-# ── Gate 3: allowlist ─────────────────────────────────────────────────────────
-# Must match at least one term from Arabic, English, or Franco-Arab keyword sets.
-
-_KW_AR = [
-    # Transaction
-    "للبيع", "للإيجار", "للايجار", "للاستثمار", "إيجار", "ايجار", "بيع",
-    "إيجار يومي", "يومي", "شهري", "سنوي",
-    # Property types
-    "شقة", "شقه", "فيلا", "فيللا", "دوبلكس", "دوبليكس", "بنتهاوس", "ستوديو",
-    "تاون هاوس", "تاونهاوس", "توين هاوس", "وحدة", "وحده",
-    "أرض", "ارض", "قطعة أرض", "محل", "مكتب", "عيادة", "مخزن", "مستودع",
-    "بناية", "عمارة", "روف", "شاليه",
-    # Specs
-    "غرفة", "غرفه", "غرف", "حمام", "حمامات", "مساحة", "مساحه", "متر", "م2",
-    "دور", "طابق", "أدوار", "بدروم", "ريسيبشن", "صالة", "صاله",
-    # Finishing / condition
-    "مفروش", "مفروشة", "تشطيب", "سوبر لوكس", "لوكس", "نص تشطيب",
-    "كور آند شيل", "تشطيب كامل", "الترا سوبر",
-    # Financial
-    "سعر", "مقدم", "قسط", "أقساط", "تقسيط", "دفعة",
-    "مليون", "ألف", "الف", "مليار",
-    # Features
-    "جاردن", "حديقة", "بركة سباحة", "حمام سباحة", "بلكونة", "تراس",
-    "أسانسير", "جراج", "موقف", "أمن", "بوابة", "كمبوند",
-    # Egyptian locations & compound names
-    "التجمع", "الرحاب", "مدينتي", "الشيخ زايد", "العاصمة الإدارية",
-    "الساحل", "العين السخنة", "أكتوبر", "المهندسين", "الدقي", "المعادي",
-    "مصر الجديدة", "هليوبوليس", "النزهة", "الزمالك", "وسط البلد",
-    "القاهرة الجديدة", "بدر", "الإسكندرية", "الغردقة",
-    "شرم الشيخ", "الجونة", "سيدي عبد الرحمن", "العلمين",
-    "هايد بارك", "ميفيدا", "ماونتن فيو", "ذا ادرس", "بالم هيلز", "ايستاون",
-]
-
-_KW_EN = [
-    # Transaction
-    "for sale", "for rent", "resale", "lease",
-    # Property types
-    "apartment", "villa", "studio", "duplex", "penthouse", "chalet",
-    "townhouse", "twin house", "standalone", "office", "warehouse", "land",
-    "flat", "unit", "roof", "shop", "clinic", "building",
-    # Specs
-    "bedroom", "bathroom", "sqm", "sq m", "sq.m", "m2", "ground floor", "reception",
-    # Finishing
-    "furnished", "unfurnished", "semi finished",
-    "core & shell", "core and shell", "super lux", "super luxury", "finished",
-    # Financial
-    "cash", "installment", "down payment", "negotiable",
-    # Features
-    "garden", "pool", "balcony", "terrace", "parking", "garage", "security",
-    "elevator", "compound",
-    # Locations
-    "new cairo", "sheikh zayed", "new capital", "ain sokhna", "north coast",
-    "maadi", "heliopolis", "zamalek", "nasr city",
-    "mivida", "hyde park", "palm hills", "mountain view", "east town",
-    "el rehab", "madinaty",
-]
-
-_KW_FRANCO = [
-    # Romanised Egyptian Arabic
-    "sha2a", "she2a", "2otda", "otda", "ghorf", "hamam",
-    "ll bai3", "lel bai3", "ll egar", "lel egar",
-    "mafroush", "super lux", "teshteeb",
-]
-
-# Sort longest-first so longer phrases match before their substrings
-_kw_all = sorted(set(_KW_AR + _KW_EN + _KW_FRANCO), key=len, reverse=True)
-ALLOWLIST_RE = re.compile(
-    "|".join(re.escape(kw) for kw in _kw_all),
-    re.IGNORECASE,
-)
-
-MIN_BODY_LEN = 20  # characters — anything shorter is noise
-
+# ─── 3. Ad filter — delegates to filter_chat.classify ────────────────────────
 
 def filter_ads(messages: list[dict]) -> tuple[list[dict], dict]:
     """
-    Apply the 3-gate filter. Returns (ads, stats) where stats breaks down
-    how many messages were dropped at each gate.
+    Apply the 3-gate filter via filter_chat.classify().
+    Returns (ads, stats) — identical interface to the original pipeline.
     """
     stats = {"system": 0, "too_short": 0, "blocklist": 0, "no_keywords": 0, "passed": 0}
     ads   = []
 
     for msg in messages:
-        body = msg["body"].strip()
-
-        if SYSTEM_RE.search(body):
-            stats["system"] += 1
-            continue
-
-        if len(body) < MIN_BODY_LEN:
-            stats["too_short"] += 1
-            continue
-
-        if BLOCKLIST_RE.search(body):
-            stats["blocklist"] += 1
-            continue
-
-        if not ALLOWLIST_RE.search(body):
-            stats["no_keywords"] += 1
-            continue
-
-        stats["passed"] += 1
-        ads.append(msg)
+        result = classify(msg)
+        if result == "pass":
+            stats["passed"] += 1
+            ads.append(msg)
+        else:
+            stats[result] += 1
 
     return ads, stats
 
 
-def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
-    """
-    MODIFIED (temporarily) returns messages from all available dates, without excluding the last one. 
-
-    Return messages from the N most recent full days in the export.
-    Excludes the very last date (may be incomplete) and takes the `days`
-    dates before it. If the export has fewer dates than requested, returns
-    whatever is available.
-    """
-    if not messages:
-        return []
-    dates = sorted(set(m["datetime"].date() for m in messages))
-    # MODIFIEDD XXXX UNUSED->  Drop the last date (potentially incomplete), then take last `days` dates
-    full_dates = dates#[:-1] if len(dates) > 1 else dates
-    target_dates = set(full_dates[-days:])
-    return [m for m in messages if m["datetime"].date() in target_dates]
-
-
-# ─── 3. Gemini API Extraction ────────────────────────────────────────────────
+# ─── 4. Gemini API Extraction ────────────────────────────────────────────────
 
 SYSTEM_PROMPT = """You are a real estate data extraction engine. You receive property advertisement texts from Egyptian real estate groups.
 
@@ -476,7 +272,7 @@ def call_gemini(ads: list[dict]) -> tuple[list[dict], dict]:
     return [], timing
 
 
-# ─── 4. Database ─────────────────────────────────────────────────────────────
+# ─── 5. Database ─────────────────────────────────────────────────────────────
 
 def init_db(db_path: str = DB_PATH) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
@@ -590,7 +386,7 @@ def _b(val) -> Optional[int]:
     return None if val is None else (1 if val else 0)
 
 
-# ─── 5. Main Pipeline ────────────────────────────────────────────────────────
+# ─── 6. Main Pipeline ────────────────────────────────────────────────────────
 
 def run_pipeline(chat_file: str, days: int = 1):
     run_start = _ts()
@@ -756,6 +552,6 @@ def run_pipeline(chat_file: str, days: int = 1):
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "2DayAdsGT.txt"  # Path to your WhatsApp export file
-run_pipeline(chat_file,2)
+chat_file = "2DayAdsGT.txt"
+run_pipeline(chat_file, 2)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
