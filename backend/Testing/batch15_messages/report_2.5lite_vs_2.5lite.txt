@@ -1,0 +1,216 @@
+=== Pipeline Evaluation Report ===
+Generated  : 2026-03-31 17:28:15
+GT file    : Testing/gemini2.5flashlite/listing2.csv
+PRED file  : Testing/gemini2.5flashlite/listing3.csv
+
+Ground truth ads : 43
+Pipeline output  : 43
+Matched pairs    : 43
+Unmatched GT ads : 0  (pipeline missed these)
+Recall (listing) : 100.0%
+Precision        : 100.0%
+
+Mean per-ad accuracy : 97.4%
+  >=90%  :  40 ads
+  75-89% :   3 ads
+  50-74% :   0 ads
+  <50%   :   0 ads
+
+Field                       Accuracy      N
+---------------------------------------------
+  -- Categorical --
+  property_type               97.7%     43
+  transaction_type           100.0%     43
+  finishing                   93.0%     43
+  furnished                  100.0%     43
+  payment_method              97.7%     43
+  advertiser_type             95.3%     43
+  currency                   100.0%     43
+  -- Numeric --
+  price                       97.6%     42
+  area_sqm                   100.0%     41
+  bedrooms                   100.0%     41
+  bathrooms                  100.0%     42
+  floor_number               100.0%     18
+  -- Boolean --
+  has_elevator               100.0%     14
+  has_garden                 100.0%     23
+  has_pool                   100.0%     16
+  has_balcony                100.0%     14
+  has_security               100.0%     14
+  has_parking                100.0%     14
+  price_negotiable           100.0%     14
+  -- Text --
+  compound_name               97.7%     43
+  district                    97.7%     43
+  city                        97.7%     43
+  -- List --
+  phone_numbers              100.0%     43
+  amenities                   79.1%     43
+
+=== All Matched Ads (sorted worst to best) ===
+
+[1/43] Accuracy: 80.0%  |  📍Telal Elsokhna📍 •Developer :Roaaya •Twin House 🏡 •Fourth Row 💫  •view : Sea & swimming pool 🌊  •140...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+  district                                   Ain Sokhna                             nan
+  city                                             Suez                          Sokhna
+
+[2/43] Accuracy: 88.2%  |  شقه في كمبوند كايرو فيستيفال سيتي للايجار الدور الاول مساحه 235 متر 3 غرف نوم  5 حمام  ريسبشن 2 قطعه...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  advertiser_type                                broker                           owner
+  amenities              ["kitchen", "AC", "Nanny room"]  ["kitchen", "AC", "nanny room"]
+
+[3/43] Accuracy: 88.2%  |  Available Code HPr186 Studio ground floor for rent in Hyde Park-center ville Area 85 SQM 1 master be...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  finishing                                         nan                   semi_finished
+  compound_name                 Hyde Park - Centerville        Hyde Park - Centre Ville
+
+[4/43] Accuracy: 94.1%  |  Town house corner (azzar 1 ) Very Prime Location *Compound azzar 1* Immediate delivery Golden square...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  price                                      22690000.0                      21000000.0
+
+[5/43] Accuracy: 94.1%  |  شقه في كمبوند فيليت v ريزيدنس 140 متر جاردن 75 متر الي 85 متر تقريبا 2 غرف نوم  3 حمام ريسبشن كبير  ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  advertiser_type                                broker                           owner
+
+[6/43] Accuracy: 94.1%  |  •Al marasem Fifth square Townhouse middle for Rent  •Bua 250m •Land 250m  •3 Bedrooms  •4 Bathrooms ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities              ["kitchen", "AC", "Nanny's room"]               ["kitchen", "AC"]
+
+[7/43] Accuracy: 94.1%  |  Code HPs30 Duplex with garden for sale in Hyde park  Area 278 SQM Garden  80 SQM 3  bedrooms ( 1 mas...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities                                ["dressing"]                              []
+
+[8/43] Accuracy: 94.1%  |  Code SVr88 Apartment for rent in Sodic Villette - V residence  Area 182 SQM  1st floor  3 bedrooms  ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities              ["kitchen", "AC", "Nanny room"]  ["kitchen", "AC", "nanny room"]
+
+[9/43] Accuracy: 94.1%  |  Code SVr90  Apartment for rent in Sodic Villette - V residence  Area 168 SQM  4th floor  2 bedrooms ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities              ["kitchen", "AC", "Nanny room"]  ["kitchen", "AC", "nanny room"]
+
+[10/43] Accuracy: 94.1%  |  Code SVr92 Apartment for rent in sodic Villette v residence  Area 160 SQM 3rd floor  2 bedrooms  4 b...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities              ["kitchen", "AC", "Nanny room"]  ["kitchen", "AC", "nanny room"]
+
+[11/43] Accuracy: 94.1%  |  Code SVs94 Apartment for sale in Sodic Villette Sky condos  Area 190 SQM 2nd floor  3 bedrooms (1 ma...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities                                 ["terrace"]                              []
+
+[12/43] Accuracy: 94.1%  |  Available Code CFCr65 Standalone for rent in CFC Land Area 490 SQM Bua 365 SQM 5 master bedrooms  7 ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities              ["kitchen", "AC", "shutters", "Nanny room"]  ["kitchen", "AC", "shutters", "nanny room"]
+
+[13/43] Accuracy: 95.7%  |  AlMarasem fifth square المراسم فيفث سكوير  Twin House corner for Rent  Prime location  First use  Gr...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  amenities              ["AC", "kitchen", "dressing", "laundry"]  ["AC", "kitchen", "dressing", "laundry room"]
+
+[14/43] Accuracy: 95.7%  |  Sodic Eastown إيستاون Triplex Roof for rent Ultra modern  Premium finishing  Bua 283 m Roof 79 m 4 b...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  property_type                                   other                       penthouse
+
+[15/43] Accuracy: 95.7%  |  Studio for rent in Gardenia Heights 1  Area 50 SQM 1 bedroom  1 bathroom  Fully furnished  Price 18k...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  finishing                                 unfurnished                   semi_finished
+
+[16/43] Accuracy: 95.8%  |  Sodic Eastown سوديك إيستاون Apartment for Rent First use 👌  Landscape view 🏞️  Area 150 m Second flo...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  finishing                                 unfurnished                   semi_finished
+
+[17/43] Accuracy: 100.0%  |  ♦️0 % مقدم اقساط تصل إلى 7 سنوات انتهز آخر فرصة للاستثمار في مشروع  ♦️ KAY90  خطوات من شارع التسعين ...
+  All fields correct.
+
+[18/43] Accuracy: 100.0%  |  ✨Lowest Price in SilverSands✨ 🔹Townhouse (S) 🔹BUA 149m + Garden 174m 🔹Ultra Modern finishing with AC...
+  All fields correct.
+
+[19/43] Accuracy: 100.0%  |  شقة ايجار ف مدينتي 2 غرف نوم  • مفروشه بالكامل فرش مودرن جدا  2 حمام  مطلوب 48 الف...
+  All fields correct.
+
+[20/43] Accuracy: 100.0%  |  شقه في كمبوند فيليت v ريزيدنس 140 متر 60متر جاردن 2 غرف نوم  3 حمام ريسبشن كبير  تشطيب سوبر لوكس  مط...
+  All fields correct.
+
+[21/43] Accuracy: 100.0%  |  Penthouse for rent at Eastown residence 310M Roof 110M  View jacaranda  3 Bedrooms  5 Bathrooms Livi...
+  All fields correct.
+
+[22/43] Accuracy: 100.0%  |  Code HPs274 Apartment for sale in Hyde Park  Area 110 SQM  2 master bedrooms  3 bathrooms  Semi fini...
+  All fields correct.
+
+[23/43] Accuracy: 100.0%  |  Code LKs107 Apartment ground floor with garden for sale in lake view residence  Area 207 SQM  Garden...
+  All fields correct.
+
+[24/43] Accuracy: 100.0%  |  Code LKr93 Apartment for rent in Lake view Residence  Area 148 SQM 2 bedrooms  2 bathrooms  Receptio...
+  All fields correct.
+
+[25/43] Accuracy: 100.0%  |  Code LKr92 Apartment for rent in Lake view Residence  Area 148 SQM 2 bedrooms  2 bathrooms  Receptio...
+  All fields correct.
+
+[26/43] Accuracy: 100.0%  |  Code LKs140 Apartment for sale in lake view Residence  Area 143 SQM First floor  2 bedrooms  2 bathr...
+  All fields correct.
+
+[27/43] Accuracy: 100.0%  |  Update price  Code LKr110  Apartment for rent in Lake View Residence  Area 144 SQM 3rd floor  2 bedr...
+  All fields correct.
+
+[28/43] Accuracy: 100.0%  |  Code SVr41 Apartment for rent in Sodic Villette Sky Condos  Area 175 SQM 1st floor  3 bedrooms (1 ma...
+  All fields correct.
+
+[29/43] Accuracy: 100.0%  |  Code SVs94 Apartment for sale in Sodic Villette Sky condos  Area 190 SQM 2nd floor  3 bedrooms (1 ma...
+  All fields correct.
+
+[30/43] Accuracy: 100.0%  |  Code SVs95 Apartment for sale in Sodic Villette Sky condos  Area 190 SQM 2nd floor  3 bedrooms (1 ma...
+  All fields correct.
+
+[31/43] Accuracy: 100.0%  |  Code SVs95 Apartment for sale in Sodic Villette Sky condos  Area 190 SQM 2nd floor  3 bedrooms (1 ma...
+  All fields correct.
+
+[32/43] Accuracy: 100.0%  |  Code SVs53 Apartment ground floor with garden for sale in Sodic Villette  Area 181 SQM Garden 74 SQM...
+  All fields correct.
+
+[33/43] Accuracy: 100.0%  |  Available Code MAr7 penthouse for rent in fifth square marasem Area 165 sqm 3 bedrooms 3 bathrooms R...
+  All fields correct.
+
+[34/43] Accuracy: 100.0%  |  90 Avenue ناينتي أڤينيو  For rent  Studio with garden 🏕️ Area 90 m Ultra Super lux ✨  1 master bedro...
+  All fields correct.
+
+[35/43] Accuracy: 100.0%  |  Sodic Villete سوديك ڤيليت Apartment For Rent Ultra Super lux ✨  Second floor  First use  Landscape &...
+  All fields correct.
+
+[36/43] Accuracy: 100.0%  |  Sodic Villete Sky condos  سوديك ڤيليت Apartment For Rent  Ultra Super lux ✨  First use  First floor ...
+  All fields correct.
+
+[37/43] Accuracy: 100.0%  |  Eastown sodic إيستاون  Apartment for rent  Ultra Super lux ✨  Landscape view  1st floor  BUA: 190m 3...
+  All fields correct.
+
+[38/43] Accuracy: 100.0%  |  Hyde park هايد بارك  Duplex for rent  Ultra Super lux ✨  Bua: 244m Garden: 120m 🪴  3 bedrooms  3 bat...
+  All fields correct.
+
+[39/43] Accuracy: 100.0%  |  Sodic Villete سوديك ڤيليت For rent  Apartment with garden Ultra Super lux ✨  First use  Landscape vi...
+  All fields correct.
+
+[40/43] Accuracy: 100.0%  |  Water way وتر واي Apartment For rent Luxury Furnished  Brand New Bua 237 m 3 bedrooms  3 bathrooms P...
+  All fields correct.
+
+[41/43] Accuracy: 100.0%  |  The square ذا اسكوير  Twinhouse For rent Land 500m Bua 300m 4 bedrooms 4 bathrooms Nany room with to...
+  All fields correct.
+
+[42/43] Accuracy: 100.0%  |  lake view residence ليك فيو ريزيدنس  apartment for rent 140m 2 bedrooms 2 bathrooms private garden u...
+  All fields correct.
+
+[43/43] Accuracy: 100.0%  |  Porto new Cairo بورتو نيو كايرو Duplex for rent Floor 2,3 Bua 150 m Ultra Super lux ✨ 2 bedrooms 2 b...
+  All fields correct.

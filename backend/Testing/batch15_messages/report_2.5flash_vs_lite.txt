@@ -1,0 +1,362 @@
+=== Pipeline Evaluation Report ===
+Generated  : 2026-03-31 17:29:34
+GT file    : Testing/gemini2.5flash/listing1_flash.csv
+PRED file  : Testing/gemini2.5flashlite/listing3.csv
+
+Ground truth ads : 44
+Pipeline output  : 43
+Matched pairs    : 43
+Unmatched GT ads : 1  (pipeline missed these)
+Recall (listing) : 97.7%
+Precision        : 100.0%
+
+Mean per-ad accuracy : 80.4%
+  >=90%  :   6 ads
+  75-89% :  27 ads
+  50-74% :  10 ads
+  <50%   :   0 ads
+
+Field                       Accuracy      N
+---------------------------------------------
+  -- Categorical --
+  property_type               97.7%     43
+  transaction_type            97.7%     43
+  finishing                   88.4%     43
+  furnished                   20.9%     43
+  payment_method              11.6%     43
+  advertiser_type             58.1%     43
+  currency                   100.0%     43
+  -- Numeric --
+  price                       97.6%     41
+  area_sqm                   100.0%     41
+  bedrooms                    95.1%     41
+  bathrooms                  100.0%     42
+  floor_number               100.0%     18
+  -- Boolean --
+  has_elevator             (no data)
+  has_garden                  91.7%     12
+  has_pool                   100.0%      3
+  has_balcony              (no data)
+  has_security             (no data)
+  has_parking              (no data)
+  price_negotiable           100.0%      3
+  -- Text --
+  compound_name               67.4%     43
+  district                    86.0%     43
+  city                        90.7%     43
+  -- List --
+  phone_numbers               97.7%     43
+  amenities                   69.8%     43
+
+=== All Matched Ads (sorted worst to best) ===
+
+[1/43] Accuracy: 56.2%  |  Code Tr500 Studio for rent in Gardenia Heights 1 Area 50 SQM 1 bedroom 1 bathroom Fully furnished *P...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  transaction_type                                 rent                      daily_rent
+  finishing                                         nan                   semi_finished
+  furnished                             fully_furnished                       furnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  bedrooms                                          0.0                             1.0
+  city                                            Cairo                       New Cairo
+
+[2/43] Accuracy: 58.3%  |  ♦️0 % مقدم اقساط تصل إلى 7 سنوات انتهز آخر فرصة للاستثمار في مشروع ♦️ KAY90 خطوات من شارع التسعين ال...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  property_type                                  office                           other
+  furnished                                         nan                     unfurnished
+  advertiser_type                                broker                       developer
+  district                                          nan                 90 North Street
+  phone_numbers          ["+20 10 50062535", "01050062535"]                 ["01050062535"]
+
+[3/43] Accuracy: 62.5%  |  *AlMarasem fifth square* *المراسم فيفث سكوير* *Twin House corner for Rent* *Prime location* *First u...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  finishing                                         nan                   semi_finished
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  district                                          nan                    Fifth Square
+  amenities              ["Nany room", "toilet", "kitchen", "Living room", "Kitchenette", "Laundry room", "Dressing room", "AC", "kitchen cabinets"]  ["AC", "kitchen", "dressing", "laundry room"]
+
+[4/43] Accuracy: 66.7%  |  شقة ايجار ف مدينتي 2 غرف نوم • مفروشه بالكامل فرش مودرن جدا 2 حمام مطلوب 48 الف...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+  advertiser_type                                broker                           owner
+  compound_name                                  مدينتي                             nan
+  district                                          nan                        Madinaty
+  city                                         Madinaty                           Cairo
+
+[5/43] Accuracy: 68.8%  |  The square ذا اسكوير Twinhouse For rent Land 500m Bua 300m 4 bedrooms 4 bathrooms Nany room with toi...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  compound_name                              The square                      The Square
+  amenities              ["Nany room", "toilet", "Kitchen", "AC"]               ["kitchen", "AC"]
+
+[6/43] Accuracy: 70.6%  |  •Al marasem Fifth square Townhouse middle for Rent •Bua 250m •Land 250m •3 Bedrooms •4 Bathrooms Sec...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name                 Al Marasem Fifth Square                      Al Marasem
+  district                                          nan                    Fifth Square
+  amenities              ["kitchen", "AC", "nanny room"]               ["kitchen", "AC"]
+
+[7/43] Accuracy: 70.6%  |  Code HPr186 Studio ground floor for rent in Hyde Park-center ville Area 85 SQM 1 master bedroom 2 ba...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  finishing                                         nan                   semi_finished
+  payment_method                                    nan                            cash
+  bedrooms                                          0.0                             1.0
+  compound_name                               Hyde Park        Hyde Park - Centre Ville
+  district                                 Center Ville                             nan
+
+[8/43] Accuracy: 70.6%  |  *Sodic Eastown* *سوديك إيستاون* *Apartment for Rent* *First use* 👌 *Landscape view* 🏞️ Area *150 m* ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  finishing                                         nan                   semi_finished
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  amenities              ["Nany room", "toilet", "kitchen", "AC", "appliances"]               ["kitchen", "AC"]
+
+[9/43] Accuracy: 72.2%  |  Code SVr92 Apartment for rent in sodic Villette v residence Area 160 SQM 3rd floor 2 bedrooms 4 bath...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  price                                         50000.0                         45000.0
+  compound_name              Sodic Villette V Residence      Sodic Villette v residence
+  amenities              ["nanny room", "kitchen", "AC", "appliances"]  ["kitchen", "AC", "nanny room"]
+
+[10/43] Accuracy: 72.2%  |  *Sodic Eastown* *إيستاون* *Triplex Roof for rent* *Ultra modern* *Premium finishing* *Bua 283 m* *Ro...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  has_garden                                        1.0                             0.0
+  amenities              ["Nany room", "toilet", "kitchen", "AC"]               ["kitchen", "AC"]
+
+[11/43] Accuracy: 75.0%  |  Code MAr7 penthouse for rent in fifth square marasem Area 165 sqm 3 bedrooms 3 bathrooms Reception A...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name                    Fifth Square Marasem                         Marasem
+  district                                          nan                    Fifth Square
+
+[12/43] Accuracy: 75.0%  |  *Porto new Cairo* *بورتو نيو كايرو* *Duplex for rent* Floor 2,3 Bua 150 m Ultra Super lux ✨ *2 bedro...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                             fully_furnished                       furnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  compound_name                         Porto new Cairo                 Porto New Cairo
+
+[13/43] Accuracy: 76.5%  |  *Eastown sodic* *إيستاون* *Apartment for rent* *Ultra Super lux* ✨ *Landscape view* 1st floor *BUA: ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  amenities              ["Nany room", "kitchen", "AC"]               ["kitchen", "AC"]
+
+[14/43] Accuracy: 76.5%  |  *Hyde park* *هايد بارك* *Duplex for rent* Ultra Super lux ✨ Bua: 244m Garden: 120m 🪴 *3 bedrooms* *3...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                             fully_furnished                       furnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  amenities                             ["Living room"]                     ["kitchen"]
+
+[15/43] Accuracy: 76.5%  |  *Sodic Villete* *سوديك ڤيليت* *For rent* *Apartment with garden* Ultra Super lux ✨ *First use* *Land...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  amenities              ["Nany room", "kitchen", "AC", "Dressing", "Shutters"]  ["kitchen", "AC", "dressing", "shutters"]
+
+[16/43] Accuracy: 77.8%  |  *Sodic Villete* *سوديك ڤيليت* *Apartment For Rent* Ultra Super lux ✨ Second floor *First use* *Lands...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+  amenities              ["Nany room", "toilet", "kitchen", "AC", "Dressing"]   ["kitchen", "AC", "dressing"]
+
+[17/43] Accuracy: 80.0%  |  📍Telal Elsokhna📍 •Developer :Roaaya •Twin House 🏡 •Fourth Row 💫 •view : Sea & swimming pool 🌊 •140SQ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  city                                       Ain Sokhna                          Sokhna
+
+[18/43] Accuracy: 81.2%  |  Code CFCr65 Standalone for rent in CFC Land Area 490 SQM Bua 365 SQM 5 master bedrooms 7 bathrooms L...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name                     Cairo Festival City                             CFC
+
+[19/43] Accuracy: 82.4%  |  شقه في كمبوند فيليت v ريزيدنس 140 متر جاردن 75 متر الي 85 متر تقريبا 2 غرف نوم 3 حمام ريسبشن كبير تش...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                broker                           owner
+
+[20/43] Accuracy: 82.4%  |  Code HPs30 Duplex with garden for sale in Hyde park Area 278 SQM Garden 80 SQM 3 bedrooms ( 1 master...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                     installment
+  amenities                                ["dressing"]                              []
+
+[21/43] Accuracy: 82.4%  |  Code SVs94 Apartment for sale in Sodic Villette Sky condos Area 190 SQM 2nd floor 3 bedrooms (1 mast...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name               Sodic Villette Sky Condos       Sodic Villette Sky condos
+
+[22/43] Accuracy: 82.4%  |  Code SVs95 Apartment for sale in Sodic Villette Sky condos Area 190 SQM 2nd floor 3 bedrooms (1 mast...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name               Sodic Villette Sky Condos       Sodic Villette Sky condos
+
+[23/43] Accuracy: 82.4%  |  Code SVr88 Apartment for rent in Sodic Villette - V residence Area 182 SQM 1st floor 3 bedrooms 3 ba...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name              Sodic Villette V Residence    Sodic Villette - V residence
+
+[24/43] Accuracy: 82.4%  |  Code SVr90 Apartment for rent in Sodic Villette - V residence Area 168 SQM 4th floor 2 bedrooms ( 1 ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+  compound_name              Sodic Villette V Residence    Sodic Villette - V residence
+  amenities                              ["nanny room"]  ["kitchen", "AC", "nanny room"]
+
+[25/43] Accuracy: 82.4%  |  Code SVs94 Apartment for sale in Sodic Villette Sky condos Area 190 SQM 2nd floor 3 bedrooms (1 mast...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name               Sodic Villette Sky Condos       Sodic Villette Sky condos
+
+[26/43] Accuracy: 82.4%  |  Code SVs95 Apartment for sale in Sodic Villette Sky condos Area 190 SQM 2nd floor 3 bedrooms (1 mast...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  compound_name               Sodic Villette Sky Condos       Sodic Villette Sky condos
+
+[27/43] Accuracy: 82.4%  |  *Sodic Villete* *Sky condos* *سوديك ڤيليت* *Apartment For Rent* *Ultra Super lux* ✨ *First use* Firs...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                              semi_furnished                     unfurnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+
+[28/43] Accuracy: 82.4%  |  lake view residence ليك فيو ريزيدنس apartment for rent 140m 2 bedrooms 2 bathrooms private garden ul...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                             fully_furnished                       furnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+
+[29/43] Accuracy: 83.3%  |  *90 Avenue* *ناينتي أڤينيو* *For rent* *Studio with garden* 🏕️ Area 90 m *Ultra Super lux* ✨ *1 mast...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                             fully_furnished                       furnished
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+
+[30/43] Accuracy: 84.2%  |  Code LKs107 Apartment ground floor with garden for sale in lake view residence Area 207 SQM Garden 1...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+  amenities                            ["private pool"]                              []
+
+[31/43] Accuracy: 86.7%  |  Town house corner (azzar 1 ) Very Prime Location *Compound azzar 1* Immediate delivery Golden square...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  finishing                                         nan                           shell
+  furnished                                         nan                     unfurnished
+
+[32/43] Accuracy: 87.5%  |  *Water way* *وتر واي* *Apartment For rent* *Luxury Furnished* *Brand New* Bua 237 m *3 bedrooms* *3 ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+  advertiser_type                                   nan                          broker
+
+[33/43] Accuracy: 88.2%  |  شقه في كمبوند فيليت v ريزيدنس 140 متر 60متر جاردن 2 غرف نوم 3 حمام ريسبشن كبير تشطيب سوبر لوكس مطبخ ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+
+[34/43] Accuracy: 88.2%  |  شقه في كمبوند كايرو فيستيفال سيتي للايجار الدور الاول مساحه 235 متر 3 غرف نوم 5 حمام ريسبشن 2 قطعه م...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+  advertiser_type                                broker                           owner
+
+[35/43] Accuracy: 88.2%  |  Code LKr110 Apartment for rent in Lake View Residence Area 144 SQM 3rd floor 2 bedrooms 2 bathrooms ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+
+[36/43] Accuracy: 88.9%  |  ✨Lowest Price in SilverSands✨ 🔹Townhouse (S) 🔹BUA 149m + Garden 174m 🔹Ultra Modern finishing with AC...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  city                                              nan                    Marsa Matruh
+
+[37/43] Accuracy: 88.9%  |  Code SVs53 Apartment ground floor with garden for sale in Sodic Villette Area 181 SQM Garden 74 SQM ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+  payment_method                                    nan                            cash
+
+[38/43] Accuracy: 93.8%  |  Penthouse for rent at Eastown residence 310M Roof 110M View jacaranda 3 Bedrooms 5 Bathrooms Living ...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+
+[39/43] Accuracy: 93.8%  |  Code HPs274 Apartment for sale in Hyde Park Area 110 SQM 2 master bedrooms 3 bathrooms Semi finished...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+
+[40/43] Accuracy: 93.8%  |  Code LKr93 Apartment for rent in Lake view Residence Area 148 SQM 2 bedrooms 2 bathrooms Reception F...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+
+[41/43] Accuracy: 93.8%  |  Code LKr92 Apartment for rent in Lake view Residence Area 148 SQM 2 bedrooms 2 bathrooms Reception F...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
+
+[42/43] Accuracy: 94.1%  |  Code LKs140 Apartment for sale in lake view Residence Area 143 SQM First floor 2 bedrooms 2 bathroom...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  furnished                                         nan                     unfurnished
+
+[43/43] Accuracy: 94.1%  |  Code SVr41 Apartment for rent in Sodic Villette Sky Condos Area 175 SQM 1st floor 3 bedrooms (1 mast...
+  Field                                              GT                            PRED
+  ----------------------  ------------------------------  ------------------------------
+  payment_method                                    nan                            cash
