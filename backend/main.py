@@ -8,7 +8,6 @@ import os
 from fastapi.concurrency import run_in_threadpool
 
 
-
 app = FastAPI(title="WhatsApp Real Estate Parser")
 
 app.add_middleware(
@@ -19,17 +18,6 @@ app.add_middleware(
 )
 
 dbControl.init_db()
-# @app.post("/upload")
-# async def upload_chat(file: UploadFile = File(...)):
-#     try:
-#       #store the file in the directory and return the path
-#       file_path = os.path.join(os.path.dirname(__file__), file.filename)
-#       with open(file_path, "wb") as f:
-#         f.write(await file.read())
-#         extractFromChatExport.run_pipeline(file_path,1)
-#         return {"status": "ok", "message": "Chat processed successfully"}
-#     except Exception as e:
-#         return JSONResponse(status_code=500, content={"status": "error", "detail": str(e)})
 @app.post("/upload")
 async def upload_chat(file: UploadFile = File(...)):
     try:

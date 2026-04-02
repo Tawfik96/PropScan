@@ -262,8 +262,26 @@ function getFilters() {
   };
 }
 
-document.getElementById('searchBtn').addEventListener('click', () => fetchListings(getFilters()));
+let autoFilterDebounceTimer;
+function fetchListingsWithCurrentFilters() {
+  fetchListings(getFilters());
+}
+
+function queueAutoFilterFetch(delayMs = 250) {
+  clearTimeout(autoFilterDebounceTimer);
+  autoFilterDebounceTimer = setTimeout(fetchListingsWithCurrentFilters, delayMs);
+}
+
+['f-price-min', 'f-price-max'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => queueAutoFilterFetch(250));
+});
+
+['f-bedrooms', 'f-city', 'f-transaction', 'f-proptype'].forEach(id => {
+  document.getElementById(id).addEventListener('change', fetchListingsWithCurrentFilters);
+});
+
 document.getElementById('resetBtn').addEventListener('click', () => {
+  clearTimeout(autoFilterDebounceTimer);
   ['f-price-min','f-price-max'].forEach(id => document.getElementById(id).value = '');
   ['f-bedrooms','f-city','f-transaction','f-proptype'].forEach(id => document.getElementById(id).value = '');
   fetchListings();
