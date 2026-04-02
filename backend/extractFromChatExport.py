@@ -43,7 +43,7 @@ load_dotenv()
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL   = "gemini-2.5-flash-lite"
+GEMINI_MODEL   = "gemini-3.1-pro-preview"
 DB_PATH        = "listings.db"
 BATCH_SIZE     = 10
 MAX_RETRIES    = 3
@@ -407,7 +407,7 @@ SCHEMA — every field is nullable (use null if not determinable):
 }
 
 RULES:
-- If a single AD block contains multiple distinct listings, return one JSON object per listing, all with the same source_ad_index.
+- If a single AD block contains multiple distinct listings, return one JSON object per listing, all with the same original_message field.
 - ONLY extract what is explicitly stated. If a detail is ambiguous or absent, use null. Never infer or assume.
 - Default currency is EGP unless stated otherwise.
 - "super lux" or "الترا سوبر لوكس" = luxury finishing.
@@ -666,16 +666,12 @@ def run_pipeline(chat_file: str, days: int = 1):
 
         t_db = _ts()
         for result in results:
-            src_idx = result.get("source_ad_index")
-            if src_idx is not None and 1 <= src_idx <= len(batch):
-                ad = batch[src_idx - 1]
-            else:
-                print(f"  [!] result missing valid source_ad_index ({src_idx!r}), skipping")
-                continue
+            orig = result.get("original_message") or ""
+            ad = next((a for a in batch if a["body"].strip() == orig.strip()), None)
             insert_listing(conn, result,
-                           original_msg=ad["body"],
-                           sender=ad["sender"],
-                           ad_date=ad["datetime"].isoformat())
+                           original_msg=orig,
+                           sender=ad["sender"] if ad else None,
+                           ad_date=ad["datetime"].isoformat() if ad else None)
             total_inserted += 1
         conn.commit()
         db_s = _elapsed(t_db)
@@ -760,6 +756,6 @@ def run_pipeline(chat_file: str, days: int = 1):
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "mini_chat.txt"  # Path to your WhatsApp export file
-run_pipeline(chat_file,1)
+chat_file = "2DayAdsGT.txt"  # Path to your WhatsApp export file
+run_pipeline(chat_file,2)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
