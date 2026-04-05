@@ -15,7 +15,7 @@ Also importable by the pipeline:
 import re
 import os
 from datetime import datetime
-
+# import batch_messages
 
 # ─── WhatsApp message parser ──────────────────────────────────────────────────
 
@@ -287,74 +287,46 @@ def classify(msg: dict) -> str:
 # ─── Formatting ───────────────────────────────────────────────────────────────
 
 SEPARATOR = "-" * 60
-
-
-# def format_message(msg: dict, avg_len: float, reason: str = None) -> str:
-#     body     = msg["body"].strip()
-#     body_len = len(body)
-
-#     if avg_len > 0 and body_len > avg_len * 1.015:
-#         est_ads = int(body_len // avg_len)
-#         size    = f"multiple(~{est_ads})"
-#     else:
-#         size = "single"
-
-#     # datetime is now a real object; format it for display
-#     dt_display = msg["datetime"].strftime("%d/%m/%Y, %I:%M %p") \
-#         if isinstance(msg["datetime"], datetime) else msg["datetime"]
-
-#     lines = [
-#         SEPARATOR,
-#         f"From : {msg['sender']}",
-#         f"Date : {dt_display}",
-#         f"Size: {size}",
-#     ]
-#     if reason:
-#         lines.append(f"Drop : {reason}")
-#     lines += ["", body, ""]
-#     return "\n".join(lines)
-
 from collections import Counter
 
-def format_message(msg: dict, avg_len: float, reason: str = None) -> str:
-    body = msg["body"].strip()
+def get_size_and_count(body: str, avg_len: float):
+    body = body.strip()
     body_len = len(body)
-    size = "single"
 
-    # Only process if it's long enough to potentially be multiple ads
     if avg_len > 0 and body_len > avg_len * 1.15:
-        
-        # Find all structural markers (including 'code', 'كود', etc.)
         marker_matches = DIVIDER_RE.findall(body)
-        
+
         if marker_matches:
-            # We normalize the "code" keywords so 'Code', 'code', and 'كود' 
-            # all count as the same "type" of divider
-            normalized_markers = []
+            normalized = []
             for m in marker_matches:
                 m_lower = m.lower()
                 if m_lower in ['code', 'كود', 'kd', 'ref']:
-                    normalized_markers.append("unit_code_marker")
+                    normalized.append("unit_code_marker")
                 else:
-                    normalized_markers.append(m_lower)
+                    normalized.append(m_lower)
 
-            # Count the frequency of each marker
-            counts = Counter(normalized_markers).values()
+            counts = Counter(normalized).values()
             max_repeats = max(counts)
-            
-            # If a marker (like the word 'Code') repeats 2+ times, it's a multi-ad
-            if max_repeats >= 2:
-                size = f"multiple(~{max_repeats})"
-            else:
-                # FALLBACK 1: If markers exist but don't repeat, use length math
-                est_ads = int(body_len // avg_len)
-                size = f"multiple(~{max_repeats if max_repeats > 1 else est_ads})"
-        else:
-            # FALLBACK 2: No markers found at all, use length/avg
-            est_ads = int(body_len // avg_len)
-            size = f"multiple(~{est_ads})"
 
-    # Date formatting
+            if max_repeats >= 2:
+                return f"multiple(~{max_repeats})", max_repeats
+            else:
+                est_ads = int(body_len // avg_len)
+                return f"multiple(~{est_ads})", est_ads
+
+        else:
+            est_ads = int(body_len // avg_len)
+            return f"multiple(~{est_ads})", est_ads
+
+    return "single", 1
+
+
+
+def format_message(msg: dict, avg_len: float, reason: str = None) -> str:
+    body = msg["body"].strip()
+
+    size, _ = get_size_and_count(body, avg_len)
+
     dt_display = msg["datetime"].strftime("%d/%m/%Y, %I:%M %p") \
         if isinstance(msg["datetime"], datetime) else msg["datetime"]
 
@@ -368,7 +340,6 @@ def format_message(msg: dict, avg_len: float, reason: str = None) -> str:
         lines.append(f"Drop : {reason}")
     lines += ["", body, ""]
     return "\n".join(lines)
-
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main(filepath: str):
@@ -403,11 +374,16 @@ def main(filepath: str):
     ads_count      = len(ads_lengths)
     filtered_count = len(filtered_lengths)
 
-    ads_big_threshold      = ads_avg + 10
-    filtered_big_threshold = filtered_avg + 10
+    ads_big = 0
 
-    ads_big      = sum(1 for x in ads_lengths      if x > ads_big_threshold)
-    filtered_big = sum(1 for x in filtered_lengths if x > filtered_big_threshold)
+    for msg, body_len, reason in results:
+        if reason != "pass":
+            continue
+
+        size, count = get_size_and_count(msg["body"], ads_avg)
+
+        if size.startswith("multiple") and count > 1:
+            ads_big += 1
 
     with open(ads_path, "w", encoding="utf-8") as ads_f, \
          open(filtered_path, "w", encoding="utf-8") as filt_f:
@@ -423,15 +399,14 @@ def main(filepath: str):
     print("\n--- ADS STATS ---")
     print(f"Total: {ads_count}")
     print(f"Average length: {ads_avg:.2f}")
-    print(f"Big message threshold: {ads_big_threshold:.2f}")
-    print(f"Big messages: {ads_big}")
+    print(f"Big ads (multiple only): {ads_big}")
 
     print("\n--- FILTERED STATS ---")
     print(f"Total: {filtered_count}")
     print(f"Average length: {filtered_avg:.2f}")
-    print(f"Big message threshold: {filtered_big_threshold:.2f}")
-    print(f"Big messages: {filtered_big}")
 
 
 if __name__ == "__main__":
-    main("messages_per_day/75_messages_01_03_2025.txt")
+    file_path = "Backupz/2days_53_messages.txt"
+    main(file_path)
+    # batch_messages.main(file_path)

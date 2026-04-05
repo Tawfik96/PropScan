@@ -135,7 +135,9 @@ def estimate_tokens(chars: int) -> int:
     """Cheap token estimate — no external library required."""
     return int(chars / CHARS_PER_TOKEN)
 
-def compute_ads_avg(pass_messages: list[dict]) -> float:
+
+def compute_ads_avg(pass_messages: List[dict]) -> float:
+    """Average body length in chars across pass messages. Used by build_batches."""
     lengths = [len(m["body"].strip()) for m in pass_messages]
     return sum(lengths) / len(lengths) if lengths else 0
 

@@ -388,7 +388,7 @@ def _b(val) -> Optional[int]:
 
 # ─── 6. Main Pipeline ────────────────────────────────────────────────────────
 
-def run_pipeline(chat_file: str, days: int = 1):
+def run_pipeline(chat_file: str, days: int = 2):
     run_start = _ts()
     run_ts    = datetime.now().isoformat(timespec="seconds")
 
@@ -566,6 +566,6 @@ def run_pipeline(chat_file: str, days: int = 1):
     print(f"\n      Run logged → {os.path.abspath(LOG_PATH)}")
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "2DayAdsGT.txt"
-# run_pipeline(chat_file, 2)
+chat_file = "Backupz/2days_53_messages.txt"
+run_pipeline(chat_file, 3)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
