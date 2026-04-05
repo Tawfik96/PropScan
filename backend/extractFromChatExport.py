@@ -24,7 +24,7 @@ from filter_chat import (
     classify,               # msg → "pass" | "system" | "too_short" | "blocklist" | "no_keywords"
     WA_MSG_PATTERN,         # regex used by crop_chat_by_date
 )
-
+from batch_messages import build_batches, compute_ads_avg
 # ─── Timing helpers ──────────────────────────────────────────────────────────
 
 LOG_PATH = "pipeline_runs.log"
@@ -394,7 +394,7 @@ def run_pipeline(chat_file: str, days: int = 1):
 
     print(f"{'='*60}")
     print(f"  Real Estate Ad Extraction Pipeline")
-    print(f"  Started: {run_ts}  |  Model: {GEMINI_MODEL}  |  Batch: {BATCH_SIZE}  |  Days: {days}")
+    print(f"  Started: {run_ts}  |  Model: {GEMINI_MODEL}  |  Days: {days}")
     print(f"{'='*60}\n")
 
     timings = {}
@@ -443,18 +443,33 @@ def run_pipeline(chat_file: str, days: int = 1):
         print("      No ads found after filtering.")
         return
 
+    # ── Build batches ──────────────────────────────────────────
+    ads_avg       = compute_ads_avg(ads)
+    batches       = build_batches(ads, ads_avg)
+    total_batches = len(batches)
+    oversized_cnt = sum(1 for b in batches if b.is_oversized)
+    print(f"\n      Batches built : {total_batches}  ({oversized_cnt} oversized)")
+
     # ── Step 4: Gemini extraction ──────────────────────────────
     print(f"\n[4/5] Extracting via {GEMINI_MODEL}...")
-    conn          = init_db()
+    conn           = init_db()
     total_inserted = 0
-    total_batches  = (len(ads) + BATCH_SIZE - 1) // BATCH_SIZE
     batch_timings  = []
 
     t_extraction = _ts()
-    for batch_idx in range(0, len(ads), BATCH_SIZE):
-        batch     = ads[batch_idx : batch_idx + BATCH_SIZE]
-        batch_num = batch_idx // BATCH_SIZE + 1
-        print(f"      Batch {batch_num}/{total_batches} ({len(batch)} ads)...", end=" ", flush=True)
+    for batch_num, batch_obj in enumerate(batches, 1):
+        batch = batch_obj.messages
+
+        # ── Batch header line ──────────────────────────────────
+        oversized_flag = "  ⚠ OVERSIZED" if batch_obj.is_oversized else ""
+        print(
+            f"      Batch {batch_num}/{total_batches} "
+            f"({len(batch)} msg(s), ~{batch_obj.estimated_ads} ads, "
+            f"{batch_obj.total_chars} chars, "
+            f"~{batch_obj.estimated_tokens} tokens)"
+            f"{oversized_flag}...",
+            end=" ", flush=True
+        )
 
         t_batch  = _ts()
         results, bt = call_gemini(batch)
@@ -480,7 +495,7 @@ def run_pipeline(chat_file: str, days: int = 1):
         parse_s = _fmt(bt["json_parse_s"]) if bt["json_parse_s"] else "err"
         print(f"OK ({len(results)} extracted) | total={_fmt(batch_total)} api={api_s} json={parse_s} db={_fmt(db_s)}")
 
-        if batch_idx + BATCH_SIZE < len(ads):
+        if batch_num < total_batches:
             time.sleep(1)
 
     timings["extraction_s"] = _elapsed(t_extraction)
@@ -524,7 +539,6 @@ def run_pipeline(chat_file: str, days: int = 1):
     _log({
         "run_at": run_ts,
         "model": GEMINI_MODEL,
-        "batch_size": BATCH_SIZE,
         "input_file": chat_file,
         "days_requested": days,
         "target_dates": [str(d) for d in target_dates],
@@ -532,26 +546,26 @@ def run_pipeline(chat_file: str, days: int = 1):
         "day_messages": len(day_messages),
         "filter_stats": fstats,
         "ads_processed": len(ads),
+        "batches_total": total_batches,
+        "batches_oversized": oversized_cnt,
         "listings_inserted": total_inserted,
         "avg_confidence": round(avg_conf, 4) if avg_conf else None,
         "property_type_counts": prop_types,
         "timings": {k: round(v, 3) for k, v in timings.items()},
         "batches": [{
-            "batch":         b["batch_num"],
-            "ads_in":        b["ads_in"],
-            "ads_out":       b["ads_out"],
-            "api_call_s":    round(b["api_call_s"],   3) if b["api_call_s"]   else None,
-            "json_parse_s":  round(b["json_parse_s"], 4) if b["json_parse_s"] else None,
-            "db_insert_s":   round(b["db_insert_s"],  4),
-            "batch_total_s": round(b["batch_total_s"],3),
-            "attempts":      b["attempts"],
+            "batch":            b["batch_num"],
+            "ads_in":           b["ads_in"],
+            "ads_out":          b["ads_out"],
+            "api_call_s":       round(b["api_call_s"],   3) if b["api_call_s"]   else None,
+            "json_parse_s":     round(b["json_parse_s"], 4) if b["json_parse_s"] else None,
+            "db_insert_s":      round(b["db_insert_s"],  4),
+            "batch_total_s":    round(b["batch_total_s"],3),
+            "attempts":         b["attempts"],
         } for b in batch_timings],
     })
     print(f"\n      Run logged → {os.path.abspath(LOG_PATH)}")
-
-
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
 chat_file = "2DayAdsGT.txt"
-run_pipeline(chat_file, 2)
+# run_pipeline(chat_file, 2)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)

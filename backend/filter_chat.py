@@ -119,8 +119,11 @@ SYSTEM_RE = re.compile("|".join([
 
 BLOCKLIST_RE = re.compile("|".join([
     r"أبحث\s*عن|ابحث\s*عن", r"بدور\s*على|بدوّر\s*على",
+    r"urgent\s*request",r"sale\s*request",
     r"محتاج\s*(شقة|شقه|فيلا|وحدة|وحده|أرض|ارض|محل)",
+    r"محتاجة\s*(شقة|شقه|فيلا|وحدة|وحده|أرض|ارض|محل)",
     r"عايز\s*(أشتري|اشتري|اجار|ايجار|ايجاره)",
+    r"عايزة\s*(أشتري|اشتري|اجار|ايجار|ايجاره)",
     r"urgent\s*request", r"\blooking\s+for\b",
     r"\bwanted\b.{0,40}\b(apartment|villa|flat|unit|land|office)\b",
     r"\b(3ayez|3ayz)\b",
@@ -134,6 +137,44 @@ BLOCKLIST_RE = re.compile("|".join([
     r"^(hi|hello|hey|ok|okay|تمام|ماشي)\s*$",
     r"^\?\s*$",
 ]), re.IGNORECASE | re.MULTILINE)
+
+STRONG_AD_RE = re.compile("|".join([
+    r"\bfor\s*sale\b", r"\bfor\s*rent\b",
+    r"للبيع", r"للايجار", r"للإيجار",
+    r"\bresale\b", r"\blease\b",
+
+    # price indicators
+    r"\d+\s*(million|m|k|الف|مليون)",
+    
+    # property specs (strong signal it's an ad)
+    r"\d+\s*(bed|bedroom|غرف|غرفة)",
+    r"\d+\s*(sqm|m2|متر)",
+
+]), re.IGNORECASE)
+
+REQUEST_INTENT_RE = re.compile("|".join([
+    r"مطلوب", r"المطلوب", r"محتاج", r"محتاجة", r"محتاجه",
+    r"عايز", r"عايزة", r"عاوزه", r"عاوزة", r"عايزه", r"عاوز",
+    r"اريد", r"أبحث\s*عن", r"ابحث\s*عن", r"بدور\s*على", r"بدوّر\s*على",
+    r"need", r"looking\s*for", r"\bwanted\b",
+    r"matloob", r"matloub", r"mtlob", r"matlob", r"2matlob", r"mtlb"
+]), re.IGNORECASE)
+
+_mataloub_terms = r"(?:مطلوب|المطلوب|محتاج|عايز|عايزةعاوزه|عاوزة|عايزه|عاوزه|عاوز|محتاجة|محتاجه|matloob|matloub|mtlob|matlob|2matlob|mtlb)"
+
+# 2. Matches "Cash" or "Installments" (Taseet) in Arabic and Franco
+_payment_terms = r"(?:\s+(?:كاش|cash|تقسيط|مقدم|downpayment|قسط|taseet|t2seet|3al\s+sneen))?"
+
+# 3. Matches Numbers: Handles 1,234, 1.234, 1 234, and Arabic numerals ٦.٧٥٠.٠٠٠
+# Also handles suffixes like "مليون" (million) or "الف" (thousand)
+# Updated to catch "Mataloub Million"
+_number_pattern = r"(?:\s*[:\-])?\s*(?:[\d\u0660-\u0669][\d\u0660-\u0669\s.,]*|مليون|الف)\s*(?:مليون|m|الف|k|egp|جنيه|ج\.م)?"
+
+# Combine into a final pattern
+PRICE_CONTEXT_RE = re.compile(
+    rf"{_mataloub_terms}{_payment_terms}{_number_pattern}",
+    re.IGNORECASE | re.UNICODE
+)
 
 _kw_all = sorted(set([
     "للبيع","للإيجار","للايجار","للاستثمار","إيجار","ايجار","بيع",
@@ -179,22 +220,68 @@ ALLOWLIST_RE = re.compile("|".join(re.escape(kw) for kw in _kw_all), re.IGNORECA
 
 MIN_BODY_LEN = 20
 
+# Updated to include "code" in multiple languages/formats
+AD_DIVIDER_MARKERS = [
+    r"كود", r"كود رقم", r"code", r"kd", r"ref", # <--- "code" keywords    
+]
+
+DIVIDER_RE = re.compile("|".join(AD_DIVIDER_MARKERS), re.IGNORECASE)
+
+# def classify(msg: dict) -> str:
+#     """
+#     Classify a single message through the 3 gates.
+#     Returns "pass" or one of: "system", "too_short", "blocklist", "no_keywords".
+#     """
+#     body = msg["body"].strip()
+#     if SYSTEM_RE.search(body):
+#         return "system"
+#     if len(body) < MIN_BODY_LEN:
+#         return "too_short"
+#     if BLOCKLIST_RE.search(body):
+#         return "blocklist"
+#     if not ALLOWLIST_RE.search(body):
+#         return "no_keywords"
+#     return "pass"
 
 def classify(msg: dict) -> str:
-    """
-    Classify a single message through the 3 gates.
-    Returns "pass" or one of: "system", "too_short", "blocklist", "no_keywords".
-    """
     body = msg["body"].strip()
+
     if SYSTEM_RE.search(body):
         return "system"
+
     if len(body) < MIN_BODY_LEN:
         return "too_short"
-    if BLOCKLIST_RE.search(body):
+
+    has_ad_div= DIVIDER_RE.search(body)
+    has_request_intent = REQUEST_INTENT_RE.search(body)
+    has_price_context  = PRICE_CONTEXT_RE.search(body)
+    has_block = BLOCKLIST_RE.search(body)
+    has_ad = ALLOWLIST_RE.search(body)
+    strong_ad = STRONG_AD_RE.search(body)
+    mataloub_match = REQUEST_INTENT_RE.search(body)
+    
+    is_early_mataloub = False
+    if mataloub_match:
+        # If "مطلوب" starts within the first 20 characters, it's likely a Buyer Request
+        if mataloub_match.start() < 20:
+            is_early_mataloub = True
+
+    #has code => must be ad 
+    if has_ad_div:
+        return "pass"
+
+    if is_early_mataloub:
         return "blocklist"
-    if not ALLOWLIST_RE.search(body):
+
+    if has_block:
+        return "blocklist"
+
+    # normal flow
+    if not has_ad:
         return "no_keywords"
+
     return "pass"
+
 
 
 # ─── Formatting ───────────────────────────────────────────────────────────────
@@ -202,17 +289,72 @@ def classify(msg: dict) -> str:
 SEPARATOR = "-" * 60
 
 
+# def format_message(msg: dict, avg_len: float, reason: str = None) -> str:
+#     body     = msg["body"].strip()
+#     body_len = len(body)
+
+#     if avg_len > 0 and body_len > avg_len * 1.015:
+#         est_ads = int(body_len // avg_len)
+#         size    = f"multiple(~{est_ads})"
+#     else:
+#         size = "single"
+
+#     # datetime is now a real object; format it for display
+#     dt_display = msg["datetime"].strftime("%d/%m/%Y, %I:%M %p") \
+#         if isinstance(msg["datetime"], datetime) else msg["datetime"]
+
+#     lines = [
+#         SEPARATOR,
+#         f"From : {msg['sender']}",
+#         f"Date : {dt_display}",
+#         f"Size: {size}",
+#     ]
+#     if reason:
+#         lines.append(f"Drop : {reason}")
+#     lines += ["", body, ""]
+#     return "\n".join(lines)
+
+from collections import Counter
+
 def format_message(msg: dict, avg_len: float, reason: str = None) -> str:
-    body     = msg["body"].strip()
+    body = msg["body"].strip()
     body_len = len(body)
+    size = "single"
 
-    if avg_len > 0 and body_len > avg_len * 1.015:
-        est_ads = int(body_len // avg_len)
-        size    = f"multiple(~{est_ads})"
-    else:
-        size = "single"
+    # Only process if it's long enough to potentially be multiple ads
+    if avg_len > 0 and body_len > avg_len * 1.15:
+        
+        # Find all structural markers (including 'code', 'كود', etc.)
+        marker_matches = DIVIDER_RE.findall(body)
+        
+        if marker_matches:
+            # We normalize the "code" keywords so 'Code', 'code', and 'كود' 
+            # all count as the same "type" of divider
+            normalized_markers = []
+            for m in marker_matches:
+                m_lower = m.lower()
+                if m_lower in ['code', 'كود', 'kd', 'ref']:
+                    normalized_markers.append("unit_code_marker")
+                else:
+                    normalized_markers.append(m_lower)
 
-    # datetime is now a real object; format it for display
+            # Count the frequency of each marker
+            counts = Counter(normalized_markers).values()
+            max_repeats = max(counts)
+            
+            # If a marker (like the word 'Code') repeats 2+ times, it's a multi-ad
+            if max_repeats >= 2:
+                size = f"multiple(~{max_repeats})"
+            else:
+                # FALLBACK 1: If markers exist but don't repeat, use length math
+                est_ads = int(body_len // avg_len)
+                size = f"multiple(~{max_repeats if max_repeats > 1 else est_ads})"
+        else:
+            # FALLBACK 2: No markers found at all, use length/avg
+            est_ads = int(body_len // avg_len)
+            size = f"multiple(~{est_ads})"
+
+    # Date formatting
     dt_display = msg["datetime"].strftime("%d/%m/%Y, %I:%M %p") \
         if isinstance(msg["datetime"], datetime) else msg["datetime"]
 
@@ -226,7 +368,6 @@ def format_message(msg: dict, avg_len: float, reason: str = None) -> str:
         lines.append(f"Drop : {reason}")
     lines += ["", body, ""]
     return "\n".join(lines)
-
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
@@ -293,4 +434,4 @@ def main(filepath: str):
 
 
 if __name__ == "__main__":
-    main("fullChat.txt")
+    main("messages_per_day/75_messages_01_03_2025.txt")
