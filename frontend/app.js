@@ -10,7 +10,6 @@ if (inquiryEl) {
   ['input', 'change'].forEach(ev =>
     inquiryEl.addEventListener(ev, autoResizeInquiry)
   );
-  // Ensure correct size on initial load if there's prefilled text
   autoResizeInquiry();
 }
 
@@ -51,7 +50,6 @@ function copyText(text, btn) {
 function applyHighlights(text, ranges) {
   if (!ranges || ranges.length === 0) return escapeHtml(text);
 
-  // Merge overlapping ranges
   const sorted = [...ranges].sort((a, b) => a.start - b.start);
   const merged = [];
   for (const r of sorted) {
@@ -89,25 +87,14 @@ function getOrganizedDetailsRows(listing) {
     { label: 'City', value: formatValue(listing.city) },
     { label: 'Deal', value: formatValue(listing.transaction_type) },
     { label: 'Type', value: formatValue(listing.property_type) },
-    // { 
-    //   label: 'District', 
-    //   value: (listing.district !== undefined && listing.district !== null && listing.district !== '') 
-    //     ? formatValue(listing.district) 
-    //     : '—' 
-    // },
-  
-
-    
-    
     ...(listing.district !== undefined && listing.district !== null && listing.district !== ''
       ? [{ label: 'District', value: formatValue(listing.district) }]
       : []
     ),
-    ...(listing.compound_name !== undefined && listing.compound_name !== null && listing.compound_name !== ''&& listing.compound_name !=listing.district
-      ? [{ label: 'Compund', value: formatValue(listing.compound_name) }]
+    ...(listing.compound_name !== undefined && listing.compound_name !== null && listing.compound_name !== '' && listing.compound_name != listing.district
+      ? [{ label: 'Compound', value: formatValue(listing.compound_name) }]
       : []
     ),
-
   ];
 }
 
@@ -123,8 +110,6 @@ function buildOrganizedDetailsTable(rows) {
 function buildOrganizedDetailsText(rows) {
   return rows.map(r => `${r.label}: ${r.value}`).join('\n');
 }
-
-
 
 // ── Render cards ──
 function renderCards(listings) {
@@ -161,7 +146,7 @@ function renderCards(listings) {
             <button class="copy-btn-sm" title="Copy sender" data-copy="${escapeHtml(l.sender || '')}">${SVG.copy}</button>
           </div>
           <div class="date-row">
-            <span class="send-date">${escapeHtml(l.ad_date || '—')}</span>            
+            <span class="send-date">${escapeHtml(l.ad_date || '—')}</span>
           </div>
         </div>
       </div>
@@ -173,23 +158,21 @@ function renderCards(listings) {
       </div>
 
       <div class="card-view-content">
-          <button
-      class="btn-copy-floating"
-      data-copy="${escapeHtml(organizedText)}"
-      data-message-copy="${escapeHtml(msg)}"
-      data-details-copy="${escapeHtml(organizedText)}"
-      data-original-copy="${escapeHtml(originalMsg)}"
-    >
-      ${SVG.copy}
-    </button>
+        <button
+          class="btn-copy-floating"
+          data-copy="${escapeHtml(organizedText)}"
+          data-message-copy="${escapeHtml(msg)}"
+          data-details-copy="${escapeHtml(organizedText)}"
+          data-original-copy="${escapeHtml(originalMsg)}"
+        >
+          ${SVG.copy}
+        </button>
         <div class="details-table" data-view-panel="details">${organizedTable}</div>
         <div class="message-bubble hidden" data-view-panel="message">${highlighted}</div>
         <div class="message-bubble hidden" data-view-panel="original">${escapeHtml(originalMsg)}</div>
       </div>
 
-      <div class="card-footer">
-
-      </div>
+      <div class="card-footer"></div>
     </div>`;
   }).join('');
 
@@ -242,6 +225,8 @@ async function loadCities() {
     const res = await fetch(API + '/cities');
     const data = await res.json();
     const sel = document.getElementById('f-city');
+    // Remove old dynamic options (keep the "Any" option)
+    [...sel.options].forEach(o => { if (o.value !== '') o.remove(); });
     (data.cities || []).forEach(c => {
       const o = document.createElement('option');
       o.value = c; o.textContent = c;
@@ -250,7 +235,7 @@ async function loadCities() {
   } catch {}
 }
 
-// ── Search ──
+// ── Filters ──
 function getFilters() {
   return {
     price_min: document.getElementById('f-price-min').value,
@@ -287,6 +272,105 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   fetchListings();
 });
 
+// ── Progress polling ──
+let _pollTimer    = null;
+let _batchStart   = null;
+let _secPerBatch  = null;
+
+const STAGE_LABELS = [
+  '',
+  'Parsing chat file…',
+  'Selecting recent messages…',
+  'Filtering ads…',
+  'Extracting with AI…',
+  'Saving to database…',
+];
+
+function startPolling() {
+  _batchStart  = null;
+  _secPerBatch = null;
+  _pollTimer   = setInterval(pollStatus, 1500);
+}
+
+function stopPolling() {
+  clearInterval(_pollTimer);
+  _pollTimer = null;
+}
+
+async function pollStatus() {
+  try {
+    const res = await fetch(API + '/status');
+    const s = await res.json();
+
+    const stageIdx     = s.stage_index   || 0;
+    const batchNum     = s.batch         || 0;
+    const totalBatches = s.total_batches || 1;
+
+    // ── Progress % ──
+    let pct = 0;
+    if (s.done) {
+      pct = 100;
+    } else if (stageIdx < 4) {
+      pct = Math.round((stageIdx / 5) * 20);
+    } else if (stageIdx === 4) {
+      pct = 20 + Math.round((batchNum / totalBatches) * 70);
+    } else if (stageIdx === 5) {
+      pct = 95;
+    }
+
+    document.getElementById('progressBarFill').style.width = pct + '%';
+    document.getElementById('progressStage').textContent =
+      s.done ? (s.stage || 'Done!') : (STAGE_LABELS[stageIdx] || s.stage || '…');
+
+    // ── Batch sub-label ──
+    if (stageIdx === 4 && s.total_batches > 0) {
+      document.getElementById('progressSub').textContent =
+        `Batch ${batchNum} of ${totalBatches}`;
+    } else {
+      document.getElementById('progressSub').textContent = '';
+    }
+
+    // ── ETA: measure time between batch completions ──
+    if (stageIdx === 4 && batchNum > 0 && totalBatches > 0) {
+      const now = Date.now();
+
+      if (_batchStart === null) {
+        // First time we see a batch — start the clock
+        _batchStart = { batch: batchNum, time: now };
+      } else if (batchNum > _batchStart.batch) {
+        // A new batch just completed — measure how long the previous one took
+        const batchSec = (now - _batchStart.time) / 1000;
+        _secPerBatch = _secPerBatch === null
+          ? batchSec
+          : _secPerBatch * 0.6 + batchSec * 0.4;   // rolling weighted average
+        _batchStart = { batch: batchNum, time: now }; // reset clock for next batch
+      }
+
+      if (_secPerBatch !== null) {
+        const remaining = (totalBatches - batchNum) * _secPerBatch;
+        if (remaining > 5) {
+          const mins = Math.floor(remaining / 60);
+          const secs = Math.round(remaining % 60);
+          document.getElementById('progressEta').textContent =
+            `~${mins > 0 ? mins + 'm ' : ''}${secs}s remaining`;
+        } else {
+          document.getElementById('progressEta').textContent = 'almost done…';
+        }
+      } else {
+        document.getElementById('progressEta').textContent = '';
+      }
+    } else {
+      document.getElementById('progressEta').textContent = '';
+    }
+
+    if (s.done || s.error) {
+      stopPolling();
+    }
+  } catch {
+    // backend busy — keep polling silently
+  }
+}
+
 // ── Import ──
 document.getElementById('importBtn').addEventListener('click', () => {
   document.getElementById('file-input').click();
@@ -298,13 +382,31 @@ document.getElementById('file-input').addEventListener('change', async (e) => {
   e.target.value = '';
 
   const overlay = document.getElementById('uploadOverlay');
+
+  // Reset display state
+  document.getElementById('progressBarFill').style.width = '0%';
+  document.getElementById('progressStage').textContent = 'Uploading…';
+  document.getElementById('progressSub').textContent = '';
+  document.getElementById('progressEta').textContent = '';
   overlay.classList.add('active');
+
+  startPolling();
 
   try {
     const fd = new FormData();
     fd.append('file', file);
     const res = await fetch(API + '/upload', { method: 'POST', body: fd });
     const data = await res.json();
+
+    stopPolling();
+    document.getElementById('progressBarFill').style.width = '100%';
+    document.getElementById('progressStage').textContent = 'Done!';
+    document.getElementById('progressSub').textContent = '';
+    document.getElementById('progressEta').textContent = '';
+
+    await new Promise(r => setTimeout(r, 800));
+    overlay.classList.remove('active');
+
     if (res.ok) {
       showToast('Chat imported successfully!', 'success');
       await loadCities();
@@ -313,9 +415,9 @@ document.getElementById('file-input').addEventListener('change', async (e) => {
       showToast(data.detail || 'Upload failed.', 'error');
     }
   } catch {
-    showToast('Could not connect to backend.', 'error');
-  } finally {
+    stopPolling();
     overlay.classList.remove('active');
+    showToast('Could not connect to backend.', 'error');
   }
 });
 
@@ -324,24 +426,3 @@ document.getElementById('file-input').addEventListener('change', async (e) => {
   await loadCities();
   await fetchListings();
 })();
-
-// ── [PLACEHOLDER] Parse Inquiry → Auto-fill filters ──
-// When the user pastes a WhatsApp message into #inquiryInput and clicks Apply,
-// this function should:
-//   1. Send the message text to a backend endpoint (e.g. POST /parse-inquiry)
-//   2. Receive extracted filter values (price_min, price_max, bedrooms, city, etc.)
-//   3. Populate the filter inputs with those values
-//   4. Automatically call fetchListings(getFilters())
-//
-// document.querySelector('.btn-inquiry').addEventListener('click', async () => {
-//   const text = document.getElementById('inquiryInput').value.trim();
-//   if (!text) return;
-//   const res = await fetch(API + '/parse-inquiry', {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({ message: text })
-//   });
-//   const filters = await res.json(); // { price_min, price_max, bedrooms, city, ... }
-//   // TODO: populate filter inputs from filters object
-//   // TODO: fetchListings(filters);
-// });

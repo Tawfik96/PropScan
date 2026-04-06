@@ -11,10 +11,17 @@
 </head>
 <body>
 
-<!-- Upload spinner overlay -->
+<!-- Upload progress overlay -->
 <div class="upload-overlay" id="uploadOverlay">
-  <div class="spinner"></div>
-  <div class="upload-text">UPLOADING CHAT…</div>
+  <div class="progress-card">
+    <div class="progress-spinner"></div>
+    <div class="progress-stage" id="progressStage">Uploading…</div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+    <div class="progress-sub" id="progressSub"></div>
+    <div class="progress-eta" id="progressEta"></div>
+  </div>
 </div>
 
 <!-- Toast -->

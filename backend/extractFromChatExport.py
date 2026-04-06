@@ -26,6 +26,7 @@ from filter_chat import (
     WA_MSG_PATTERN,  # regex used by crop_chat_by_date
 )
 from batch_messages import build_batches, compute_ads_avg
+
 # ─── Timing helpers ──────────────────────────────────────────────────────────
 
 LOG_PATH = "pipeline_runs.log"
@@ -53,12 +54,11 @@ load_dotenv()
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 GEMINI_MODEL = "gemini-2.5-flash-lite"
 DB_PATH = "test_listings.db"
 BATCH_SIZE = 10
 MAX_RETRIES = 3
-DEBUG_MODEL   = False   # prints thinking + raw response and halts; set False to run full pipeline
+DEBUG_MODEL = False  # prints thinking + raw response and halts; set False to run full pipeline
 
 
 # ─── Date-range Crop Utility ─────────────────────────────────────────────────
@@ -72,17 +72,6 @@ def crop_chat_by_date(
     end_month: int,
     end_year: int,
 ) -> str:
-    """
-    Write all messages in [start_date, end_date] (inclusive) to a new file:
-        <basename>_cropped_DDMMYYYY-DDMMYYYY.txt
-
-    Preserves every raw line exactly (multi-line messages stay intact).
-    Returns the output file path.
-
-    Example:
-        crop_chat_by_date("chat.txt", 1, 3, 2025, 7, 3, 2025)
-        # → chat_cropped_01032025-07032025.txt
-    """
     from datetime import date as _date
 
     start_date = _date(start_year, start_month, start_day)
@@ -147,10 +136,6 @@ def crop_chat_by_date(
 
 
 def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
-    """
-    Return messages from the N most recent full days in the export.
-    (Last date is NOT excluded — matches original MODIFIED behaviour.)
-    """
     if not messages:
         return []
     dates = sorted(set(m["datetime"].date() for m in messages))
@@ -162,10 +147,6 @@ def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
 
 
 def filter_ads(messages: list[dict]) -> tuple[list[dict], dict]:
-    """
-    Apply the 3-gate filter via filter_chat.classify().
-    Returns (ads, stats) — identical interface to the original pipeline.
-    """
     stats = {"system": 0, "too_short": 0, "blocklist": 0, "no_keywords": 0, "passed": 0}
     ads = []
 
@@ -186,23 +167,9 @@ def filter_ads(messages: list[dict]) -> tuple[list[dict], dict]:
 class ListingExtraction(BaseModel):
     property_type: Optional[
         Literal[
-            "apartment",
-            "villa",
-            "studio",
-            "duplex",
-            "penthouse",
-            "chalet",
-            "townhouse",
-            "twin_house",
-            "standalone",
-            "i_villa",
-            "land",
-            "office",
-            "shop",
-            "warehouse",
-            "building",
-            "loft",
-            "other",
+            "apartment", "villa", "studio", "duplex", "penthouse", "chalet",
+            "townhouse", "twin_house", "standalone", "i_villa", "land", "office",
+            "shop", "warehouse", "building", "loft", "other",
         ]
     ] = Field(default=None, description="Category of the property being advertised. If not explicitly stated, set to null and if mentioned in text but not in the fields available, set to 'other'.")
     transaction_type: Optional[Literal["sale", "rent", "daily_rent"]] = Field(
@@ -227,129 +194,43 @@ class ListingExtraction(BaseModel):
         description="Total land/plot area in square metres, only when it differs from the built-up area "
         "(common for villas, twin houses, and land listings).",
     )
-    bedrooms: Optional[int] = Field(
-        default=None, description="Number of bedrooms. Use 0 for studios."
-    )
+    bedrooms: Optional[int] = Field(default=None, description="Number of bedrooms. Use 0 for studios.")
     bathrooms: Optional[int] = Field(default=None, description="Number of bathrooms.")
-    floor_number: Optional[int] = Field(
-        default=None, description="Floor on which the unit sits. Ground floor = 0."
-    )
-    total_floors: Optional[int] = Field(
-        default=None, description="Total number of floors in the building."
-    )
+    floor_number: Optional[int] = Field(default=None, description="Floor on which the unit sits. Ground floor = 0.")
+    total_floors: Optional[int] = Field(default=None, description="Total number of floors in the building.")
     furnished: Optional[Literal["furnished", "semi_furnished", "unfurnished"]] = Field(
         default=None, description="Furnishing status of the unit."
     )
-    finishing: Optional[
-        Literal["shell", "core_and_shell", "semi_finished", "finished", "luxury"]
-    ] = Field(
+    finishing: Optional[Literal["shell", "core_and_shell", "semi_finished", "finished", "luxury"]] = Field(
         default=None,
         description="Interior finishing level. "
         "'super lux' or 'الترا سوبر لوكس' → luxury. "
         "'لوكس' alone → finished. "
         "Unfinished/skeleton units → shell.",
     )
-    has_garden: Optional[bool] = Field(
-        default=None, description="True if the unit includes a private garden."
-    )
-    garden_area_sqm: Optional[float] = Field(
-        default=None,
-        description="Area of the private garden in square metres, if stated.",
-    )
-    has_pool: Optional[bool] = Field(
-        default=None, description="True if the unit or compound has a swimming pool."
-    )
-    has_balcony: Optional[bool] = Field(
-        default=None, description="True if the unit has a balcony."
-    )
-    city: Optional[str] = Field(
-        default=None,
-        description="City or governorate where the property is located (e.g. Cairo, Alexandria, New Cairo).",
-    )
-    district: Optional[str] = Field(
-        default=None,
-        description="Neighbourhood, district, or zone within the city (e.g. Maadi, Zamalek, Sheikh Zayed).",
-    )
-    compound_name: Optional[str] = Field(
-        default=None,
-        description="Name of the compound or gated community, if the property is inside one.",
-    )
+    has_garden: Optional[bool] = Field(default=None, description="True if the unit includes a private garden.")
+    garden_area_sqm: Optional[float] = Field(default=None, description="Area of the private garden in square metres, if stated.")
+    has_pool: Optional[bool] = Field(default=None, description="True if the unit or compound has a swimming pool.")
+    has_balcony: Optional[bool] = Field(default=None, description="True if the unit has a balcony.")
+    city: Optional[str] = Field(default=None, description="City or governorate where the property is located (e.g. Cairo, Alexandria, New Cairo).")
+    district: Optional[str] = Field(default=None, description="Neighbourhood, district, or zone within the city (e.g. Maadi, Zamalek, Sheikh Zayed).")
+    compound_name: Optional[str] = Field(default=None, description="Name of the compound or gated community, if the property is inside one.")
     landmark_proximity: Optional[str] = Field(
         default=None,
-        description="Nearby landmark, road, or area mentioned to describe the location "
-        "(e.g. 'near City Stars', 'Ring Road exit 5').",
+        description="Nearby landmark, road, or area mentioned to describe the location (e.g. 'near City Stars', 'Ring Road exit 5').",
     )
-    down_payment: Optional[float] = Field(
-        default=None,
-        description="Initial down-payment amount in the stated currency, if an installment plan is offered.",
-    )
-    installment_years: Optional[float] = Field(
-        default=None, description="Duration of the installment plan in years."
-    )
-    installment_amount: Optional[float] = Field(
-        default=None,
-        description="Periodic installment payment amount (monthly unless stated otherwise).",
-    )
-    phone_numbers: Optional[list[str]] = Field(
-        default=None,
-        description="All phone/WhatsApp numbers found in the ad. Preserve the original format exactly.",
-    )
-    reference_id: Optional[str] = Field(
-        default=None,
-        description="Any internal listing code or reference number found in the ad (e.g. 'U926440', 'HPs160').",
-    )
-    view: Optional[str] = Field(
-        default=None,
-        description="What the unit overlooks or faces, as stated in the ad (e.g. 'pool view', 'garden', 'sea view').",
-    )
+    down_payment: Optional[float] = Field(default=None, description="Initial down-payment amount in the stated currency, if an installment plan is offered.")
+    installment_years: Optional[float] = Field(default=None, description="Duration of the installment plan in years.")
+    installment_amount: Optional[float] = Field(default=None, description="Periodic installment payment amount (monthly unless stated otherwise).")
+    phone_numbers: Optional[list[str]] = Field(default=None, description="All phone/WhatsApp numbers found in the ad. Preserve the original format exactly.")
+    reference_id: Optional[str] = Field(default=None, description="Any internal listing code or reference number found in the ad (e.g. 'U926440', 'HPs160').")
+    view: Optional[str] = Field(default=None, description="What the unit overlooks or faces, as stated in the ad (e.g. 'pool view', 'garden', 'sea view').")
     ad_snippet: Optional[str] = Field(
         default=None,
         description="Clean, standalone text of this specific listing only — no repeated contact lines, "
         "no other listings that appeared in the same message.",
     )
-    original_message: Optional[str] = Field(
-        default=None,
-        description="The full, unmodified original message text that this listing was extracted from.",
-    )
-
-'''
-Temporarily removed from prompt!!!
-
-SCHEMA — every field is nullable (use null if not explicitly determinable):
-
-{
-  "property_type": "apartment|villa|studio|duplex|penthouse|chalet|townhouse|twin_house|standalone|i_villa|land|office|shop|warehouse|building|loft|other",
-  "transaction_type": "sale|rent|daily_rent",
-  "price": <number, EXPLICITLY stated total price. DO NOT calculate or add numbers together. No commas.>,
-  "currency": "EGP|USD|EUR",
-  "area_sqm": <number, BUA/built-up area in sqm>,
-  "land_area_sqm": <number, land area if different from BUA>,
-  "bedrooms": <int, studio=0>,
-  "bathrooms": <int>,
-  "floor_number": <int, ground=0>,
-  "total_floors": <int>,
-  "furnished": "furnished|semi_furnished|unfurnished",
-  "finishing": "shell|core_and_shell|semi_finished|finished|luxury",
-  "has_garden": <bool>,
-  "garden_area_sqm": <number>,
-  "has_pool": <bool>,
-  "has_balcony": <bool>,
-  "city": "<string>",
-  "district": "<string, only if explicitly stated>",
-  "compound_name": "<string, extract the project name exactly as written>",
-  "landmark_proximity": "<string>",
-  "down_payment": <number>,
-  "installment_years": <number>,
-  "installment_amount": <number>,
-  "phone_numbers": [<strings, preserve original format>],
-  "reference_id": "<string, any code like U926440 or HPs160>",
-  "view": "<string, e.g. pool, garden, sea>",
-  "ad_snippet": "<string, the clean ad text only, no duplicate contact lines or other ads from the same message>",
-  "original_message": "<string, the full original message text>"
-}
-
-'''
-
+    original_message: Optional[str] = Field(default=None, description="The full, unmodified original message text that this listing was extracted from.")
 
 
 SYSTEM_PROMPT = """You are a strict data extraction engine for Egyptian real estate advertisements. Your job is to extract text exactly as it appears. 
@@ -392,7 +273,6 @@ def call_gemini(ads: list[dict]) -> tuple[list[dict], dict]:
 
     for attempt in range(MAX_RETRIES):
         timing["attempts"] = attempt + 1
-        t_parse = None
         try:
             t_api = _ts()
             response = client.models.generate_content(
@@ -435,7 +315,6 @@ def call_gemini(ads: list[dict]) -> tuple[list[dict], dict]:
 
     print("  [!] Failed after all retries, skipping batch.")
     return [], timing
-
 
 
 # ─── 5. Database ─────────────────────────────────────────────────────────────
@@ -501,12 +380,11 @@ def init_db(db_path: str = DB_PATH) -> sqlite3.Connection:
     """
     )
     conn.commit()
-    # Migrate existing databases that predate ad_snippet
     try:
         conn.execute("ALTER TABLE listings ADD COLUMN ad_snippet TEXT")
         conn.commit()
     except sqlite3.OperationalError:
-        pass  # column already exists
+        pass
     return conn
 
 
@@ -579,7 +457,15 @@ def _b(val) -> Optional[int]:
 # ─── 6. Main Pipeline ────────────────────────────────────────────────────────
 
 
-def run_pipeline(chat_file: str, days: int = 2):
+def run_pipeline(chat_file: str, days: int = 2, status: dict = None):
+
+    def _update(stage: str, stage_index: int, batch: int = 0, total_batches: int = 0):
+        if status is not None:
+            status["stage"]         = stage
+            status["stage_index"]   = stage_index
+            status["batch"]         = batch
+            status["total_batches"] = total_batches
+
     run_start = _ts()
     run_ts = datetime.now().isoformat(timespec="seconds")
 
@@ -591,6 +477,7 @@ def run_pipeline(chat_file: str, days: int = 2):
     timings = {}
 
     # ── Step 1: Parse ──────────────────────────────────────────
+    _update("Parsing chat file…", 1)
     print("[1/5] Parsing WhatsApp export...", end=" ", flush=True)
     t = _ts()
     messages = parse_whatsapp_export(chat_file)
@@ -600,12 +487,15 @@ def run_pipeline(chat_file: str, days: int = 2):
 
     if not messages:
         print("      No messages found. Check file format.")
+        if status:
+            status["done"] = True
         return
 
     dates = sorted(set(m["datetime"].date() for m in messages))
     print(f"      Date range: {dates[0]} → {dates[-1]}")
 
     # ── Step 2: Select target days ─────────────────────────────
+    _update("Selecting recent messages…", 2)
     print(f"\n[2/5] Selecting {days} most recent full day(s)...", end=" ", flush=True)
     t = _ts()
     day_messages = get_recent_days(messages, days)
@@ -617,6 +507,7 @@ def run_pipeline(chat_file: str, days: int = 2):
     print(f"      Target dates: {target_date}  ({len(day_messages)} messages)")
 
     # ── Step 3: 3-gate ad filter ───────────────────────────────
+    _update("Filtering ads…", 3)
     print(f"\n[3/5] Filtering ads (3-gate)...", end=" ", flush=True)
     t = _ts()
     ads, fstats = filter_ads(day_messages)
@@ -632,6 +523,8 @@ def run_pipeline(chat_file: str, days: int = 2):
 
     if not ads:
         print("      No ads found after filtering.")
+        if status:
+            status["done"] = True
         return
 
     # ── Build batches ──────────────────────────────────────────
@@ -642,16 +535,17 @@ def run_pipeline(chat_file: str, days: int = 2):
     print(f"\n      Batches built : {total_batches}  ({oversized_cnt} oversized)")
 
     # ── Step 4: Gemini extraction ──────────────────────────────
+    _update("Extracting with AI…", 4, batch=0, total_batches=total_batches)
     print(f"\n[4/5] Extracting via {GEMINI_MODEL}...")
-    conn          = init_db()
+    conn           = init_db()
     total_inserted = 0
     batch_timings  = []
 
     t_extraction = _ts()
     for batch_num, batch_obj in enumerate(batches, 1):
         batch = batch_obj.messages
+        _update("Extracting with AI…", 4, batch=batch_num, total_batches=total_batches)
 
-        # ── Batch header line ──────────────────────────────────
         oversized_flag = "  ⚠ OVERSIZED" if batch_obj.is_oversized else ""
         print(
             f"      Batch {batch_num}/{total_batches} "
@@ -659,7 +553,7 @@ def run_pipeline(chat_file: str, days: int = 2):
             f"{batch_obj.total_chars} chars, "
             f"~{batch_obj.estimated_tokens} tokens)"
             f"{oversized_flag}...",
-            end=" ", flush=True
+            end=" ", flush=True,
         )
 
         t_batch = _ts()
@@ -690,7 +584,7 @@ def run_pipeline(chat_file: str, days: int = 2):
         )
         batch_timings.append(bt)
 
-        api_s = _fmt(bt["api_call_s"]) if bt["api_call_s"] else "err"
+        api_s   = _fmt(bt["api_call_s"])   if bt["api_call_s"]   else "err"
         parse_s = _fmt(bt["json_parse_s"]) if bt["json_parse_s"] else "err"
         print(
             f"OK ({len(results)} extracted) | total={_fmt(batch_total)} api={api_s} json={parse_s} db={_fmt(db_s)}"
@@ -700,9 +594,10 @@ def run_pipeline(chat_file: str, days: int = 2):
             time.sleep(1)
 
     timings["extraction_s"] = _elapsed(t_extraction)
-    timings["total_s"] = _elapsed(run_start)
+    timings["total_s"]      = _elapsed(run_start)
 
     # ── Step 5: Summary ────────────────────────────────────────
+    _update("Saving to database…", 5)
     print(f"\n[5/5] Done!")
     print(f"      Listings saved : {total_inserted}")
     print(f"      Database       : {os.path.abspath(DB_PATH)}")
@@ -710,18 +605,12 @@ def run_pipeline(chat_file: str, days: int = 2):
     print(f"      Parse          : {_fmt(timings['parse_s'])}")
     print(f"      Day select     : {_fmt(timings['day_filter_s'])}")
     print(f"      Ad filter      : {_fmt(timings['ad_filter_s'])}")
-    print(
-        f"      Gemini total   : {_fmt(timings['extraction_s'])}  ({total_batches} batches)"
-    )
+    print(f"      Gemini total   : {_fmt(timings['extraction_s'])}  ({total_batches} batches)")
     if batch_timings:
         valid = [b for b in batch_timings if b["api_call_s"]]
         if valid:
-            print(
-                f"      Avg API/batch  : {_fmt(sum(b['api_call_s'] for b in valid) / len(valid))}"
-            )
-        print(
-            f"      Avg total/batch: {_fmt(sum(b['batch_total_s'] for b in batch_timings) / len(batch_timings))}"
-        )
+            print(f"      Avg API/batch  : {_fmt(sum(b['api_call_s'] for b in valid) / len(valid))}")
+        print(f"      Avg total/batch: {_fmt(sum(b['batch_total_s'] for b in batch_timings) / len(batch_timings))}")
     print(f"      TOTAL          : {_fmt(timings['total_s'])}")
     print(f"  ─────────────────────────────────────────────────────")
 
@@ -762,19 +651,27 @@ def run_pipeline(chat_file: str, days: int = 2):
         "property_type_counts": prop_types,
         "timings": {k: round(v, 3) for k, v in timings.items()},
         "batches": [{
-            "batch":            b["batch_num"],
-            "ads_in":           b["ads_in"],
-            "ads_out":          b["ads_out"],
-            "api_call_s":       round(b["api_call_s"],   3) if b["api_call_s"]   else None,
-            "json_parse_s":     round(b["json_parse_s"], 4) if b["json_parse_s"] else None,
-            "db_insert_s":      round(b["db_insert_s"],  4),
-            "batch_total_s":    round(b["batch_total_s"],3),
-            "attempts":         b["attempts"],
+            "batch":         b["batch_num"],
+            "ads_in":        b["ads_in"],
+            "ads_out":       b["ads_out"],
+            "api_call_s":    round(b["api_call_s"],   3) if b["api_call_s"]   else None,
+            "json_parse_s":  round(b["json_parse_s"], 4) if b["json_parse_s"] else None,
+            "db_insert_s":   round(b["db_insert_s"],  4),
+            "batch_total_s": round(b["batch_total_s"], 3),
+            "attempts":      b["attempts"],
         } for b in batch_timings],
     })
     print(f"\n      Run logged → {os.path.abspath(LOG_PATH)}")
+
+    # ── Mark done LAST — after all work including logging ──────
+    if status:
+        status["done"]        = True
+        status["stage"]       = f"Done — {total_inserted} listings saved"
+        status["stage_index"] = 5
+
+
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "Backupz/2days_53_messages.txt"
-run_pipeline(chat_file, 3)
-# crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
+if __name__ == "__main__":
+    chat_file = "Backupz/2days_53_messages.txt"
+    run_pipeline(chat_file, 3)

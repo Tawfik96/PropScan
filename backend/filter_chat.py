@@ -407,6 +407,6 @@ def main(filepath: str):
 
 
 if __name__ == "__main__":
-    file_path = "Backupz/2days_53_messages.txt"
-    main(file_path)
+     file_path = "Backupz/2days_53_messages.txt"
+    # main(file_path)
     # batch_messages.main(file_path)
