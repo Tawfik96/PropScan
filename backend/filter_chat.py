@@ -15,6 +15,8 @@ Also importable by the pipeline:
 import re
 import os
 from datetime import datetime
+
+import batch_messages
 # import batch_messages
 
 # ─── WhatsApp message parser ──────────────────────────────────────────────────
@@ -407,6 +409,6 @@ def main(filepath: str):
 
 
 if __name__ == "__main__":
-    file_path = "Backupz/2days_53_messages.txt"
+    file_path = "350_sampled_messages.txt"
     main(file_path)
-    # batch_messages.main(file_path)
+    batch_messages.main(file_path)

@@ -55,7 +55,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 GEMINI_MODEL = "gemini-2.5-flash-lite"
-DB_PATH = "test_listings.db"
+DB_PATH = "test_api_propscan_tier1_test.db"
 BATCH_SIZE = 10
 MAX_RETRIES = 3
 DEBUG_MODEL   = False   # prints thinking + raw response and halts; set False to run full pipeline
@@ -775,6 +775,6 @@ def run_pipeline(chat_file: str, days: int = 2):
     print(f"\n      Run logged → {os.path.abspath(LOG_PATH)}")
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "Backupz/2days_53_messages.txt"
-run_pipeline(chat_file, 3)
+chat_file = "350_sampled_messages.txt"
+run_pipeline(chat_file, 8)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
