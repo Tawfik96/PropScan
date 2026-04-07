@@ -1,20 +1,13 @@
 import sqlite3
 import json
 import os
-import extractFromChatExport
 
-DB_PATH = os.path.join(os.path.dirname(__file__), extractFromChatExport.DB_PATH)
-
+DB_PATH = os.getenv("DB_PATH", os.path.join(os.path.dirname(__file__), "listings.db"))
 
 def get_conn():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
-
-
-def init_db():
-    has_listings_table()
-
 
 def has_listings_table():
     conn = get_conn()
@@ -26,7 +19,47 @@ def has_listings_table():
     finally:
         conn.close()
 
-
+def init_db():
+    conn = get_conn()
+    try:
+        if has_listings_table():
+            return conn
+        
+        conn.execute("""
+            CREATE TABLE listings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                property_type TEXT,
+                transaction_type TEXT,
+                price REAL,
+                currency TEXT DEFAULT 'EGP',
+                area_sqm REAL,
+                bedrooms INTEGER,
+                bathrooms INTEGER,
+                city TEXT,
+                district TEXT,
+                compound_name TEXT,
+                phone_numbers TEXT,
+                reference_id TEXT,
+                ad_date TEXT,
+                ad_snippet TEXT,
+                original_message TEXT,
+                sender TEXT,
+                amenities TEXT DEFAULT '[]',
+                price_negotiable INTEGER DEFAULT 0,
+                has_elevator INTEGER DEFAULT 0,
+                has_garden INTEGER DEFAULT 0,
+                has_pool INTEGER DEFAULT 0,
+                has_balcony INTEGER DEFAULT 0,
+                has_security INTEGER DEFAULT 0,
+                has_parking INTEGER DEFAULT 0,
+                extracted_at DATETIME DEFAULT (datetime('now'))
+            )
+        """)
+        conn.commit()
+        return conn
+    finally:
+        if not has_listings_table():
+            conn.close()
 
 def get_listings(
     price_min=None, price_max=None, bedrooms=None,
@@ -68,15 +101,21 @@ def get_listings(
     result = []
     for row in rows:
         d = dict(row)
-        d["amenities"] = json.loads(d["amenities"] or "[]")
-        d["phone_numbers"] = json.loads(d["phone_numbers"] or "[]")
-        d["price_negotiable"] = bool(d["price_negotiable"])
-        d["has_elevator"] = bool(d["has_elevator"])
-        d["has_garden"] = bool(d["has_garden"])
-        d["has_pool"] = bool(d["has_pool"])
-        d["has_balcony"] = bool(d["has_balcony"])
-        d["has_security"] = bool(d["has_security"])
-        d["has_parking"] = bool(d["has_parking"])
+        try:
+            d["amenities"] = json.loads(d.get("amenities", "[]"))
+        except:
+            d["amenities"] = []
+        try:
+            d["phone_numbers"] = json.loads(d.get("phone_numbers", "[]"))
+        except:
+            d["phone_numbers"] = []
+        d["price_negotiable"] = bool(d.get("price_negotiable", False))
+        d["has_elevator"] = bool(d.get("has_elevator", False))
+        d["has_garden"] = bool(d.get("has_garden", False))
+        d["has_pool"] = bool(d.get("has_pool", False))
+        d["has_balcony"] = bool(d.get("has_balcony", False))
+        d["has_security"] = bool(d.get("has_security", False))
+        d["has_parking"] = bool(d.get("has_parking", False))
         result.append(d)
     return result
 

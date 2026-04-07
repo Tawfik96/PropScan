@@ -159,7 +159,8 @@ REQUEST_INTENT_RE = re.compile("|".join([
     r"عايز", r"عايزة", r"عاوزه", r"عاوزة", r"عايزه", r"عاوز",
     r"اريد", r"أبحث\s*عن", r"ابحث\s*عن", r"بدور\s*على", r"بدوّر\s*على",
     r"need", r"looking\s*for", r"\bwanted\b",
-    r"matloob", r"matloub", r"mtlob", r"matlob", r"2matlob", r"mtlb"
+    r"matloob", r"matloub", r"mtlob", r"matlob", r"2matlob", r"mtlb", "anyone", "any one", "ay had",
+    "yb3tli", "send me", "looking for"
 ]), re.IGNORECASE)
 
 _mataloub_terms = r"(?:مطلوب|المطلوب|محتاج|عايز|عايزةعاوزه|عاوزة|عايزه|عاوزه|عاوز|محتاجة|محتاجه|matloob|matloub|mtlob|matlob|2matlob|mtlb)"

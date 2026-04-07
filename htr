@@ -1,0 +1,11 @@
+# Install deps once
+pip install pytest httpx python-dateutil
+
+# All unit tests (fast, no Gemini needed)
+python tests/run_all_tests.py --unit-only
+
+# Full suite including API
+python tests/run_all_tests.py
+
+# After running pipeline on gt_chat.txt, measure Gemini accuracy
+python tests/run_all_tests.py --compare backend/listings.db

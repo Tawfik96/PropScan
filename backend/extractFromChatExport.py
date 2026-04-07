@@ -1,13 +1,11 @@
-
 """
 Real Estate Ad Extraction Pipeline
 ===================================
 1. Parses a WhatsApp chat export (.txt)          ← filter_chat.py
-2. Filters to a target day of messages
+2. Filters to the N most recent day(s) of messages
 3. Removes non-ad messages using a 3-gate filter ← filter_chat.py
 4. Sends ads to Gemini for structured extraction
 5. Stores results in SQLite
-
 """
 
 import re
@@ -16,34 +14,43 @@ import json
 import sqlite3
 import time
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal, Optional, List
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-from typing import List, Dict, Tuple
 
 # ── All parsing + filtering comes from filter_chat ───────────────────────────
 from filter_chat import (
     parse_whatsapp_export,  # .txt → list[dict]  (datetime is a real datetime obj)
-    classify,  # msg → "pass" | "system" | "too_short" | "blocklist" | "no_keywords"
-    WA_MSG_PATTERN,  # regex used by crop_chat_by_date
+    classify,               # msg → "pass" | "system" | "too_short" | "blocklist" | "no_keywords"
+    WA_MSG_PATTERN,         # regex used by crop_chat_by_date
 )
-from batch_messages import build_batches, compute_ads_avg
+
+load_dotenv()
+
+# ─── Configuration ───────────────────────────────────────────────────────────
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL   = "gemini-2.5-flash-lite"
+DB_PATH        = os.getenv(
+    "DB_PATH",
+    os.path.join(os.path.dirname(__file__), "listings.db")
+)
+BATCH_SIZE  = 10
+MAX_RETRIES = 3
+DEBUG_MODEL = False  # prints thinking + raw response and halts; set False for full pipeline
+LOG_PATH    = "pipeline_runs.log"
+
+
 # ─── Timing helpers ──────────────────────────────────────────────────────────
-
-LOG_PATH = "pipeline_runs.log"
-
 
 def _ts() -> float:
     return time.perf_counter()
 
-
 def _elapsed(start: float) -> float:
     return time.perf_counter() - start
 
-
 def _fmt(seconds: float) -> str:
     return f"{seconds*1000:.0f}ms" if seconds < 1 else f"{seconds:.2f}s"
-
 
 def _log(run_record: dict):
     with open(LOG_PATH, "a", encoding="utf-8") as f:
@@ -57,7 +64,10 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 GEMINI_MODEL = "gemini-2.5-flash-lite"
-DB_PATH = "test_api_propscan_tier1_test.db"
+DB_PATH = os.getenv(
+    "DB_PATH",
+    os.path.join(os.path.dirname(__file__), "listings.db")
+)
 BATCH_SIZE = 10
 MAX_RETRIES = 3
 DEBUG_MODEL   = False   # prints thinking + raw response and halts; set False to run full pipeline
@@ -67,12 +77,8 @@ DEBUG_MODEL   = False   # prints thinking + raw response and halts; set False to
 
 def crop_chat_by_date(
     filepath: str,
-    start_day: int,
-    start_month: int,
-    start_year: int,
-    end_day: int,
-    end_month: int,
-    end_year: int,
+    start_day: int, start_month: int, start_year: int,
+    end_day:   int, end_month:   int, end_year:   int,
 ) -> str:
     """
     Write all messages in [start_date, end_date] (inclusive) to a new file:
@@ -88,16 +94,16 @@ def crop_chat_by_date(
     from datetime import date as _date
 
     start_date = _date(start_year, start_month, start_day)
-    end_date = _date(end_year, end_month, end_day)
+    end_date   = _date(end_year,   end_month,   end_day)
     if start_date > end_date:
         raise ValueError(f"start_date {start_date} is after end_date {end_date}")
 
     with open(filepath, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
-    out_lines: list[str] = []
-    current_block: list[str] = []
-    in_range: bool | None = None
+    out_lines:     list[str]   = []
+    current_block: list[str]   = []
+    in_range:      bool | None = None
 
     def flush():
         if in_range:
@@ -110,15 +116,12 @@ def crop_chat_by_date(
             current_block = [line]
             try:
                 combined = f"{m.group(1)}, {m.group(2)}".strip()
-                clean = re.sub(r"[aApP][mM]", lambda x: x.group().upper(), combined)
-                dt = None
+                clean    = re.sub(r'[aApP][mM]', lambda x: x.group().upper(), combined)
+                dt       = None
                 for fmt in [
-                    "%d/%m/%Y, %I:%M %p",
-                    "%d/%m/%Y, %I:%M%p",
-                    "%d/%m/%y, %I:%M %p",
-                    "%d/%m/%y, %I:%M%p",
-                    "%m/%d/%Y, %I:%M %p",
-                    "%m/%d/%y, %I:%M %p",
+                    "%d/%m/%Y, %I:%M %p", "%d/%m/%Y, %I:%M%p",
+                    "%d/%m/%y, %I:%M %p", "%d/%m/%y, %I:%M%p",
+                    "%m/%d/%Y, %I:%M %p", "%m/%d/%y, %I:%M %p",
                     "%d/%m/%Y, %I:%M:%S %p",
                 ]:
                     try:
@@ -134,7 +137,7 @@ def crop_chat_by_date(
     flush()
 
     base, ext = os.path.splitext(filepath)
-    tag = f"{start_day:02d}{start_month:02d}{start_year}-{end_day:02d}{end_month:02d}{end_year}"
+    tag      = f"{start_day:02d}{start_month:02d}{start_year}-{end_day:02d}{end_month:02d}{end_year}"
     out_path = f"{base}_cropped_{tag}{ext}"
 
     with open(out_path, "w", encoding="utf-8") as f:
@@ -147,7 +150,6 @@ def crop_chat_by_date(
 
 # ─── 2. Date filtering ───────────────────────────────────────────────────────
 
-
 def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
     """
     Return messages from the N most recent full days in the export.
@@ -155,21 +157,20 @@ def get_recent_days(messages: list[dict], days: int = 2) -> list[dict]:
     """
     if not messages:
         return []
-    dates = sorted(set(m["datetime"].date() for m in messages))
+    dates        = sorted(set(m["datetime"].date() for m in messages))
     target_dates = set(dates[-days:])
     return [m for m in messages if m["datetime"].date() in target_dates]
 
 
 # ─── 3. Ad filter — delegates to filter_chat.classify ────────────────────────
 
-
 def filter_ads(messages: list[dict]) -> tuple[list[dict], dict]:
     """
     Apply the 3-gate filter via filter_chat.classify().
-    Returns (ads, stats) — identical interface to the original pipeline.
+    Returns (ads, stats).
     """
     stats = {"system": 0, "too_short": 0, "blocklist": 0, "no_keywords": 0, "passed": 0}
-    ads = []
+    ads   = []
 
     for msg in messages:
         result = classify(msg)
@@ -184,37 +185,26 @@ def filter_ads(messages: list[dict]) -> tuple[list[dict], dict]:
 
 # ─── 4. Gemini API Extraction ────────────────────────────────────────────────
 
-
 class ListingExtraction(BaseModel):
-    property_type: Optional[
-        Literal[
-            "apartment",
-            "villa",
-            "studio",
-            "duplex",
-            "penthouse",
-            "chalet",
-            "townhouse",
-            "twin_house",
-            "standalone",
-            "i_villa",
-            "land",
-            "office",
-            "shop",
-            "warehouse",
-            "building",
-            "loft",
-            "other",
-        ]
-    ] = Field(default=None, description="Category of the property being advertised. If not explicitly stated, set to null and if mentioned in text but not in the fields available, set to 'other'.")
+    property_type: Optional[Literal[
+        "apartment", "villa", "studio", "duplex", "penthouse", "chalet",
+        "townhouse", "twin_house", "standalone", "i_villa", "land",
+        "office", "shop", "warehouse", "building", "loft", "other",
+    ]] = Field(default=None, description=(
+        "Category of the property being advertised. "
+        "If not explicitly stated, set to null. "
+        "If mentioned but not in the available fields, set to 'other'."
+    ))
     transaction_type: Optional[Literal["sale", "rent", "daily_rent"]] = Field(
         default=None,
         description="Whether the property is for sale, long-term rent, or nightly/daily rent.",
     )
     price: Optional[float] = Field(
         default=None,
-        description="Asking price as a plain number. Normalize shorthand: '4.5M' → 4500000, '25k' → 25000. "
-        "Prices written with a period as thousands separator (e.g. '35.000' in a rental context) mean 35000.",
+        description=(
+            "Asking price as a plain number. Normalize shorthand: '4.5M' → 4500000, '25k' → 25000. "
+            "Prices written with a period as thousands separator (e.g. '35.000' in a rental context) mean 35000."
+        ),
     )
     currency: Optional[Literal["EGP", "USD", "EUR"]] = Field(
         default=None,
@@ -226,44 +216,31 @@ class ListingExtraction(BaseModel):
     )
     land_area_sqm: Optional[float] = Field(
         default=None,
-        description="Total land/plot area in square metres, only when it differs from the built-up area "
-        "(common for villas, twin houses, and land listings).",
+        description=(
+            "Total land/plot area in square metres, only when it differs from the built-up area "
+            "(common for villas, twin houses, and land listings)."
+        ),
     )
-    bedrooms: Optional[int] = Field(
-        default=None, description="Number of bedrooms. Use 0 for studios."
-    )
+    bedrooms: Optional[int] = Field(default=None, description="Number of bedrooms. Use 0 for studios.")
     bathrooms: Optional[int] = Field(default=None, description="Number of bathrooms.")
-    floor_number: Optional[int] = Field(
-        default=None, description="Floor on which the unit sits. Ground floor = 0."
-    )
-    total_floors: Optional[int] = Field(
-        default=None, description="Total number of floors in the building."
-    )
+    floor_number: Optional[int] = Field(default=None, description="Floor on which the unit sits. Ground floor = 0.")
+    total_floors: Optional[int] = Field(default=None, description="Total number of floors in the building.")
     furnished: Optional[Literal["furnished", "semi_furnished", "unfurnished"]] = Field(
         default=None, description="Furnishing status of the unit."
     )
-    finishing: Optional[
-        Literal["shell", "core_and_shell", "semi_finished", "finished", "luxury"]
-    ] = Field(
+    finishing: Optional[Literal["shell", "core_and_shell", "semi_finished", "finished", "luxury"]] = Field(
         default=None,
-        description="Interior finishing level. "
-        "'super lux' or 'الترا سوبر لوكس' → luxury. "
-        "'لوكس' alone → finished. "
-        "Unfinished/skeleton units → shell.",
+        description=(
+            "Interior finishing level. "
+            "'super lux' or 'الترا سوبر لوكس' → luxury. "
+            "'لوكس' alone → finished. "
+            "Unfinished/skeleton units → shell."
+        ),
     )
-    has_garden: Optional[bool] = Field(
-        default=None, description="True if the unit includes a private garden."
-    )
-    garden_area_sqm: Optional[float] = Field(
-        default=None,
-        description="Area of the private garden in square metres, if stated.",
-    )
-    has_pool: Optional[bool] = Field(
-        default=None, description="True if the unit or compound has a swimming pool."
-    )
-    has_balcony: Optional[bool] = Field(
-        default=None, description="True if the unit has a balcony."
-    )
+    has_garden: Optional[bool] = Field(default=None, description="True if the unit includes a private garden.")
+    garden_area_sqm: Optional[float] = Field(default=None, description="Area of the private garden in sqm, if stated.")
+    has_pool: Optional[bool] = Field(default=None, description="True if the unit or compound has a swimming pool.")
+    has_balcony: Optional[bool] = Field(default=None, description="True if the unit has a balcony.")
     city: Optional[str] = Field(
         default=None,
         description="City or governorate where the property is located (e.g. Cairo, Alexandria, New Cairo).",
@@ -278,21 +255,18 @@ class ListingExtraction(BaseModel):
     )
     landmark_proximity: Optional[str] = Field(
         default=None,
-        description="Nearby landmark, road, or area mentioned to describe the location "
-        "(e.g. 'near City Stars', 'Ring Road exit 5').",
+        description="Nearby landmark, road, or area mentioned to describe the location.",
     )
     down_payment: Optional[float] = Field(
         default=None,
         description="Initial down-payment amount in the stated currency, if an installment plan is offered.",
     )
-    installment_years: Optional[float] = Field(
-        default=None, description="Duration of the installment plan in years."
-    )
+    installment_years: Optional[float] = Field(default=None, description="Duration of the installment plan in years.")
     installment_amount: Optional[float] = Field(
         default=None,
         description="Periodic installment payment amount (monthly unless stated otherwise).",
     )
-    phone_numbers: Optional[list[str]] = Field(
+    phone_numbers: Optional[List[str]] = Field(
         default=None,
         description="All phone/WhatsApp numbers found in the ad. Preserve the original format exactly.",
     )
@@ -306,58 +280,20 @@ class ListingExtraction(BaseModel):
     )
     ad_snippet: Optional[str] = Field(
         default=None,
-        description="Clean, standalone text of this specific listing only — no repeated contact lines, "
-        "no other listings that appeared in the same message.",
+        description=(
+            "Clean, standalone text of this specific listing only — "
+            "no repeated contact lines, no other listings that appeared in the same message."
+        ),
     )
     original_message: Optional[str] = Field(
         default=None,
         description="The full, unmodified original message text that this listing was extracted from.",
     )
 
-'''
-Temporarily removed from prompt!!!
 
-SCHEMA — every field is nullable (use null if not explicitly determinable):
-
-{
-  "property_type": "apartment|villa|studio|duplex|penthouse|chalet|townhouse|twin_house|standalone|i_villa|land|office|shop|warehouse|building|loft|other",
-  "transaction_type": "sale|rent|daily_rent",
-  "price": <number, EXPLICITLY stated total price. DO NOT calculate or add numbers together. No commas.>,
-  "currency": "EGP|USD|EUR",
-  "area_sqm": <number, BUA/built-up area in sqm>,
-  "land_area_sqm": <number, land area if different from BUA>,
-  "bedrooms": <int, studio=0>,
-  "bathrooms": <int>,
-  "floor_number": <int, ground=0>,
-  "total_floors": <int>,
-  "furnished": "furnished|semi_furnished|unfurnished",
-  "finishing": "shell|core_and_shell|semi_finished|finished|luxury",
-  "has_garden": <bool>,
-  "garden_area_sqm": <number>,
-  "has_pool": <bool>,
-  "has_balcony": <bool>,
-  "city": "<string>",
-  "district": "<string, only if explicitly stated>",
-  "compound_name": "<string, extract the project name exactly as written>",
-  "landmark_proximity": "<string>",
-  "down_payment": <number>,
-  "installment_years": <number>,
-  "installment_amount": <number>,
-  "phone_numbers": [<strings, preserve original format>],
-  "reference_id": "<string, any code like U926440 or HPs160>",
-  "view": "<string, e.g. pool, garden, sea>",
-  "ad_snippet": "<string, the clean ad text only, no duplicate contact lines or other ads from the same message>",
-  "original_message": "<string, the full original message text>"
-}
-
-'''
-
-
-
-SYSTEM_PROMPT = """You are a strict data extraction engine for Egyptian real estate advertisements. Your job is to extract text exactly as it appears. 
+SYSTEM_PROMPT = """You are a strict data extraction engine for Egyptian real estate advertisements. Your job is to extract text exactly as it appears.
 
 Extract structured data from each ad. Return a JSON array where each element corresponds to one ad.
-
 
 STRICT ZERO-ASSUMPTION POLICY (CRITICAL RULES):
 1. NO MATH OR CALCULATIONS: If a total price is not explicitly written, set "price" to null. DO NOT add "down payment" and "remaining" together to guess the price.
@@ -375,9 +311,7 @@ Return ONLY valid JSON. No markdown, no explanation, no thinking output."""
 def build_extraction_prompt(ads: list[dict]) -> str:
     parts = []
     for i, ad in enumerate(ads, 1):
-        parts.append(
-            f"--- AD {i} (from: {ad['sender']}, date: {ad['datetime'].isoformat()}) ---"
-        )
+        parts.append(f"--- AD {i} (from: {ad['sender']}, date: {ad['datetime'].isoformat()}) ---")
         parts.append(ad["body"])
         parts.append("")
     return "\n".join(parts)
@@ -388,9 +322,9 @@ def call_gemini(ads: list[dict]) -> tuple[list[dict], dict]:
     from google import genai
     from google.genai import types
 
-    client = genai.Client(api_key=GEMINI_API_KEY)
+    client      = genai.Client(api_key=GEMINI_API_KEY)
     user_prompt = build_extraction_prompt(ads)
-    timing = {"api_call_s": None, "json_parse_s": None, "attempts": 0}
+    timing      = {"api_call_s": None, "json_parse_s": None, "attempts": 0}
 
     for attempt in range(MAX_RETRIES):
         timing["attempts"] = attempt + 1
@@ -404,11 +338,6 @@ def call_gemini(ads: list[dict]) -> tuple[list[dict], dict]:
                     system_instruction=SYSTEM_PROMPT,
                     temperature=0.1,
                     response_mime_type="application/json",
-                    response_schema=list[ListingExtraction],
-                    thinking_config=types.ThinkingConfig(
-                        thinking_budget=-1,
-                        include_thoughts=True,
-                    ),
                 ),
             )
             timing["api_call_s"] = _elapsed(t_api)
@@ -1126,8 +1055,14 @@ def init_db(db_path: str = DB_PATH) -> sqlite3.Connection:
     return conn
 
 
-def insert_listing(conn: sqlite3.Connection, data: dict,
-                   original_msg: str, sender: str, ad_date: str):
+def _b(val) -> Optional[int]:
+    return None if val is None else (1 if val else 0)
+
+
+def insert_listing(
+    conn: sqlite3.Connection, data: dict,
+    original_msg: str, sender: str, ad_date: str
+):
     phones = json.dumps(data.get("phone_numbers") or [], ensure_ascii=False)
     conn.execute("""
         INSERT INTO listings (
@@ -1165,10 +1100,6 @@ def insert_listing(conn: sqlite3.Connection, data: dict,
         data.get("view"),
         original_msg, data.get("ad_snippet"), sender, ad_date, GEMINI_MODEL,
     ))
-
-
-def _b(val) -> Optional[int]:
-    return None if val is None else (1 if val else 0)
 
 
 # ─── 6. Main Pipeline ────────────────────────────────────────────────────────
@@ -1230,7 +1161,7 @@ def run_pipeline(chat_file: str, days: int = 1):
 
     # ── Step 4: Gemini extraction ──────────────────────────────
     print(f"\n[4/5] Extracting via {GEMINI_MODEL}...")
-    conn          = init_db()
+    conn           = init_db()
     total_inserted = 0
     total_batches  = (len(ads) + BATCH_SIZE - 1) // BATCH_SIZE
     batch_timings  = []
@@ -1241,24 +1172,28 @@ def run_pipeline(chat_file: str, days: int = 1):
         batch_num = batch_idx // BATCH_SIZE + 1
         print(f"      Batch {batch_num}/{total_batches} ({len(batch)} ads)...", end=" ", flush=True)
 
-        t_batch  = _ts()
+        t_batch     = _ts()
         results, bt = call_gemini(batch)
         batch_total = _elapsed(t_batch)
 
         t_db = _ts()
         for result in results:
             orig = result.get("original_message") or ""
-            ad = next((a for a in batch if a["body"].strip() == orig.strip()), None)
-            insert_listing(conn, result,
-                           original_msg=orig,
-                           sender=ad["sender"] if ad else None,
-                           ad_date=ad["datetime"].isoformat() if ad else None)
+            ad   = next((a for a in batch if a["body"].strip() == orig.strip()), None)
+            insert_listing(
+                conn, result,
+                original_msg=orig,
+                sender=ad["sender"] if ad else None,
+                ad_date=ad["datetime"].isoformat() if ad else None,
+            )
             total_inserted += 1
         conn.commit()
         db_s = _elapsed(t_db)
 
-        bt.update(batch_num=batch_num, ads_in=len(batch), ads_out=len(results),
-                  db_insert_s=db_s, batch_total_s=batch_total)
+        bt.update(
+            batch_num=batch_num, ads_in=len(batch), ads_out=len(results),
+            db_insert_s=db_s, batch_total_s=batch_total,
+        )
         batch_timings.append(bt)
 
         api_s   = _fmt(bt["api_call_s"])   if bt["api_call_s"]   else "err"
@@ -1307,20 +1242,20 @@ def run_pipeline(chat_file: str, days: int = 1):
 
     # ── Log run ────────────────────────────────────────────────
     _log({
-        "run_at": run_ts,
-        "model": GEMINI_MODEL,
-        "batch_size": BATCH_SIZE,
-        "input_file": chat_file,
-        "days_requested": days,
-        "target_dates": [str(d) for d in target_dates],
-        "total_messages": len(messages),
-        "day_messages": len(day_messages),
-        "filter_stats": fstats,
-        "ads_processed": len(ads),
-        "listings_inserted": total_inserted,
-        "avg_confidence": round(avg_conf, 4) if avg_conf else None,
+        "run_at":               run_ts,
+        "model":                GEMINI_MODEL,
+        "batch_size":           BATCH_SIZE,
+        "input_file":           chat_file,
+        "days_requested":       days,
+        "target_dates":         [str(d) for d in target_dates],
+        "total_messages":       len(messages),
+        "day_messages":         len(day_messages),
+        "filter_stats":         fstats,
+        "ads_processed":        len(ads),
+        "listings_inserted":    total_inserted,
+        "avg_confidence":       round(avg_conf, 4) if avg_conf else None,
         "property_type_counts": prop_types,
-        "timings": {k: round(v, 3) for k, v in timings.items()},
+        "timings":              {k: round(v, 3) for k, v in timings.items()},
         "batches": [{
             "batch":         b["batch_num"],
             "ads_in":        b["ads_in"],
@@ -1328,7 +1263,7 @@ def run_pipeline(chat_file: str, days: int = 1):
             "api_call_s":    round(b["api_call_s"],   3) if b["api_call_s"]   else None,
             "json_parse_s":  round(b["json_parse_s"], 4) if b["json_parse_s"] else None,
             "db_insert_s":   round(b["db_insert_s"],  4),
-            "batch_total_s": round(b["batch_total_s"],3),
+            "batch_total_s": round(b["batch_total_s"], 3),
             "attempts":      b["attempts"],
         } for b in batch_timings],
     })
@@ -1337,9 +1272,6 @@ def run_pipeline(chat_file: str, days: int = 1):
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "2DayAdsGT.txt"
-run_pipeline(chat_file, 2)
-# crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)
-from backend.purge_old_listings import purge_old_listings
-purge_old_listings("listings.db")
-
+if __name__ == "__main__":
+    chat_file = "2DayAdsGT.txt"
+    run_pipeline(chat_file, 2)
