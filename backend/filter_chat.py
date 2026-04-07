@@ -16,7 +16,6 @@ import re
 import os
 from datetime import datetime
 
-import batch_messages
 # import batch_messages
 
 # ─── WhatsApp message parser ──────────────────────────────────────────────────
@@ -121,7 +120,7 @@ SYSTEM_RE = re.compile("|".join([
 
 BLOCKLIST_RE = re.compile("|".join([
     r"أبحث\s*عن|ابحث\s*عن", r"بدور\s*على|بدوّر\s*على",
-    r"urgent\s*request",r"sale\s*request",
+    r"urgent\s*request",r"sale\s*request",r"serious\s*request",r"important\s*request",
     r"محتاج\s*(شقة|شقه|فيلا|وحدة|وحده|أرض|ارض|محل)",
     r"محتاجة\s*(شقة|شقه|فيلا|وحدة|وحده|أرض|ارض|محل)",
     r"عايز\s*(أشتري|اشتري|اجار|ايجار|ايجاره)",
@@ -409,6 +408,5 @@ def main(filepath: str):
 
 
 if __name__ == "__main__":
-    file_path = "350_sampled_messages.txt"
+    file_path = "Backupz/50_messages_24_02_2025.txt"
     main(file_path)
-    batch_messages.main(file_path)
