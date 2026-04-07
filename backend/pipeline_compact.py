@@ -570,7 +570,6 @@ def run_pipeline(chat_file: str, days: int = 2):
     logger.finalize(
         total_inserted=total_inserted,
         fstats=fstats,
-        timings=timings,
     )
 
     # ── Log run ────────────────────────────────────────────────

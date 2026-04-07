@@ -756,3 +756,269 @@ For each block, I'll iterate through it and extract the required information: `p
 
 
 ============================================================
+
+## (7/4/2026)Run — (18:06)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 2 | 2 | 27_messages_13_10_2024.txt |
+
+## (7/4/2026)Run — (18:09)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 2 | 2 | 27_messages_13_10_2024.txt |
+
+### Batch 1/2
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (520 words, 3184 chars, 3118 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 28830195, date: 2024-10-13T00:43:00) ---
+*EL Rehab*
+Apartment Available For Rent:
+Bua: 255sqm.
+___
+3 Bedrooms.
+3 Bathrooms.
+Living room.
+3 Balconies.
+___
+NG.
+___
+Price : 38k ...
+
+--- AD 2 (from: +20 10 28830195, date: 2024-10-13T00:43:00) ---
+*Village Gate*
+Apartment Available For Rent:
+Prime Location ✨ 
+2th Floor.
+Bua: 150sqm.
+____
+2 Bedrooms.
+2 Bathrooms.
+____
+AC'S and Kitchen Cabinets.
+Garage.
+____
+Price: 35k ...
+
+--- AD 3 (from: +20 10 28830195, date: 2024-10-13T00:43:00) ---
+*Madinaty*
+Apartment Available For Rent:
+Prime Location ✨ 
+____
+2 Bedrooms.
+2 Bathrooms.
+Fully furnished.
+____
+Facing North (bahary).
+Garden View.
+
+Price 25k per month ...
+
+--- AD 4 (from: +20
+[truncated — 3,183 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (591 words, 4958 chars, 1821 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 38000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "El Rehab",
+    "ad_snippet": "Apartment Available For Rent: Bua: 255sqm. 3 Bedrooms. 3 Bathrooms. Living room. 3 Balconies. NG. Price : 38k ...",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 35000,
+    "currency": "EGP",
+    "bedrooms": 2,
+    "compound_name": "Village Gate",
+    "ad_snippet": "Apartment Available For Rent: Prime Location ✨ 2th Floor. Bua: 150sqm. 2 Bedrooms. 2 Bathrooms. AC'S and Kitchen Cabinets. Garage. Price: 35k ...",
+    "ad_index": 2
+  },
+  {
+    "propert
+[truncated — 4,958 chars total]
+```
+
+</details>
+
+
+**Thinking**
+
+<details>
+<summary>▶ Show thinking text (622) words, (4958) chars, 888 tokens)</summary>
+
+```
+**My Approach to Structured Data Extraction from WhatsApp Ads**
+
+Okay, so I've been given a JSON schema and a set of rules, and my task is to meticulously extract structured data from these WhatsApp ad messages. My goal is to create a JSON array of listing objects, one object per AD block.  I need to go through each AD block individually, following a defined set of steps.
+
+Here's the breakdown of my planned process:
+
+1.  **AD Block Identification:** First, I'll scan each text chunk, looking for that specific marker: "--- AD N ---". This tells me where each advertisement starts, and importantly, it provides the `ad_index`, which I need to record.
+
+2.  **Ad Index Extraction:** From the marker 
+[truncated — 3,709 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/2
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (212 words, 1314 chars, 2224 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 03387996, date: 2024-10-13T00:57:00) ---
+Code Mi648
+Apartment for rent in mivida 
+Boulevard 
+Area 238m
+4 bedrooms 
+3 bathrooms 
+Maids room with bathroom 
+Ultra super lux
+Furnished 
+Price 3000$
+
+--- AD 2 (from: +20 11 03387996, date: 2024-10-13T00:58:00) ---
+Code mvhpr306
+Apartment for rent in mountain view hyde park
+Area 203m
+3 bedrooms 
+3 bathrooms 
+Dressing 
+Super luxury
+Furnished 
+Price 60k
+
+--- AD 3 (from: +20 11 03387996, date: 2024-10-13T00:58:00) ---
+code ncc1484
+Apartment for sale in stone residence 
+2nd floor
+Area 175m
+3 bedrooms
+3 bathrooms 
+3 terrace 
+Reception 3 pieces 
+3 balcony with double view
+ semi finished 
+Price 6,509,000
+
+--- AD 4 (from: +20 11 03387
+[truncated — 1,313 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (228 words, 1826 chars, 616 tokens)</summary>
+
+```
+[{"property_type": "apartment", "transaction_type": "rent", "price": 3000, "currency": "USD", "bedrooms": 4, "compound_name": "Mivida", "ad_snippet": "Apartment for rent in mivida Boulevard Area 238m 4 bedrooms 3 bathrooms Maids room with bathroom Ultra super lux Furnished Price 3000$", "ad_index": 1}, {"property_type": "apartment", "transaction_type": "rent", "price": 60000, "currency": "EGP", "bedrooms": 3, "compound_name": "Mountain View Hyde Park", "ad_snippet": "Apartment for rent in mountain view hyde park Area 203m 3 bedrooms 3 bathrooms Dressing Super luxury Furnished Price 60k", "ad_index": 2}, {"property_type": "apartment", "transaction_type": "sale", "price": 6509000, "currency": 
+[truncated — 1,826 chars total]
+```
+
+</details>
+
+
+**Thinking**
+
+<details>
+<summary>▶ Show thinking text (598) words, (1826) chars, 829 tokens)</summary>
+
+```
+**My Approach to Structured Data Extraction from WhatsApp Ads**
+
+Okay, so I've been tasked with pulling structured data from these WhatsApp ad messages. It seems pretty straightforward, essentially a classic information extraction problem, but the devil's in the details, as usual. The goal is to take each advertisement block and turn it into a JSON object, then combine all those objects into a single JSON array, conforming to a given schema. I'm going to work through each ad methodically and detail each step I took.
+
+First, I need to break down the task into smaller, manageable steps. Here’s how I'm thinking I'll do it:
+
+1.  **Identify the AD Index:** That's easy enough. The "--- AD N ---" f
+[truncated — 3,732 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 14 | 15 | 14 | 3118 | 1821 | 888 | 0 | $0.00140 | 12.30 | 12.30 |
+| 2 | 6 | 6 | 6 | 2224 | 616 | 829 | 0 | $0.00080 | 9.11 | 9.11 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 20 | 21 | 20 | 21.42 | 2 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 10.71 | 10.71 | 2671 | 1218 | 366 | 410 | 10.0 | 0.93 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 5342 | $0.00053 | 2671 |
+| output | 2437 | $0.00097 | 1218 |
+| thinking | 1717 | $0.00069 | 858 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.002196**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-07 | 0.0022 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 2 | 0 | 4 | 1 | 20 |
+
+**Listings inserted:** 20
+
+
+============================================================

@@ -332,7 +332,6 @@ class RunLogger:
         self,
         total_inserted: int,
         fstats:         dict,
-        timings:        dict,
     ) -> None:
         """Write the run summary block."""
 

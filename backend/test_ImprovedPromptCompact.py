@@ -26,6 +26,8 @@ import time
 from datetime import datetime
 from typing import Literal, Optional
 from pydantic import BaseModel, Field, field_validator
+from analysis import open_analysis_log
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -342,7 +344,7 @@ def call_gemini(
                 for part in response.candidates[0].content.parts:
                     kind = "THINKING" if getattr(part, "thought", False) else "TEXT"
                     print(f"\n── {kind} {'─'*50}\n{part.text}\n{'─'*60}")
-                return [], info
+                return [], info, None
 
             # ── Parse ──────────────────────────────────────────────
             t_parse = time.perf_counter()
@@ -351,7 +353,7 @@ def call_gemini(
 
             if isinstance(parsed, ListingExtraction):
                 parsed = [parsed]
-            return [p.model_dump() for p in parsed], info
+            return [p.model_dump() for p in parsed], info, response
 
         except Exception as e:
             print(f"  [!] API error (attempt {attempt+1}): {e}")
@@ -359,7 +361,7 @@ def call_gemini(
                 time.sleep(2**attempt)
 
     print("  [!] Failed after all retries, skipping batch.")
-    return [], info
+    return [], info, None
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -431,11 +433,14 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
 
         ads_avg = compute_ads_avg(ads)
         batches = build_batches(ads, ads_avg)
+        
     except ImportError:
         # Fallback: simple fixed-size batching
         BATCH_SIZE = 10
         batches = _simple_batches(ads, BATCH_SIZE)
+        total_batches = len(batches)
 
+    logger = open_analysis_log(run_ts, GEMINI_MODEL, len(batches), days, chat_file)
     print(f"      Batches: {len(batches)}")
 
     # ── Count system prompt tokens ─────────────────────────────
@@ -467,7 +472,7 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
     )
 
     # DB setup — compact schema matching GT format
-    DB_PATH = "/home/hussein/work/Qortova/RealEstateProject/PropScan/backend/Test2_New50DayGTSample.db"
+    DB_PATH = "backend/test_ImprovedPromptCompact.db"
     conn = _init_db(DB_PATH)
     total_inserted = 0
     all_info = []
@@ -479,7 +484,10 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
         else:
             batch = batch_obj
 
-        results, info = call_gemini(batch, client)
+        t_batch = time.perf_counter()
+        results, info, api_response = call_gemini(batch, client)
+        batch_total=time.perf_counter()-t_batch
+
         all_info.append(info)
 
         # Insert results
@@ -502,6 +510,17 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
 
         if batch_num < len(batches):
             time.sleep(1)
+
+        logger.log_batch(
+        batch_num=batch_num,
+        total_batches=len(batches),
+        batch=batch,
+        results=results,
+        batch_total_s=batch_total,
+        api_response=api_response,
+        api_s=info["api_call_s"] or 0.0, 
+        estimated_ads=batch_obj.estimated_ads  
+        )
 
     conn.close()
 
@@ -565,6 +584,10 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
             print(f"    {k}: {v}")
 
     print(f"\n{'='*70}")
+    logger.finalize(
+    total_inserted=total_inserted,
+    fstats=fstats,
+        )
 
 
 # ── Internal helpers ──────────────────────────────────────────────────────────
@@ -656,6 +679,6 @@ def _simple_batches(ads, size):
 if __name__ == "__main__":
 
     run_pipeline_improved(
-        "/home/hussein/work/Qortova/RealEstateProject/PropScan/backend/New50DayGTSample.txt",
-        8,
+        "Backupz/27_messages_13_10_2024.txt",
+        2,
     )
