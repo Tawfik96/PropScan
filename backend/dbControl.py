@@ -1,9 +1,9 @@
 import sqlite3
 import json
 import os
-import extractFromChatExport
+import test_ImprovedPromptCompact
 
-DB_PATH = os.path.join(os.path.dirname(__file__), extractFromChatExport.DB_PATH)
+DB_PATH = os.path.join(os.path.dirname(__file__), test_ImprovedPromptCompact.DB_PATH)
 
 
 def get_conn():
@@ -59,25 +59,13 @@ def get_listings(
         query += " AND property_type = ?"
         params.append(property_type)
 
-    query += " ORDER BY ad_date DESC LIMIT ? OFFSET ?"
+    query += " ORDER BY date DESC LIMIT ? OFFSET ?"
     params.extend([limit, offset])
 
     rows = conn.execute(query, params).fetchall()
     conn.close()
 
-    result = []
-    for row in rows:
-        d = dict(row)
-        d["amenities"] = json.loads(d["amenities"] or "[]")
-        d["phone_numbers"] = json.loads(d["phone_numbers"] or "[]")
-        d["price_negotiable"] = bool(d["price_negotiable"])
-        d["has_elevator"] = bool(d["has_elevator"])
-        d["has_garden"] = bool(d["has_garden"])
-        d["has_pool"] = bool(d["has_pool"])
-        d["has_balcony"] = bool(d["has_balcony"])
-        d["has_security"] = bool(d["has_security"])
-        d["has_parking"] = bool(d["has_parking"])
-        result.append(d)
+    result = [dict(row) for row in rows]
     return result
 
 

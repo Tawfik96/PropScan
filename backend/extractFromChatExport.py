@@ -775,6 +775,7 @@ def run_pipeline(chat_file: str, days: int = 2):
     print(f"\n      Run logged → {os.path.abspath(LOG_PATH)}")
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
-chat_file = "350_sampled_messages.txt"
-run_pipeline(chat_file, 8)
+
+# chat_file = "350_sampled_messages.txt"
+# run_pipeline(chat_file, 8)
 # crop_chat_by_date(chat_file, 28, 9, 2024, 28, 9, 2024)

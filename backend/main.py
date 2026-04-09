@@ -3,11 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Optional
 import dbControl
-import extractFromChatExport
-import os
+import test_ImprovedPromptCompact
+import os, json
 from fastapi.concurrency import run_in_threadpool
 
-
+PROGRESS_FILE = "progress.json"
+UPLOADED_CHAT_FILE="uploaded_chat_file.txt"
 app = FastAPI(title="WhatsApp Real Estate Parser")
 
 app.add_middleware(
@@ -18,16 +19,31 @@ app.add_middleware(
 )
 
 dbControl.init_db()
+
+
+
+@app.get("/progress")
+def get_progress():
+    try:
+        with open(PROGRESS_FILE) as f:
+            return json.load(f)
+    except:
+        return {"current": 0, "total": 0, "message": ""}
+
+@app.post("/reset-progress")
+def reset_progress():
+    test_ImprovedPromptCompact.update_progress_file(0, 0, "Uploading…", reset=True)
+    return {"ok": True}
+
 @app.post("/upload")
 async def upload_chat(file: UploadFile = File(...)):
     try:
-        file_path = os.path.join(os.path.dirname(__file__), file.filename)
+        file_path = os.path.join(os.path.dirname(__file__), UPLOADED_CHAT_FILE)
 
         with open(file_path, "wb") as f:
             f.write(await file.read())
-
         # Run blocking code safely
-        await run_in_threadpool(extractFromChatExport.run_pipeline, file_path, 1)
+        await run_in_threadpool(test_ImprovedPromptCompact.run_pipeline_improved, file_path, 2)
         return {"status": "ok", "message": "Chat processed successfully"}
 
     except Exception as e:

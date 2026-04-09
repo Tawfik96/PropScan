@@ -125,6 +125,53 @@ function buildOrganizedDetailsText(rows) {
 }
 
 
+// ── Progress polling ──
+let progressPollTimer = null;
+
+async function pollProgress(onDone) {
+  const bar = document.getElementById('progressBar');
+  const label = document.getElementById('progressLabel');
+  const stage = document.getElementById('uploadStage');
+
+  const tick = async () => {
+    try {
+      const res = await fetch(API + '/progress');
+      const data = await res.json();
+      const { current, total, message } = data;
+      
+      if (total > 0) {
+        stage.textContent = 'Extracting listings…';
+        const pct = Math.round((current / total) * 100);
+        bar.style.width = pct + '%';
+        label.textContent = `Batch ${current} of ${total} — ${pct}%`;
+
+        if (data.done) {
+          bar.style.width = '100%';
+          label.textContent = 'Done!';
+          clearInterval(progressPollTimer);
+          progressPollTimer = null;
+          setTimeout(onDone, 600);
+          return;
+      }
+      } else {
+        stage.textContent = message || 'Uploading…';
+        bar.style.width = '1%';
+        label.textContent = 'Waiting for pipeline…';
+      }
+    } catch {
+      // backend not responding yet — keep waiting
+    }
+  };
+
+  await tick();
+  progressPollTimer = setInterval(tick, 800);
+}
+
+function resetProgressUI() {
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressLabel').textContent = 'Starting…';
+  document.getElementById('uploadStage').textContent = 'Uploading…';
+}
 
 // ── Render cards ──
 function renderCards(listings) {
@@ -161,7 +208,7 @@ function renderCards(listings) {
             <button class="copy-btn-sm" title="Copy sender" data-copy="${escapeHtml(l.sender || '')}">${SVG.copy}</button>
           </div>
           <div class="date-row">
-            <span class="send-date">${escapeHtml(l.ad_date || '—')}</span>            
+            <span class="send-date">${escapeHtml(l.date || '—')}</span>            
           </div>
         </div>
       </div>
@@ -292,30 +339,45 @@ document.getElementById('importBtn').addEventListener('click', () => {
   document.getElementById('file-input').click();
 });
 
+
 document.getElementById('file-input').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   if (!file) return;
   e.target.value = '';
 
+  resetProgressUI();  // ← this resets the DOM
+
+  // ← reset the server file FIRST, wait for it, then start polling
+  try {
+    await fetch(API + '/reset-progress', { method: 'POST' });
+  } catch {}
+
   const overlay = document.getElementById('uploadOverlay');
   overlay.classList.add('active');
+
+  pollProgress(async () => {
+    overlay.classList.remove('active');
+    showToast('Chat imported successfully!', 'success');
+    await loadCities();
+    await fetchListings();
+  });
 
   try {
     const fd = new FormData();
     fd.append('file', file);
     const res = await fetch(API + '/upload', { method: 'POST', body: fd });
     const data = await res.json();
-    if (res.ok) {
-      showToast('Chat imported successfully!', 'success');
-      await loadCities();
-      await fetchListings();
-    } else {
+    if (!res.ok) {
+      clearInterval(progressPollTimer);
+      progressPollTimer = null;
+      overlay.classList.remove('active');
       showToast(data.detail || 'Upload failed.', 'error');
     }
   } catch {
-    showToast('Could not connect to backend.', 'error');
-  } finally {
+    clearInterval(progressPollTimer);
+    progressPollTimer = null;
     overlay.classList.remove('active');
+    showToast('Could not connect to backend.', 'error');
   }
 });
 

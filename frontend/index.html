@@ -13,10 +13,15 @@
 
 <!-- Upload spinner overlay -->
 <div class="upload-overlay" id="uploadOverlay">
-  <div class="spinner"></div>
-  <div class="upload-text">UPLOADING CHAT…</div>
+  <div class="upload-modal">
+    <div class="upload-modal-title">Processing Chat</div>
+    <div class="upload-stage" id="uploadStage">Uploading…</div>
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Starting…</div>
+  </div>
 </div>
-
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -38,16 +43,15 @@
 <div class="inquiry-bar">
   <div class="inquiry-label">
     Paste a WhatsApp message to search
-    <span class="ai-badge">Intresting Feature — COMING SOON</span>
   </div>
   <div class="inquiry-input-row">
     <textarea
       class="inquiry-textarea"
       id="inquiryInput"
-      placeholder="e.g. «شقة 3 غرف في القاهرة الجديدة بحد أقصى 3 مليون» — paste a message and filters will update automatically"
+      placeholder="e.g. «شقة 3 غرف في القاهرة الجديدة بحد أقصى 3 مليون» "
       rows="2"
     ></textarea>
-    <button class="btn-inquiry" disabled title="Coming soon">Apply</button>
+    <button class="btn-inquiry" disabled title="Coming soon">Search</button>
   </div>
 </div>
 

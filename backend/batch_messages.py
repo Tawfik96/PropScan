@@ -65,72 +65,64 @@ class Batch:
 
 
 # ─── Core logic ───────────────────────────────────────────────────────────────
-
 def build_batches(
-    messages:          List[dict],
-    ads_avg:           float,
-    max_chars:         int = MAX_CHARS_PER_BATCH,
-    max_ads:           int = MAX_ADS_PER_BATCH,
-) -> List[Batch]:
-    """
-    Pack classified-pass messages into batches.
-
-    Parameters
-    ----------
-    messages  : list of message dicts (already filtered to 'pass' only)
-    ads_avg   : average ad length in chars (from filter_chat stats),
-                used by get_size_and_count to estimate ads per message
-    max_chars : hard char ceiling per batch
-    max_ads   : hard ad-count ceiling per batch
-
-    Returns
-    -------
-    List of Batch objects, each ready to send to the LLM.
-    """
-    batches: List[Batch] = []
-    current = Batch()
+    messages,
+    ads_avg,
+    max_chars=MAX_CHARS_PER_BATCH,
+    max_ads=MAX_ADS_PER_BATCH
+):
+    
+    #Taw: temp list to sort oversized messages
+    enriched = []
 
     for msg in messages:
-        body      = msg["body"].strip()
-        char_len  = len(body)
+        body = msg["body"].strip()
+        char_len = len(body)
         _, ad_cnt = get_size_and_count(body, ads_avg)
 
-        # ── Oversized: single message already exceeds the char limit ──────────
-        if char_len > max_chars:
-            # Flush whatever is in progress first
-            if current.messages:
-                batches.append(current)
-                current = Batch()
+        enriched.append({
+            "msg": msg,
+            "chars": char_len,
+            "ads": ad_cnt
+        })
 
-            oversized_batch = Batch(
-                messages      = [msg],
-                total_chars   = char_len,
-                estimated_ads = ad_cnt,
-                is_oversized  = True,
-            )
-            batches.append(oversized_batch)
+    enriched.sort(key=lambda x: x["chars"], reverse=True)
+
+    batches: List[Batch] = []
+
+    for item in enriched:
+        placed = False
+
+        if item["chars"] > max_chars:
+            batches.append(Batch(
+                messages=[item["msg"]],
+                total_chars=item["chars"],
+                estimated_ads=item["ads"],
+                is_oversized=True
+            ))
             continue
 
-        # ── Would adding this message exceed either limit? ────────────────────
-        would_exceed_chars = (current.total_chars + char_len) > max_chars
-        would_exceed_ads   = (current.estimated_ads + ad_cnt) > max_ads
+        for batch in batches:
+            if batch.is_oversized:
+                continue
 
-        if current.messages and (would_exceed_chars or would_exceed_ads):
-            batches.append(current)
-            current = Batch()
+            if (batch.total_chars + item["chars"] <= max_chars and
+                batch.estimated_ads + item["ads"] <= max_ads):
 
-        # ── Add to current batch ──────────────────────────────────────────────
-        current.messages.append(msg)
-        current.total_chars   += char_len
-        current.estimated_ads += ad_cnt
+                batch.messages.append(item["msg"])
+                batch.total_chars += item["chars"]
+                batch.estimated_ads += item["ads"]
+                placed = True
+                break
 
-    # Flush last batch
-    if current.messages:
-        batches.append(current)
+        if not placed:
+            new_batch = Batch()
+            new_batch.messages.append(item["msg"])
+            new_batch.total_chars = item["chars"]
+            new_batch.estimated_ads = item["ads"]
+            batches.append(new_batch)
 
     return batches
-
-
 def estimate_tokens(chars: int) -> int:
     """Cheap token estimate — no external library required."""
     return int(chars / CHARS_PER_TOKEN)
@@ -177,4 +169,5 @@ def main(filepath: str):
 
 
 if __name__ == "__main__":
-    main("messages_per_day/75_messages_01_03_2025.txt")
+    file_path = "backend/v2New50DayGTSample.txt"
+    main(file_path)

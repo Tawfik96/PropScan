@@ -28,7 +28,7 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field, field_validator
 from analysis import open_analysis_log
 
-
+DB_PATH = "DBwithSenderadDate_Taw_Generated2.db"
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  IMPROVED PYDANTIC SCHEMA
@@ -69,7 +69,7 @@ class ListingExtraction(BaseModel):
         ),
     )
     transaction_type: Optional[Literal["sale", "rent"]] = Field(
-        default=None,
+        default="sale",
         description=(
             "Whether the property is for sale or rent. "
             "Keywords: بيع/sale/for sale/resale → 'sale'. "
@@ -80,11 +80,13 @@ class ListingExtraction(BaseModel):
     price: Optional[float] = Field(
         default=None,
         description=(
-            "Total asking price in priority order:\n"
+            "Total asking price. Compute in this priority order:\n"
             "1. Explicit total stated → use it directly.\n"
-            "2. Deposit + remaining lump sum both stated → price = deposit + remaining.\n"
-            "3. Deposit + installment schedule → null (do not attempt multiplication).\n"
-            "4. Deposit only, or installments only → null.\n"
+            "2. Deposit (مقدم) + remaining lump sum (متبقي) both stated → price = deposit + remaining.\n"
+            "3. Deposit + installment amount + installment count both stated → price = deposit + (amount × count). "
+            "Convert years to months (× 12): '10 سنوات' = 120 months, '5 سنين' = 60 months.\n"
+            "4. Installment amount + installment count stated (no deposit) → price = amount × count.\n"
+            "5. Deposit only, or installment amount with NO count/period → null.\n"
             "Normalize: '4.5M' / '4.5 مليون' → 4500000. '800k' → 800000. "
             "'35.000' in rent context → 35000 (period = thousands separator)."
         ),
@@ -111,6 +113,8 @@ class ListingExtraction(BaseModel):
     @classmethod
     def _coerce_currency(cls, v):
         return v if v is not None else "EGP"
+
+
     bedrooms: Optional[int] = Field(
         default=None,
         description=(
@@ -126,6 +130,26 @@ class ListingExtraction(BaseModel):
             "Common formats: 'Madinaty', 'Palm Hills', 'Mountain View', 'Hyde Park', etc.. "
             "Translate arabic compound names to English (e.g. 'مدينتي' → 'Madinaty', 'هايد بارك' → 'Hyde Park'). "
             "If the property is not in a compound, return null."
+        ),
+    )
+    city: Optional[str] = Field(
+        default=None,
+        description=(
+            "The city where the property is located, always in English. "
+            "If its explicitly mentioned, extract directly and translate it in English"
+            "If not explicitly mentioned, predict from context when possible "
+            "Examples: Cairo, Alexandria, New Cairo, 6th of October City, North Coast, etc. "
+            "Return null only if truly uninferable."
+        ),
+    )
+    district: Optional[str] = Field(
+        default=None,
+        description=(
+            "The district, neighborhood, or sub-area within the city, always in English. "
+            "Extract directly if explicitly mentioned"
+            "If not stated, infer from compound/context"
+            "Examples: 5th Settlement, Maadi, Zamalek, Nasr City, Misr El-Gedida, etc. "
+            "Return null if uninferable."
         ),
     )
     ad_snippet: Optional[str] = Field(
@@ -170,12 +194,20 @@ For each AD block in the user prompt, extract structured listings. Return a JSON
 2. NO TYPE GUESSING: If no property-type word appears in the text, set property_type to null.
 3. ad_index must match the integer N from "--- AD N ---".
 4. CURRENCY: ALWAYS output "EGP" unless another currency (USD, EUR, etc.) is explicitly stated. Return null ONLY if two or more different currencies appear in the same ad making it ambiguous which applies to the price.
-5. PRICE COMPUTATION: If both a deposit/مقدم AND a remaining/متبقي are stated as plain lump sums, compute price = deposit + remaining. Example: مقدم 9,000,000 + متبقي 640,000 → price = 9640000. 
+5. PRICE COMPUTATION — compute total price whenever possible:
+   a. Explicit total stated → use directly.
+   b. مقدم (lump) + متبقي (lump) both stated → price = مقدم + متبقي.
+   c. مقدم + installment amount + installment count/period all stated → price = مقدم + (amount × months). Convert years × 12 (e.g. "10 سنوات" = 120 months, "5 سنين" = 60 months).
+   d. Installment amount + count/period (no مقدم) → price = amount × months.
+   e. Only مقدم with no other info, or installment with NO count/period → price = null.
+   Examples: مقدم 500,000 + 15,000/month × 8 years → price = 500000 + (15000 × 96) = 1940000. 10,000/month × 5 years → price = 600000.
 6. Prices with period as thousands separator (e.g. "35.000" for rent) → 35000.
 7. Normalize shorthand: "4.5M" or "4.5 مليون" → 4500000. "800k" → 800000.
 8. For bedrooms: "استوديو" or "studio" → 0. "3 غرف" → 3.
-9. For compound_name, translate common Arabic names to English: "مدينتي" → "Madinaty", "هايد بارك" → "Hyde Park", "بالم هيلز" → "Palm Hills", etc. Do not return names in Arabic, translate them to English. If no compound is mentioned, return null.
-10. Return ONLY the JSON array. No markdown, no explanation.
+9. COMPOUND NAME — MUST always be in English. NEVER output Arabic characters in compound_name. Translate: "مدينتي" → "Madinaty", "هايد بارك" → "Hyde Park", "بالم هيلز" → "Palm Hills", "ماونتن فيو" → "Mountain View", "الرحاب" → "Rehab City", "ميفيدا" → "Mivida", "تاج سيتي" → "Taj City". For any other Arabic name, transliterate to English characters. If no compound, return null.
+10. CITY: Extract the city if explicitly mentioned (القاهرة/Cairo → "Cairo", الإسكندرية → "Alexandria", 6 أكتوبر → "6th of October City"). If not stated, predict from context: Madinaty/Hyde Park/Rehab/التجمع/الرحاب → "New Cairo"; Palm Hills October/Badya/الشيخ زايد → "6th of October City"; الساحل الشمالي/North Coast → "North Coast". Always in English. Return null only if truly cannot be determined.
+11. DISTRICT: Extract the district/neighborhood if explicitly mentioned (التجمع الخامس → "5th Settlement", المعادي → "Maadi", الزمالك → "Zamalek", مدينة نصر → "Nasr City"). If not stated, infer from compound/area: Madinaty/Hyde Park/Rehab → "5th Settlement". Always in English. Return null if cannot be determined.
+12. Return ONLY the JSON array. No markdown, no explanation.
 </rules>
 
 <examples>
@@ -187,7 +219,7 @@ INPUT:
 السعر 4.5 مليون
 
 OUTPUT:
-[{"property_type": "apartment", "transaction_type": "sale", "price": 4500000, "currency": "EGP", "bedrooms": 3, "compound_name": "مدينتي", "ad_snippet": "شقه للبيع في مدينتي B12 3 غرف 150 متر السعر 4.5 مليون", "ad_index": 1}]
+[{"property_type": "apartment", "transaction_type": "sale", "price": 4500000, "currency": "EGP", "bedrooms": 3, "compound_name": "Madinaty", "city": "New Cairo", "district": "5th Settlement", "ad_snippet": "شقه للبيع في مدينتي B12 3 غرف 150 متر السعر 4.5 مليون", "ad_index": 1}]
 
 INPUT:
 --- AD 2 (from: Sara, date: 2025-03-01T11:00:00) ---
@@ -196,7 +228,9 @@ INPUT:
 الإيجار 35.000 شهري
 
 OUTPUT:
-[{"property_type": "twin_house", "transaction_type": "rent", "price": 35000, "currency": "EGP", "bedrooms": 4, "compound_name": "Hyde Park", "ad_snippet": "للإيجار فيلا توين هاوس هايد بارك التجمع 4 غرف + حديقه الإيجار 35.000 شهري", "ad_index": 2}]
+[{"property_type": "twin_house", "transaction_type": "rent", "price": 35000, "currency": "EGP", "bedrooms": 4, "compound_name": "Hyde Park", "city": "New Cairo", "district": "5th Settlement", "ad_snippet": "للإيجار فيلا توين هاوس هايد بارك التجمع 4 غرف + حديقه الإيجار 35.000 شهري", "ad_index": 2}]
+
+NOTE on AD 2: city predicted from "التجمع" (5th Settlement area = New Cairo). district extracted directly from "التجمع".
 
 INPUT:
 --- AD 3 (from: Broker, date: 2025-03-01T12:00:00) ---
@@ -205,9 +239,9 @@ INPUT:
 استلام فوري
 
 OUTPUT:
-[{"property_type": null, "transaction_type": "sale", "price": null, "currency": "EGP", "bedrooms": null, "compound_name": "Palm Hills", "ad_snippet": "مقدم 500 الف وقسط 15 الف بالم هيلز أكتوبر استلام فوري", "ad_index": 3}]
+[{"property_type": null, "transaction_type": "sale", "price": null, "currency": "EGP", "bedrooms": null, "compound_name": "Palm Hills", "city": "6th of October City", "district": null, "ad_snippet": "مقدم 500 الف وقسط 15 الف بالم هيلز أكتوبر استلام فوري", "ad_index": 3}]
 
-NOTE on AD 3: price is null because only installment info is given — no total price. property_type is null because no type word appears.
+NOTE on AD 3: price is null — installment amount given (15,000) but NO time period/count stated, so total cannot be computed. property_type is null because no type word appears.
 
 INPUT:
 --- AD 4 (from: Ali, date: 2025-03-01T13:00:00) ---
@@ -215,9 +249,9 @@ INPUT:
 وفيلا standalone 300م ب 12 مليون في نفس المشروع
 
 OUTPUT:
-[{"property_type": "apartment", "transaction_type": null, "price": 3200000, "currency": "EGP", "bedrooms": 2, "compound_name": "Badya Palm Hills", "ad_snippet": "شقه 120م بادية بالم هيلز 2 غرف بسعر 3.2M", "ad_index": 4}, {"property_type": "standalone", "transaction_type": null, "price": 12000000, "currency": "EGP", "bedrooms": null, "compound_name": "Badya Palm Hills", "ad_snippet": "فيلا standalone 300م ب 12 مليون في نفس المشروع", "ad_index": 4}]
+[{"property_type": "apartment", "transaction_type": null, "price": 3200000, "currency": "EGP", "bedrooms": 2, "compound_name": "Badya Palm Hills", "city": "6th of October City", "district": null, "ad_snippet": "شقه 120م بادية بالم هيلز 2 غرف بسعر 3.2M", "ad_index": 4}, {"property_type": "standalone", "transaction_type": null, "price": 12000000, "currency": "EGP", "bedrooms": null, "compound_name": "Badya Palm Hills", "city": "6th of October City", "district": null, "ad_snippet": "فيلا standalone 300م ب 12 مليون في نفس المشروع", "ad_index": 4}]
 
-NOTE on AD 4: Two listings from one AD block — both share ad_index 4. transaction_type is null because neither "بيع" nor "إيجار" appears.
+NOTE on AD 4: Two listings from one AD block — both share ad_index 4. transaction_type is null because neither "بيع" nor "إيجار" appears. city predicted from "بادية بالم هيلز" (Badya is in 6th of October City).
 
 INPUT:
 --- AD 5 (from: Agent, date: 2025-03-01T14:00:00) ---
@@ -227,9 +261,53 @@ INPUT:
 متبقي: 640,000
 
 OUTPUT:
-[{"property_type": "townhouse", "transaction_type": "sale", "price": 9640000, "down_payment": 9000000, "currency": "EGP", "bedrooms": 3, "compound_name": "Badya Palm Hills", "ad_snippet": "تاون هاوس باديا بالم هيلز استلام فوري 3 غرف نوم مقدم: 9,000,000 شامل الصيانة متبقي: 640,000", "ad_index": 5}]
+[{"property_type": "townhouse", "transaction_type": "sale", "price": 9640000, "down_payment": 9000000, "currency": "EGP", "bedrooms": 3, "compound_name": "Badya Palm Hills", "city": "6th of October City", "district": null, "ad_snippet": "تاون هاوس باديا بالم هيلز استلام فوري 3 غرف نوم مقدم: 9,000,000 شامل الصيانة متبقي: 640,000", "ad_index": 5}]
 
-NOTE on AD 5: Both deposit and remaining are plain lump sums → price = 9,000,000 + 640,000 = 9,640,000. down_payment = 9,000,000. currency defaults to EGP because no currency symbol appears but price is set.
+NOTE on AD 5: Both deposit and remaining are plain lump sums → price = 9,000,000 + 640,000 = 9,640,000. down_payment = 9,000,000. currency defaults to EGP because no currency symbol appears.
+
+INPUT:
+--- AD 6 (from: Hana, date: 2025-03-01T15:00:00) ---
+شقة للإيجار في الزمالك، القاهرة
+2 غرف + صالة 110م
+الإيجار 18000 جنيه شهري
+
+OUTPUT:
+[{"property_type": "apartment", "transaction_type": "rent", "price": 18000, "currency": "EGP", "bedrooms": 2, "compound_name": null, "city": "Cairo", "district": "Zamalek", "ad_snippet": "شقة للإيجار في الزمالك، القاهرة 2 غرف + صالة 110م الإيجار 18000 جنيه شهري", "ad_index": 6}]
+
+NOTE on AD 6: city "Cairo" extracted directly from "القاهرة". district "Zamalek" extracted directly from "الزمالك". No compound mentioned → null.
+
+INPUT:
+--- AD 7 (from: Karim, date: 2025-03-01T16:00:00) ---
+شقة للبيع التجمع الخامس بدون كمباوند
+3 نوم 160م
+السعر 5.2M
+
+OUTPUT:
+[{"property_type": "apartment", "transaction_type": "sale", "price": 5200000, "currency": "EGP", "bedrooms": 3, "compound_name": null, "city": "New Cairo", "district": "5th Settlement", "ad_snippet": "شقة للبيع التجمع الخامس بدون كمباوند 3 نوم 160م السعر 5.2M", "ad_index": 7}]
+
+NOTE on AD 7: district "5th Settlement" extracted directly from "التجمع الخامس". city "New Cairo" predicted from that district. compound_name is null — text explicitly says "بدون كمباوند" (no compound).
+
+INPUT:
+--- AD 8 (from: Sales, date: 2025-03-01T17:00:00) ---
+شقة في بالم هيلز أكتوبر
+2 غرف 110م
+مقدم 600,000
+وقسط 12,000 شهري لمدة 8 سنوات
+
+OUTPUT:
+[{"property_type": "apartment", "transaction_type": "sale", "price": 1752000, "down_payment": 600000, "currency": "EGP", "bedrooms": 2, "compound_name": "Palm Hills", "city": "6th of October City", "district": null, "ad_snippet": "شقة في بالم هيلز أكتوبر 2 غرف 110م مقدم 600,000 وقسط 12,000 شهري لمدة 8 سنوات", "ad_index": 8}]
+
+NOTE on AD 8: price = مقدم + (installment × months) = 600,000 + (12,000 × 96) = 600,000 + 1,152,000 = 1,752,000. 8 سنوات = 8 × 12 = 96 months. down_payment = 600,000.
+
+INPUT:
+--- AD 9 (from: Dev, date: 2025-03-01T18:00:00) ---
+وحدة تجارية ميفيدا القاهرة الجديدة
+أقساط 25,000 شهري على 5 سنوات بدون مقدم
+
+OUTPUT:
+[{"property_type": "shop", "transaction_type": "sale", "price": 1500000, "down_payment": null, "currency": "EGP", "bedrooms": null, "compound_name": "Mivida", "city": "New Cairo", "district": "5th Settlement", "ad_snippet": "وحدة تجارية ميفيدا القاهرة الجديدة أقساط 25,000 شهري على 5 سنوات بدون مقدم", "ad_index": 9}]
+
+NOTE on AD 9: price = installment × months = 25,000 × 60 = 1,500,000. No مقدم → down_payment null. "ميفيدا" → "Mivida" (compound_name must be English).
 
 </examples>"""
 
@@ -248,6 +326,23 @@ def build_extraction_prompt(ads: list[dict]) -> str:
         )
         parts.append(ad["body"])
     return "\n".join(parts)
+
+
+# Helper to update progress
+def update_progress_file(current, total, status="Processing", reset=False):
+    if reset:
+        progress_data = {"current": 0, "total": 0, "percentage": 0, "status": "", "done": False}
+    else:
+        done = (total > 0 and current >= total)
+        progress_data = {
+            "current": current,
+            "total": total,
+            "percentage": round((current / total) * 100) if total > 0 else 0,
+            "status": status,
+            "done": done
+        }
+    with open("progress.json", "w") as f:
+        json.dump(progress_data, f)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -302,13 +397,13 @@ def call_gemini(
                 contents=user_prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_PROMPT,
-                    temperature=0.1,
+                    temperature=0.5, #testing mid range temp
                     response_mime_type="application/json",
                     response_schema=list[ListingExtraction],
-                    thinking_config=types.ThinkingConfig(
-                        thinking_budget=1024,
-                        include_thoughts=True,
-                    ),
+                    # thinking_config=types.ThinkingConfig(
+                    #     thinking_budget=0,
+                    #     include_thoughts=True,
+                    # ),
                 ),
             )
             info["api_call_s"] = time.perf_counter() - t_api
@@ -439,7 +534,7 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
         BATCH_SIZE = 10
         batches = _simple_batches(ads, BATCH_SIZE)
         total_batches = len(batches)
-
+    update_progress_file(0, len(batches), "Starting batches...")
     logger = open_analysis_log(run_ts, GEMINI_MODEL, len(batches), days, chat_file)
     print(f"      Batches: {len(batches)}")
 
@@ -472,12 +567,14 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
     )
 
     # DB setup — compact schema matching GT format
-    DB_PATH = "backend/test_ImprovedPromptCompact.db"
+
     conn = _init_db(DB_PATH)
     total_inserted = 0
     all_info = []
 
     for batch_num, batch_obj in enumerate(batches, 1):
+        update_progress_file(batch_num, len(batches), f"Processing batch {batch_num}...")
+
         # Support both the Batch object from batch_messages and plain lists
         if hasattr(batch_obj, "messages"):
             batch = batch_obj.messages
@@ -494,7 +591,13 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
         for result in results:
             idx = result.get("ad_index", 1) - 1
             ad = batch[idx] if 0 <= idx < len(batch) else None
-            _insert_listing(conn, result, original_msg=ad["body"] if ad else "")
+            _insert_listing(
+                conn,
+                result,
+                original_msg=ad["body"] if ad else "",
+                sender=ad.get("sender") if ad else None,
+                date=ad["datetime"].isoformat() if ad and ad.get("datetime") else None,
+            )
             total_inserted += 1
         conn.commit()
 
@@ -523,6 +626,8 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
         )
 
     conn.close()
+    update_progress_file(len(batches), len(batches), "Complete")
+
 
     # ── Step 5: Summary ────────────────────────────────────────
     total_time = time.perf_counter() - run_start
@@ -606,8 +711,12 @@ def _init_db(db_path: str) -> sqlite3.Connection:
             currency         TEXT,
             bedrooms         INTEGER,
             compound_name    TEXT,
+            city             TEXT,
+            district         TEXT,
             ad_snippet       TEXT,
-            original_message TEXT
+            original_message TEXT,
+            sender           TEXT,
+            date             TEXT
         );
         """
     )
@@ -615,7 +724,7 @@ def _init_db(db_path: str) -> sqlite3.Connection:
     return conn
 
 
-def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str):
+def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str, sender: str = None, date: str = None):
     price = data.get("price")
     # Always default to EGP; only null if model explicitly flagged multi-currency ambiguity.
     currency = data.get("currency") or "EGP"
@@ -623,8 +732,9 @@ def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str):
         """
         INSERT INTO listings (
             property_type, transaction_type, price, currency,
-            bedrooms, compound_name, ad_snippet, original_message
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            bedrooms, compound_name, city, district, ad_snippet, original_message,
+            sender, date
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             data.get("property_type"),
@@ -633,8 +743,12 @@ def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str):
             currency,
             data.get("bedrooms"),
             data.get("compound_name"),
+            data.get("city"),
+            data.get("district"),
             data.get("ad_snippet"),
             original_msg,
+            sender,
+            date,
         ),
     )
 
@@ -679,6 +793,6 @@ def _simple_batches(ads, size):
 if __name__ == "__main__":
 
     run_pipeline_improved(
-        "Backupz/27_messages_13_10_2024.txt",
-        2,
+        "SampleTextFiles/New50DayGTSample.txt",
+        8,
     )
