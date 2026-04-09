@@ -380,13 +380,13 @@ def call_gemini(
                 contents=user_prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_PROMPT,
-                    temperature=0.1,
+                    temperature=0.5, #testing mid range temp
                     response_mime_type="application/json",
                     response_schema=list[ListingExtraction],
-                    thinking_config=types.ThinkingConfig(
-                        thinking_budget=4096,
-                        include_thoughts=True,
-                    ),
+                    # thinking_config=types.ThinkingConfig(
+                    #     thinking_budget=0,
+                    #     include_thoughts=True,
+                    # ),
                 ),
             )
             info["api_call_s"] = time.perf_counter() - t_api
@@ -550,7 +550,7 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
     )
 
     # DB setup — compact schema matching GT format
-    DB_PATH = "zDemoTest1_350.db"
+    DB_PATH = "zDemoTest1_50.db"
     conn = _init_db(DB_PATH)
     total_inserted = 0
     all_info = []
@@ -572,7 +572,13 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
         for result in results:
             idx = result.get("ad_index", 1) - 1
             ad = batch[idx] if 0 <= idx < len(batch) else None
-            _insert_listing(conn, result, original_msg=ad["body"] if ad else "")
+            _insert_listing(
+                conn,
+                result,
+                original_msg=ad["body"] if ad else "",
+                sender=ad.get("sender") if ad else None,
+                date=ad["datetime"].isoformat() if ad and ad.get("datetime") else None,
+            )
             total_inserted += 1
         conn.commit()
 
@@ -687,7 +693,9 @@ def _init_db(db_path: str) -> sqlite3.Connection:
             city             TEXT,
             district         TEXT,
             ad_snippet       TEXT,
-            original_message TEXT
+            original_message TEXT,
+            sender           TEXT,
+            date             TEXT
         );
         """
     )
@@ -695,7 +703,7 @@ def _init_db(db_path: str) -> sqlite3.Connection:
     return conn
 
 
-def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str):
+def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str, sender: str = None, date: str = None):
     price = data.get("price")
     # Always default to EGP; only null if model explicitly flagged multi-currency ambiguity.
     currency = data.get("currency") or "EGP"
@@ -703,8 +711,9 @@ def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str):
         """
         INSERT INTO listings (
             property_type, transaction_type, price, currency,
-            bedrooms, compound_name, city, district, ad_snippet, original_message
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            bedrooms, compound_name, city, district, ad_snippet, original_message,
+            sender, date
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             data.get("property_type"),
@@ -717,6 +726,8 @@ def _insert_listing(conn: sqlite3.Connection, data: dict, original_msg: str):
             data.get("district"),
             data.get("ad_snippet"),
             original_msg,
+            sender,
+            date,
         ),
     )
 
@@ -761,6 +772,6 @@ def _simple_batches(ads, size):
 if __name__ == "__main__":
 
     run_pipeline_improved(
-        "SampleTextFiles/350_sampled_messages.txt",
+        "SampleTextFiles/New50DayGTSample.txt",
         8,
     )
