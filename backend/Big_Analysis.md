@@ -4542,3 +4542,4794 @@ Price 34.000.000
 
 
 ============================================================
+
+## (9/4/2026)Run — (10:52)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 4 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (681 words, 4090 chars, 4834 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2024-12-15T11:06:00) ---
+Available units for *rent*  in *CFC*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code : CFCr24
+Studio ground floor with garden for rent in CFC 
+Area : 90 SQM 
+1 bedrooms 
+1 bathrooms 
+Fully furnished 
+Kitchen 
+Price : 1000$
+Available now
+✨✨✨✨✨✨✨✨✨
+Code CFCr96
+Apartment for rent in CFC
+Area 204 SQM
+4th floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Kitchen with appliances 
+ACs
+View garden 
+*Price 65k*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code CFCr67
+Apartment for rent in CFC- Aura
+Area 165 SQM
+4th floor 
+2 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+Ac's 
+Price 1800$
+✨✨✨✨✨✨✨✨✨
+Update price 
+Code CFCr62
+Apartment for rent in CFC
+Area 140 SQM
+4rd f
+[truncated — 4,087 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (877 words, 6975 chars, 2496 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "studio",
+    "transaction_type": "rent",
+    "price": 1000,
+    "currency": "USD",
+    "bedrooms": 1,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Studio ground floor with garden for rent in CFC Area : 90 SQM 1 bedrooms 1 bathrooms Fully furnished Kitchen Price : 1000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 65000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Apartment for rent in CFC Area 204 SQM 4th floor 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Kitchen 
+[truncated — 6,975 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (1120 words, 6986 chars, 6449 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 76253405, date: 2025-01-17T12:52:00) ---
+📣📣مكتب اداري لقطه لقطه لقطه
+🚨🚨ارخص ارخص مكتب اداري في اشيك مشروع  باقوي اداره اداره 🛑🛑J.w .marriout
+🛑 بالتجمع الخامس 
+المكتب اداري مساحه ٧٣ متر دور اول  🛑اسم  مشروع الجازي ( تشيس فيلد)
+(Chess field )
+⛔ال مطور العقاري الجازي القطري باداره  j.w marriout
+  تشطيب المحل  نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه
+استلام يونيه ٢٠٢٥ 
+كل المبني متشطب رخام والوميتال و٢ اسانسير  وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب وفرش jw  marriout
+اجمالي سعره 
+٩.٠٩٠.٨٤٢
+مطلوب كاش ٦.٧٥٠.٠٠٠ 
+متبقي اجمالي ٢.٣٤٠.٨٤٢
+عباره عن ١٤ قسط اقساط ربع سنوي 
+قيمه االقسط ١٦٧.٢٠٣
+اول قسط مستحق 
+القسط رقم ١٠ 
+مستحق في ٣٠ ابريل ٢٠٢٥ 
+واخ
+[truncated — 6,983 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1296 words, 9768 chars, 3792 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "office",
+    "transaction_type": "sale",
+    "price": 9090842,
+    "down_payment": 6750000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Chess Field",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "مكتب اداري لقطه لقطه لقطه ارخص ارخص مكتب اداري في اشيك مشروع باقوي اداره اداره J.w .marriout بالتجمع الخامس المكتب اداري مساحه ٧٣ متر دور اول اسم مشروع الجازي ( تشيس فيلد) (Chess field ) المطور العقاري الجازي القطري باداره j.w marriout تشطيب المحل نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه استلام يونيه ٢٠٢٥ كل المبني متشطب رخام والوميتال و٢ اسانسير وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب
+[truncated — 9,768 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (603 words, 3775 chars, 5082 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 00060244, date: 2024-12-15T14:00:00) ---
+*Palm Hills New Cairo*
+Family House Ground for sale
+
+
+كمبوند بالم هيلز نيو كايرو 
+فاميلي هاوس استلام فوري 
+موقع مميز جاهز للمعاينه اي وقت
+
+
+BUA: 203m²
+Garden: 237m²
+Core & Shell. Ready to move
+Palm Hills Club included
+Maintenance included
+Asking for 22 million
+
+--- AD 2 (from: +20 10 08378787, date: 2024-12-15T14:13:00) ---
+للايجار بالرحاب ٢
+شقة مفروشة مودرن
+٣ غرف نوم
+٢ حمام
+مطبخ بالاجهزة
+Wifi
+٢ تليفزيون lcd
+
+
+
+
+للاستفسار 
+٠١٠٠٨٣٧٨٧٨٧
+
+
+For rent rehab 2
+Apartement modern
+Amazing wide garden view 
+3 bedrooms
+2 bathrooms
+Lcd televisions
+Wifi
+
+
+Contact me if interested
+01008378787
+
+--- AD 3 (from: +20 10 97400423, date: 2024-12-15T
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (796 words, 6773 chars, 2528 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "sale",
+    "price": 22000000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Palm Hills New Cairo",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Palm Hills New Cairo Family House Ground for sale BUA: 203m² Garden: 237m² Core & Shell. Ready to move Palm Hills Club included Maintenance included Asking for 22 million",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": null,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Rehab City",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "ل
+[truncated — 6,773 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 4/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (29 words, 164 chars, 3291 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 99712389, date: 2024-12-15T13:28:00) ---
+فيلا للايجار في ميفيدا
+500 ارض 
+350 مباني 
+5 غرف نوم 
+غرف ناني 
+مطبخ وتكيفات بس 
+مطلوب 2.200  دولار
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (44 words, 357 chars, 149 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "rent",
+    "price": 2200,
+    "currency": "USD",
+    "bedrooms": 5,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "فيلا للايجار في ميفيدا 500 ارض 350 مباني 5 غرف نوم غرف ناني مطبخ وتكيفات بس مطلوب 2.200 دولار",
+    "ad_index": 1
+  }
+]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 16 | 4834 | 2496 | 0 | 0 | $0.00148 | 6.52 | 6.52 |
+| 2 | 15 | 15 | 16 | 6449 | 3792 | 0 | 0 | $0.00216 | 10.45 | 10.45 |
+| 3 | 15 | 15 | 17 | 5082 | 2528 | 0 | 0 | $0.00152 | 6.70 | 6.70 |
+| 4 | 1 | 1 | 1 | 3291 | 149 | 0 | 0 | $0.00039 | 1.75 | 1.75 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 34 | 46 | 50 | 25.42 | 4 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 6.36 | 6.36 | 4914 | 2241 | 608 | 753 | 12.5 | 1.97 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 19656 | $0.00197 | 4914 |
+| output | 8965 | $0.00359 | 2241 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.005552**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0056 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 2 | 6 | 0 | 34 |
+
+**Listings inserted:** 50
+
+
+============================================================
+
+## (9/4/2026)Run — (10:58)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 3 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (904 words, 5575 chars, 5660 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2025-02-24T16:31:00) ---
+🚨rent in Mivida🚨
+
+Code MIVr232
+Twin house for rent in Mivida
+Land area 340 
+Bua 330 SQM
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Living room 
+Kitchen with appliances 
+AC's
+Price 3000$ 
+او ما يعادله
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr19
+Apartment for rent in mivida Boulevard 
+Area 220 SQM
+2nd floor 
+3 bedrooms
+3 bathrooms
+Maids room with bathroom
+Fully furnished
+Kitchen
+AC'S 
+Price 100k
+☀️☀️☀️☀️☀️☀️☀️☀️ 
+Code MIVr167
+Townhouse for rent in Mivida - parcel 2
+Area 216 SQM 
+Garden 90 SQM 
+3 bedrooms 
+4 bathrooms 
+Nany room 
+Fully furnished 
+Kitchen 
+ACs 
+Price 120k
+Day 10k
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr4
+Apartment ground f
+[truncated — 5,573 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (979 words, 7674 chars, 2915 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 3000,
+    "currency": "USD",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Twin house for rent in Mivida Land area 340 Bua 330 SQM 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Living room Kitchen with appliances AC's Price 3000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 100000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in 
+[truncated — 7,674 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (938 words, 5296 chars, 5783 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 88084056, date: 2025-02-24T19:02:00) ---
+◾Unit type : Twin house for Rent in mivida
+▫️Area : 310m
+▫️3  Bedrooms
+▫️4 Bathrooms 
+▫️Fully Super lux Furnished
+Asking price 150k
+➖➖➖➖➖➖➖➖➖
+Sodic Eastown 
+3 bedroom 
+3 bathroom 
+Nanny + bathroom
+210 m
+4th floor 
+Furnished 
+تطل علي القطاميه ديونز 
+اقل مده سنه 
+شهرين تأمين 
+عائلات بس 
+Price:80k
+➖➖➖➖➖➖➖➖➖
+Cfc
+Apartment 
+150 m 
+2Bedroom 
+2 bathroom 
+4th floor 
+Fully furnished 
+Price:80k
+
+
+--- AD 2 (from: +20 12 22262103, date: 2025-02-24T11:14:00) ---
+للبيع عماره الأندلس ٢
+حي الاندلس ( عمارات الاندلس )
+
+٨ شقق + ٢ استديو 
+الدور الارضي :٢ شقه ٣ غرف نوم ( مساحه :١٥٠ متر )
+الأدوار المتكررة : ٦ شقق غرفتين (مساحه: ١٣٥متر )
+الروف : ٢٢٠ م
+[truncated — 5,294 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1093 words, 8208 chars, 3106 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 150000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Twin house for Rent in mivida Area :310m 3 Bedrooms 4 Bathrooms Fully Super lux Furnished Asking price 150k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Sodic Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Sodic Eastown 3 bedroom 3 bathroom Nanny + bathroom 210 m 4th floor Furnis
+[truncated — 8,208 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (383 words, 2323 chars, 4415 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 11885910, date: 2025-02-24T23:50:00) ---
+*Update price*
+Code ESr212
+Apartment for rent in Eastown 
+Area 180 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price :
+For year 85k
+For month 80k
+For day 8k
+
+
+--- AD 2 (from: +20 11 11885910, date: 2025-02-24T02:55:00) ---
+Code ESr234
+Apartment for rent in Eastown 
+Area 205 SQM
+2nd floor 
+3 bedrooms ( 1 master & dressing)
+3 bathrooms 
+Fully furnished 
+Kitchen with appliances 
+ACs
+Price 95k
+
+
+--- AD 3 (from: +20 11 11885910, date: 2025-02-24T02:57:00) ---
+Update price
+Code ESr208
+Apartment for rent in Eastown 
+Area 205 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price 95k ( negotiable)
+
+
+--- AD 4 (fr
+[truncated — 2,321 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (520 words, 4580 chars, 1735 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 180 SQM 3 bedrooms 3 bathrooms Fully furnished Kitchen ACs Price : For month 80k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 95000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 205 SQM 2nd floor 3 bedrooms ( 1 maste
+[truncated — 4,580 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 8 | 15 | 16 | 5660 | 2915 | 0 | 0 | $0.00173 | 8.02 | 8.02 |
+| 2 | 15 | 15 | 17 | 5783 | 3106 | 0 | 0 | $0.00182 | 8.52 | 8.52 |
+| 3 | 12 | 12 | 12 | 4415 | 1735 | 0 | 0 | $0.00114 | 4.82 | 4.82 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 35 | 42 | 45 | 21.35 | 3 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 7.12 | 7.12 | 5286 | 2585 | 742 | 864 | 15.0 | 2.11 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 15858 | $0.00159 | 5286 |
+| output | 7756 | $0.00310 | 2585 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.004688**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0102 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 11 | 0 | 4 | 0 | 35 |
+
+**Listings inserted:** 45
+
+
+============================================================
+
+## (9/4/2026)Run — (11:00)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 2 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/2
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (554 words, 3382 chars, 4770 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 28830195, date: 2024-10-13T00:43:00) ---
+*Village Gate Palm Hills*
+Duplex Available For Rent:
+Bua: 220sqm.
+Garden: 120sqm.
+_____
+3 Bedrooms ( 1 Master ).
+3 Bathrooms ( 2 Water heaters ).
+_____
+AC'S and Kitchen with Appliances.
+Private Parking.
+_____
+Price: 45k per month ✨ ...
+
+--- AD 2 (from: +20 11 03387996, date: 2024-10-13T00:57:00) ---
+code sh177
+pharmacy for sale in hyde park 
+ Unit CVA3-4g
+ area :50 m
+fully  finished
+ Price : 1,100,000$ cash
+installments : 1,200,000 / 2 years
+60% 1st Yr , 40 % 2nd Yr
+(USD for installments  will be the reference for amount in EGP)
+
+--- AD 3 (from: +20 11 03387996, date: 2024-10-13T00:57:00) ---
+Code vgk43
+Apartment with garden for
+[truncated — 3,381 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (672 words, 5782 chars, 2067 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "duplex",
+    "transaction_type": "rent",
+    "price": 45000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Palm Hills",
+    "city": "6th of October City",
+    "district": null,
+    "ad_snippet": "Duplex Available For Rent: Bua: 220sqm. Garden: 120sqm. 3 Bedrooms ( 1 Master ). 3 Bathrooms ( 2 Water heaters ). AC'S and Kitchen with Appliances. Private Parking. Price: 45k per month",
+    "ad_index": 1
+  },
+  {
+    "property_type": "shop",
+    "transaction_type": "sale",
+    "price": 1100000,
+    "down_payment": null,
+    "currency": "USD",
+    "bedrooms": null,
+    "compound_name": "Hyde Park",
+    "city": "New Cairo",
+    "district": "5th Settlemen
+[truncated — 5,782 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/2
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (178 words, 1116 chars, 3762 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 03387996, date: 2024-10-13T00:57:00) ---
+Code ncc1954
+Apartment For Rent in Compound  Lamirada
+ground floor 
+Area 100m 
+2 bedroom 
+2 bathroom 
+Fully furnished 
+Price 35.000
+
+--- AD 2 (from: +20 11 03387996, date: 2024-10-13T00:57:00) ---
+code lv279
+Apartment for sale in Lake view Residence
+Area143m 
+2 bedrooms 
+2 bathrooms 
+super lux
+kitchen & Acs 
+price 12.000.000
+
+--- AD 3 (from: +20 11 03387996, date: 2024-10-13T00:57:00) ---
+Code ncc1484
+Apartment for sale in stone residence 
+2nd floor 
+Area 175m
+3 bedrooms 
+3 bathrooms 
+Semi finished 
+Price 6,457,500
+
+--- AD 4 (from: +20 11 03387996, date: 2024-10-13T00:57:00) ---
+code hp337
+studio for sale in hyde park
+area 81m
+1
+[truncated — 1,115 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (252 words, 2268 chars, 837 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 35000,
+    "currency": "EGP",
+    "bedrooms": 2,
+    "compound_name": "La Mirada",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment For Rent in Compound Lamirada ground floor Area 100m 2 bedroom 2 bathroom Fully furnished Price 35.000",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "sale",
+    "price": 12000000,
+    "currency": "EGP",
+    "bedrooms": 2,
+    "compound_name": "Lake View Residence",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for sale in Lake view Residence Area143m 2 bedroo
+[truncated — 2,268 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 14 | 15 | 14 | 4770 | 2067 | 0 | 0 | $0.00130 | 5.32 | 5.32 |
+| 2 | 6 | 6 | 6 | 3762 | 837 | 0 | 3206 | $0.00079 | 3.93 | 3.93 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 20 | 21 | 20 | 9.25 | 2 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 4.63 | 4.63 | 4266 | 1452 | 366 | 462 | 10.0 | 2.16 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 8532 | $0.00085 | 4266 |
+| output | 2904 | $0.00116 | 1452 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 3206 | $0.00008 | 1603 |
+
+**Total run cost: $0.002095**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0123 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 2 | 0 | 4 | 1 | 20 |
+
+**Listings inserted:** 20
+
+
+============================================================
+
+## (9/4/2026)Run — (11:02)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 3 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (557 words, 3452 chars, 4704 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2025-03-30T17:52:00) ---
+🚨sale in Eastown 🚨
+Code ESs229
+Apartment for sale in Eastown 
+Area 156 SQM 
+2 bedrooms ( 1 master & dressing ) 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs 
+View Landscape 
+*Price* 
+Fully furnished 14,600,000
+ Unfurnished 13,650,000
+⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡
+Available 
+Code ESs236
+Apartment ground floor with garden for sale in Eastown 
+Area 156 SQM
+Garden 120 SQM
+3 bedrooms 
+2 bathrooms 
+Reception 
+Fully finished 
+Kitchen 
+ACs
+Price 15,500,000
+⚡⚡⚡⚡⚡⚡⚡⚡⚡
+Code ESs239
+Duplex ground floor with garden for sale in Eastown 
+Area 263 SQM
+Garden 60 SQM
+3 bedrooms (1master & dressing)
+3 bathrooms 
+Nanny room with bathroom 
+Semi finished 
+Price 19,950,00
+[truncated — 3,451 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (753 words, 6860 chars, 2668 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "sale",
+    "price": 14600000,
+    "currency": "EGP",
+    "bedrooms": 2,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for sale in Eastown Area 156 SQM 2 bedrooms Fully furnished Price 14,600,000",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "sale",
+    "price": 13650000,
+    "currency": "EGP",
+    "bedrooms": 2,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for sale in Eastown Area 156 SQM 2 bedrooms Unfurnished Price 13,650,000",
+    "ad_ind
+[truncated — 6,860 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (467 words, 2840 chars, 4451 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2025-03-30T17:52:00) ---
+🚨rent in Eastown 🚨
+Available 
+Code ESr230
+Apartment for rent in Eastown 
+Area 205 SQM 
+2nd floor 
+3 bedrooms 
+3 bathrooms 
+Nany room with bathroom 
+Kitchen 
+ACs 
+Price 50k
+⚡⚡⚡⚡⚡⚡⚡⚡⚡
+*Update price*
+Code ESr88
+Duplex with roof for rent in  Eastown 
+Area 283sqm
+Roof 79 sqm 
+3 bedrooms  (1master)
+3 bathrooms
+Nanny room  
+Fully finished
+Kitchen
+Ac's 
+ price 100k
+⚡⚡⚡⚡⚡⚡⚡⚡⚡
+*Update price*
+Code ESr89
+Duplex for rent in Eastown 
+Area 283sqm
+Roof 79 sqm 
+3 bedrooms  (1master)
+3 bathrooms
+Nanny room  
+Fully finished
+Kitchen
+Ac's 
+price 100k
+⚡⚡⚡⚡⚡⚡⚡⚡⚡
+Code ESr238
+Apartment for rent in Eastown 
+Area 195 SQM
+2nd floor 
+3 bedrooms (1 master)
+3
+[truncated — 2,839 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (717 words, 6081 chars, 2189 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 50000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 205 SQM 2nd floor 3 bedrooms 3 bathrooms Nany room with bathroom Kitchen ACs Price 50k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "duplex",
+    "transaction_type": "rent",
+    "price": 100000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Duplex with roof for rent in Eastown Area 283sqm Roof 79 sqm 3 bedroo
+[truncated — 6,081 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (313 words, 1828 chars, 4200 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 11885910, date: 2025-03-30T00:14:00) ---
+Update price
+Code ESr196
+Apartment for rent in Eastown 
+Area 216 SQM
+1st floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Reception 
+Laundry Room 
+Fully furnished 
+Kitchen with appliances 
+ACs
+Price 150k
+
+--- AD 2 (from: +20 11 11885910, date: 2025-03-30T05:02:00) ---
+Code ESr243
+Duplex for rent in eastown 
+Area 286 SQM 
+3 bedrooms ( 1 master ) 3 Bathrooms 
+Nany room with bathroom 
+Kitchen 
+ACs
+Price 2500$
+
+--- AD 3 (from: +20 11 11885910, date: 2025-03-30T00:06:00) ---
+Code ESr242
+Apartment for rent in Eastown 
+Area 220 SQM
+3 bedrooms (1master & dressing) 
+3 bathrooms 
+Reception 
+Kitchen 
+ACs
+Price 60k
+
+--- AD 4 (from: +20 10 09337264
+[truncated — 1,827 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (445 words, 3774 chars, 1425 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 150000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 216 SQM 1st floor 3 bedrooms (1 master) 3 bathrooms Reception Laundry Room Fully furnished Kitchen with appliances ACs Price 150k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "duplex",
+    "transaction_type": "rent",
+    "price": 2500,
+    "currency": "USD",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Duplex for rent in eastown 
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 19 | 4704 | 2668 | 0 | 0 | $0.00154 | 6.81 | 6.81 |
+| 2 | 3 | 15 | 15 | 4451 | 2189 | 0 | 0 | $0.00132 | 5.90 | 5.90 |
+| 3 | 10 | 10 | 10 | 4200 | 1425 | 0 | 0 | $0.00099 | 6.58 | 6.58 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 16 | 40 | 44 | 19.30 | 3 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 6.43 | 6.43 | 4452 | 2094 | 446 | 638 | 14.7 | 2.28 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 13355 | $0.00134 | 4452 |
+| output | 6282 | $0.00251 | 2094 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.003848**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0162 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 0 | 8 | 1 | 16 |
+
+**Listings inserted:** 44
+
+
+============================================================
+
+## (9/4/2026)Run — (11:43)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 4 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (681 words, 4090 chars, 4834 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2024-12-15T11:06:00) ---
+Available units for *rent*  in *CFC*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code : CFCr24
+Studio ground floor with garden for rent in CFC 
+Area : 90 SQM 
+1 bedrooms 
+1 bathrooms 
+Fully furnished 
+Kitchen 
+Price : 1000$
+Available now
+✨✨✨✨✨✨✨✨✨
+Code CFCr96
+Apartment for rent in CFC
+Area 204 SQM
+4th floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Kitchen with appliances 
+ACs
+View garden 
+*Price 65k*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code CFCr67
+Apartment for rent in CFC- Aura
+Area 165 SQM
+4th floor 
+2 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+Ac's 
+Price 1800$
+✨✨✨✨✨✨✨✨✨
+Update price 
+Code CFCr62
+Apartment for rent in CFC
+Area 140 SQM
+4rd f
+[truncated — 4,087 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (882 words, 7029 chars, 2506 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "studio",
+    "transaction_type": "rent",
+    "price": 1000,
+    "currency": "USD",
+    "bedrooms": 1,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Studio ground floor with garden for rent in CFC Area : 90 SQM 1 bedrooms 1 bathrooms Fully furnished Kitchen Price : 1000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 65000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Apartment for rent in CFC Area 204 SQM 4th floor 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Kitchen 
+[truncated — 7,029 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (1120 words, 6986 chars, 6449 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 76253405, date: 2025-01-17T12:52:00) ---
+📣📣مكتب اداري لقطه لقطه لقطه
+🚨🚨ارخص ارخص مكتب اداري في اشيك مشروع  باقوي اداره اداره 🛑🛑J.w .marriout
+🛑 بالتجمع الخامس 
+المكتب اداري مساحه ٧٣ متر دور اول  🛑اسم  مشروع الجازي ( تشيس فيلد)
+(Chess field )
+⛔ال مطور العقاري الجازي القطري باداره  j.w marriout
+  تشطيب المحل  نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه
+استلام يونيه ٢٠٢٥ 
+كل المبني متشطب رخام والوميتال و٢ اسانسير  وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب وفرش jw  marriout
+اجمالي سعره 
+٩.٠٩٠.٨٤٢
+مطلوب كاش ٦.٧٥٠.٠٠٠ 
+متبقي اجمالي ٢.٣٤٠.٨٤٢
+عباره عن ١٤ قسط اقساط ربع سنوي 
+قيمه االقسط ١٦٧.٢٠٣
+اول قسط مستحق 
+القسط رقم ١٠ 
+مستحق في ٣٠ ابريل ٢٠٢٥ 
+واخ
+[truncated — 6,983 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1294 words, 9952 chars, 3837 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "office",
+    "transaction_type": "sale",
+    "price": 9090842,
+    "down_payment": 6750000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Chess Field",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "مكتب اداري لقطه لقطه لقطه ارخص ارخص مكتب اداري في اشيك مشروع باقوي اداره اداره J.w .marriout بالتجمع الخامس المكتب اداري مساحه ٧٣ متر دور اول اسم مشروع الجازي ( تشيس فيلد) (Chess field ) المطور العقاري الجازي القطري باداره j.w marriout تشطيب المحل نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه استلام يونيه ٢٠٢٥ كل المبني متشطب رخام والوميتال و٢ اسانسير وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب
+[truncated — 9,952 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (603 words, 3775 chars, 5082 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 00060244, date: 2024-12-15T14:00:00) ---
+*Palm Hills New Cairo*
+Family House Ground for sale
+
+
+كمبوند بالم هيلز نيو كايرو 
+فاميلي هاوس استلام فوري 
+موقع مميز جاهز للمعاينه اي وقت
+
+
+BUA: 203m²
+Garden: 237m²
+Core & Shell. Ready to move
+Palm Hills Club included
+Maintenance included
+Asking for 22 million
+
+--- AD 2 (from: +20 10 08378787, date: 2024-12-15T14:13:00) ---
+للايجار بالرحاب ٢
+شقة مفروشة مودرن
+٣ غرف نوم
+٢ حمام
+مطبخ بالاجهزة
+Wifi
+٢ تليفزيون lcd
+
+
+
+
+للاستفسار 
+٠١٠٠٨٣٧٨٧٨٧
+
+
+For rent rehab 2
+Apartement modern
+Amazing wide garden view 
+3 bedrooms
+2 bathrooms
+Lcd televisions
+Wifi
+
+
+Contact me if interested
+01008378787
+
+--- AD 3 (from: +20 10 97400423, date: 2024-12-15T
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (765 words, 6598 chars, 2481 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "sale",
+    "price": 22000000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Palm Hills New Cairo",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Palm Hills New Cairo Family House Ground for sale BUA: 203m² Garden: 237m² Core & Shell. Ready to move Palm Hills Club included Maintenance included Asking for 22 million",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 30000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Rehab City",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "
+[truncated — 6,598 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 4/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (29 words, 164 chars, 3291 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 99712389, date: 2024-12-15T13:28:00) ---
+فيلا للايجار في ميفيدا
+500 ارض 
+350 مباني 
+5 غرف نوم 
+غرف ناني 
+مطبخ وتكيفات بس 
+مطلوب 2.200  دولار
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (44 words, 357 chars, 149 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "rent",
+    "price": 2200,
+    "currency": "USD",
+    "bedrooms": 5,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "فيلا للايجار في ميفيدا 500 ارض 350 مباني 5 غرف نوم غرف ناني مطبخ وتكيفات بس مطلوب 2.200 دولار",
+    "ad_index": 1
+  }
+]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 16 | 4834 | 2506 | 0 | 0 | $0.00149 | 5.12 | 5.12 |
+| 2 | 15 | 15 | 17 | 6449 | 3837 | 0 | 0 | $0.00218 | 7.05 | 7.05 |
+| 3 | 15 | 15 | 17 | 5082 | 2481 | 0 | 0 | $0.00150 | 4.19 | 4.19 |
+| 4 | 1 | 1 | 1 | 3291 | 149 | 0 | 0 | $0.00039 | 1.54 | 1.54 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 34 | 46 | 51 | 17.89 | 4 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 4.47 | 4.47 | 4914 | 2243 | 608 | 746 | 12.8 | 2.85 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 19656 | $0.00197 | 4914 |
+| output | 8973 | $0.00359 | 2243 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.005555**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0217 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 2 | 6 | 0 | 34 |
+
+**Listings inserted:** 51
+
+
+============================================================
+
+## (9/4/2026)Run — (12:05)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 4 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (681 words, 4090 chars, 4834 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2024-12-15T11:06:00) ---
+Available units for *rent*  in *CFC*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code : CFCr24
+Studio ground floor with garden for rent in CFC 
+Area : 90 SQM 
+1 bedrooms 
+1 bathrooms 
+Fully furnished 
+Kitchen 
+Price : 1000$
+Available now
+✨✨✨✨✨✨✨✨✨
+Code CFCr96
+Apartment for rent in CFC
+Area 204 SQM
+4th floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Kitchen with appliances 
+ACs
+View garden 
+*Price 65k*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code CFCr67
+Apartment for rent in CFC- Aura
+Area 165 SQM
+4th floor 
+2 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+Ac's 
+Price 1800$
+✨✨✨✨✨✨✨✨✨
+Update price 
+Code CFCr62
+Apartment for rent in CFC
+Area 140 SQM
+4rd f
+[truncated — 4,087 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (913 words, 7402 chars, 2641 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "studio",
+    "transaction_type": "rent",
+    "price": 1000,
+    "down_payment": null,
+    "currency": "USD",
+    "bedrooms": 1,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Studio ground floor with garden for rent in CFC Area : 90 SQM 1 bedrooms 1 bathrooms Fully furnished Kitchen Price : 1000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 65000,
+    "down_payment": null,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Apartment for rent in CFC Area 204 SQM 4th floor 3 bedrooms (1 m
+[truncated — 7,402 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (1120 words, 6986 chars, 6449 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 76253405, date: 2025-01-17T12:52:00) ---
+📣📣مكتب اداري لقطه لقطه لقطه
+🚨🚨ارخص ارخص مكتب اداري في اشيك مشروع  باقوي اداره اداره 🛑🛑J.w .marriout
+🛑 بالتجمع الخامس 
+المكتب اداري مساحه ٧٣ متر دور اول  🛑اسم  مشروع الجازي ( تشيس فيلد)
+(Chess field )
+⛔ال مطور العقاري الجازي القطري باداره  j.w marriout
+  تشطيب المحل  نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه
+استلام يونيه ٢٠٢٥ 
+كل المبني متشطب رخام والوميتال و٢ اسانسير  وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب وفرش jw  marriout
+اجمالي سعره 
+٩.٠٩٠.٨٤٢
+مطلوب كاش ٦.٧٥٠.٠٠٠ 
+متبقي اجمالي ٢.٣٤٠.٨٤٢
+عباره عن ١٤ قسط اقساط ربع سنوي 
+قيمه االقسط ١٦٧.٢٠٣
+اول قسط مستحق 
+القسط رقم ١٠ 
+مستحق في ٣٠ ابريل ٢٠٢٥ 
+واخ
+[truncated — 6,983 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1287 words, 9923 chars, 3829 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "office",
+    "transaction_type": "sale",
+    "price": 9090842,
+    "down_payment": 6750000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Chess Field",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "مكتب اداري لقطه لقطه لقطه ارخص ارخص مكتب اداري في اشيك مشروع باقوي اداره اداره J.w .marriout بالتجمع الخامس المكتب اداري مساحه ٧٣ متر دور اول اسم مشروع الجازي ( تشيس فيلد) (Chess field ) المطور العقاري الجازي القطري باداره j.w marriout تشطيب المحل نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه استلام يونيه ٢٠٢٥ كل المبني متشطب رخام والوميتال و٢ اسانسير وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب
+[truncated — 9,923 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (603 words, 3775 chars, 5082 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 00060244, date: 2024-12-15T14:00:00) ---
+*Palm Hills New Cairo*
+Family House Ground for sale
+
+
+كمبوند بالم هيلز نيو كايرو 
+فاميلي هاوس استلام فوري 
+موقع مميز جاهز للمعاينه اي وقت
+
+
+BUA: 203m²
+Garden: 237m²
+Core & Shell. Ready to move
+Palm Hills Club included
+Maintenance included
+Asking for 22 million
+
+--- AD 2 (from: +20 10 08378787, date: 2024-12-15T14:13:00) ---
+للايجار بالرحاب ٢
+شقة مفروشة مودرن
+٣ غرف نوم
+٢ حمام
+مطبخ بالاجهزة
+Wifi
+٢ تليفزيون lcd
+
+
+
+
+للاستفسار 
+٠١٠٠٨٣٧٨٧٨٧
+
+
+For rent rehab 2
+Apartement modern
+Amazing wide garden view 
+3 bedrooms
+2 bathrooms
+Lcd televisions
+Wifi
+
+
+Contact me if interested
+01008378787
+
+--- AD 3 (from: +20 10 97400423, date: 2024-12-15T
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (774 words, 6649 chars, 2478 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "sale",
+    "price": 22000000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Palm Hills New Cairo",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Palm Hills New Cairo Family House Ground for sale BUA: 203m² Garden: 237m² Core & Shell. Ready to move Palm Hills Club included Maintenance included Asking for 22 million",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 35000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Rehab City",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "
+[truncated — 6,649 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 4/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (29 words, 164 chars, 3291 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 99712389, date: 2024-12-15T13:28:00) ---
+فيلا للايجار في ميفيدا
+500 ارض 
+350 مباني 
+5 غرف نوم 
+غرف ناني 
+مطبخ وتكيفات بس 
+مطلوب 2.200  دولار
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (44 words, 357 chars, 149 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "rent",
+    "price": 2200,
+    "currency": "USD",
+    "bedrooms": 5,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "فيلا للايجار في ميفيدا 500 ارض 350 مباني 5 غرف نوم غرف ناني مطبخ وتكيفات بس مطلوب 2.200 دولار",
+    "ad_index": 1
+  }
+]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 16 | 4834 | 2641 | 0 | 0 | $0.00154 | 5.29 | 5.29 |
+| 2 | 15 | 15 | 17 | 6449 | 3829 | 0 | 0 | $0.00218 | 11.63 | 11.63 |
+| 3 | 15 | 15 | 17 | 5082 | 2478 | 0 | 0 | $0.00150 | 4.77 | 4.77 |
+| 4 | 1 | 1 | 1 | 3291 | 149 | 0 | 0 | $0.00039 | 1.18 | 1.17 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 34 | 46 | 51 | 22.87 | 4 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 5.72 | 5.72 | 4914 | 2274 | 608 | 754 | 12.8 | 2.23 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 19656 | $0.00197 | 4914 |
+| output | 9097 | $0.00364 | 2274 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.005604**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0273 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 2 | 6 | 0 | 34 |
+
+**Listings inserted:** 51
+
+
+============================================================
+
+## (9/4/2026)Run — (12:05)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 3 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (904 words, 5575 chars, 5660 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2025-02-24T16:31:00) ---
+🚨rent in Mivida🚨
+
+Code MIVr232
+Twin house for rent in Mivida
+Land area 340 
+Bua 330 SQM
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Living room 
+Kitchen with appliances 
+AC's
+Price 3000$ 
+او ما يعادله
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr19
+Apartment for rent in mivida Boulevard 
+Area 220 SQM
+2nd floor 
+3 bedrooms
+3 bathrooms
+Maids room with bathroom
+Fully furnished
+Kitchen
+AC'S 
+Price 100k
+☀️☀️☀️☀️☀️☀️☀️☀️ 
+Code MIVr167
+Townhouse for rent in Mivida - parcel 2
+Area 216 SQM 
+Garden 90 SQM 
+3 bedrooms 
+4 bathrooms 
+Nany room 
+Fully furnished 
+Kitchen 
+ACs 
+Price 120k
+Day 10k
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr4
+Apartment ground f
+[truncated — 5,573 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1057 words, 8144 chars, 3063 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 3000,
+    "currency": "USD",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Twin house for rent in Mivida Land area 340 Bua 330 SQM 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Living room Kitchen with appliances AC's Price 3000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 100000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in 
+[truncated — 8,144 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (938 words, 5296 chars, 5783 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 88084056, date: 2025-02-24T19:02:00) ---
+◾Unit type : Twin house for Rent in mivida
+▫️Area : 310m
+▫️3  Bedrooms
+▫️4 Bathrooms 
+▫️Fully Super lux Furnished
+Asking price 150k
+➖➖➖➖➖➖➖➖➖
+Sodic Eastown 
+3 bedroom 
+3 bathroom 
+Nanny + bathroom
+210 m
+4th floor 
+Furnished 
+تطل علي القطاميه ديونز 
+اقل مده سنه 
+شهرين تأمين 
+عائلات بس 
+Price:80k
+➖➖➖➖➖➖➖➖➖
+Cfc
+Apartment 
+150 m 
+2Bedroom 
+2 bathroom 
+4th floor 
+Fully furnished 
+Price:80k
+
+
+--- AD 2 (from: +20 12 22262103, date: 2025-02-24T11:14:00) ---
+للبيع عماره الأندلس ٢
+حي الاندلس ( عمارات الاندلس )
+
+٨ شقق + ٢ استديو 
+الدور الارضي :٢ شقه ٣ غرف نوم ( مساحه :١٥٠ متر )
+الأدوار المتكررة : ٦ شقق غرفتين (مساحه: ١٣٥متر )
+الروف : ٢٢٠ م
+[truncated — 5,294 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1106 words, 8256 chars, 3129 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 150000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Unit type : Twin house for Rent in mivida Area : 310m 3 Bedrooms 4 Bathrooms Fully Super lux Furnished Asking price 150k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown Sodic",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Sodic Eastown 3 bedroom 3 bathroom Nanny + bathroom 210 m 4th
+[truncated — 8,256 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (383 words, 2323 chars, 4415 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 11885910, date: 2025-02-24T23:50:00) ---
+*Update price*
+Code ESr212
+Apartment for rent in Eastown 
+Area 180 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price :
+For year 85k
+For month 80k
+For day 8k
+
+
+--- AD 2 (from: +20 11 11885910, date: 2025-02-24T02:55:00) ---
+Code ESr234
+Apartment for rent in Eastown 
+Area 205 SQM
+2nd floor 
+3 bedrooms ( 1 master & dressing)
+3 bathrooms 
+Fully furnished 
+Kitchen with appliances 
+ACs
+Price 95k
+
+
+--- AD 3 (from: +20 11 11885910, date: 2025-02-24T02:57:00) ---
+Update price
+Code ESr208
+Apartment for rent in Eastown 
+Area 205 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price 95k ( negotiable)
+
+
+--- AD 4 (fr
+[truncated — 2,321 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (515 words, 4544 chars, 1717 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 180 SQM 3 bedrooms 3 bathrooms Fully furnished Kitchen ACs Price For month 80k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 95000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 205 SQM 2nd floor 3 bedrooms ( 1 master 
+[truncated — 4,544 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 8 | 15 | 16 | 5660 | 3063 | 0 | 0 | $0.00179 | 6.71 | 6.71 |
+| 2 | 15 | 15 | 17 | 5783 | 3129 | 0 | 0 | $0.00183 | 9.05 | 9.05 |
+| 3 | 12 | 12 | 12 | 4415 | 1717 | 0 | 0 | $0.00113 | 3.38 | 3.38 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 35 | 42 | 45 | 19.14 | 3 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 6.38 | 6.38 | 5286 | 2636 | 742 | 893 | 15.0 | 2.35 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 15858 | $0.00159 | 5286 |
+| output | 7909 | $0.00316 | 2636 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.004749**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0321 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 11 | 0 | 4 | 0 | 35 |
+
+**Listings inserted:** 45
+
+
+============================================================
+
+## (9/4/2026)Run — (12:08)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 4 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (681 words, 4090 chars, 4834 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2024-12-15T11:06:00) ---
+Available units for *rent*  in *CFC*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code : CFCr24
+Studio ground floor with garden for rent in CFC 
+Area : 90 SQM 
+1 bedrooms 
+1 bathrooms 
+Fully furnished 
+Kitchen 
+Price : 1000$
+Available now
+✨✨✨✨✨✨✨✨✨
+Code CFCr96
+Apartment for rent in CFC
+Area 204 SQM
+4th floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Kitchen with appliances 
+ACs
+View garden 
+*Price 65k*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code CFCr67
+Apartment for rent in CFC- Aura
+Area 165 SQM
+4th floor 
+2 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+Ac's 
+Price 1800$
+✨✨✨✨✨✨✨✨✨
+Update price 
+Code CFCr62
+Apartment for rent in CFC
+Area 140 SQM
+4rd f
+[truncated — 4,087 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (883 words, 7010 chars, 2503 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "studio",
+    "transaction_type": "rent",
+    "price": 1000,
+    "currency": "USD",
+    "bedrooms": 1,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Studio ground floor with garden for rent in CFC Area : 90 SQM 1 bedrooms 1 bathrooms Fully furnished Kitchen Price : 1000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 65000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Apartment for rent in CFC Area 204 SQM 4th floor 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Kitchen 
+[truncated — 7,010 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (1120 words, 6986 chars, 6449 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 76253405, date: 2025-01-17T12:52:00) ---
+📣📣مكتب اداري لقطه لقطه لقطه
+🚨🚨ارخص ارخص مكتب اداري في اشيك مشروع  باقوي اداره اداره 🛑🛑J.w .marriout
+🛑 بالتجمع الخامس 
+المكتب اداري مساحه ٧٣ متر دور اول  🛑اسم  مشروع الجازي ( تشيس فيلد)
+(Chess field )
+⛔ال مطور العقاري الجازي القطري باداره  j.w marriout
+  تشطيب المحل  نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه
+استلام يونيه ٢٠٢٥ 
+كل المبني متشطب رخام والوميتال و٢ اسانسير  وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب وفرش jw  marriout
+اجمالي سعره 
+٩.٠٩٠.٨٤٢
+مطلوب كاش ٦.٧٥٠.٠٠٠ 
+متبقي اجمالي ٢.٣٤٠.٨٤٢
+عباره عن ١٤ قسط اقساط ربع سنوي 
+قيمه االقسط ١٦٧.٢٠٣
+اول قسط مستحق 
+القسط رقم ١٠ 
+مستحق في ٣٠ ابريل ٢٠٢٥ 
+واخ
+[truncated — 6,983 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1327 words, 10059 chars, 3885 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "office",
+    "transaction_type": "sale",
+    "price": 9090842,
+    "down_payment": 6750000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Chess Field",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "مكتب اداري لقطه لقطه لقطه ارخص ارخص مكتب اداري في اشيك مشروع باقوي اداره اداره J.w .marriout بالتجمع الخامس المكتب اداري مساحه ٧٣ متر دور اول اسم مشروع الجازي ( تشيس فيلد) (Chess field ) المطور العقاري الجازي القطري باداره j.w marriout تشطيب المحل نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه استلام يونيه ٢٠٢٥ كل المبني متشطب رخام والوميتال و٢ اسانسير وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب
+[truncated — 10,059 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (603 words, 3775 chars, 5082 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 00060244, date: 2024-12-15T14:00:00) ---
+*Palm Hills New Cairo*
+Family House Ground for sale
+
+
+كمبوند بالم هيلز نيو كايرو 
+فاميلي هاوس استلام فوري 
+موقع مميز جاهز للمعاينه اي وقت
+
+
+BUA: 203m²
+Garden: 237m²
+Core & Shell. Ready to move
+Palm Hills Club included
+Maintenance included
+Asking for 22 million
+
+--- AD 2 (from: +20 10 08378787, date: 2024-12-15T14:13:00) ---
+للايجار بالرحاب ٢
+شقة مفروشة مودرن
+٣ غرف نوم
+٢ حمام
+مطبخ بالاجهزة
+Wifi
+٢ تليفزيون lcd
+
+
+
+
+للاستفسار 
+٠١٠٠٨٣٧٨٧٨٧
+
+
+For rent rehab 2
+Apartement modern
+Amazing wide garden view 
+3 bedrooms
+2 bathrooms
+Lcd televisions
+Wifi
+
+
+Contact me if interested
+01008378787
+
+--- AD 3 (from: +20 10 97400423, date: 2024-12-15T
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (725 words, 6339 chars, 2402 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "sale",
+    "price": 22000000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Palm Hills New Cairo",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Family House Ground for sale Palm Hills New Cairo BUA: 203m² Garden: 237m² Asking for 22 million",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": null,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Rehab City",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment modern 3 bedrooms 2 bathrooms For rent rehab 2",
+    "ad_index": 
+[truncated — 6,339 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 4/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (29 words, 164 chars, 3291 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 99712389, date: 2024-12-15T13:28:00) ---
+فيلا للايجار في ميفيدا
+500 ارض 
+350 مباني 
+5 غرف نوم 
+غرف ناني 
+مطبخ وتكيفات بس 
+مطلوب 2.200  دولار
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (44 words, 357 chars, 149 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "rent",
+    "price": 2200,
+    "currency": "USD",
+    "bedrooms": 5,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "فيلا للايجار في ميفيدا 500 ارض 350 مباني 5 غرف نوم غرف ناني مطبخ وتكيفات بس مطلوب 2.200 دولار",
+    "ad_index": 1
+  }
+]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 16 | 4834 | 2503 | 0 | 4195 | $0.00159 | 4.83 | 4.83 |
+| 2 | 15 | 15 | 17 | 6449 | 3885 | 0 | 0 | $0.00220 | 10.56 | 10.56 |
+| 3 | 15 | 15 | 17 | 5082 | 2402 | 0 | 4971 | $0.00159 | 4.15 | 4.15 |
+| 4 | 1 | 1 | 1 | 3291 | 149 | 0 | 0 | $0.00039 | 1.29 | 1.29 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 34 | 46 | 51 | 20.84 | 4 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 5.21 | 5.21 | 4914 | 2235 | 608 | 745 | 12.8 | 2.45 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 19656 | $0.00197 | 4914 |
+| output | 8939 | $0.00358 | 2235 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 9166 | $0.00023 | 2292 |
+
+**Total run cost: $0.005770**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0379 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 2 | 6 | 0 | 34 |
+
+**Listings inserted:** 51
+
+
+============================================================
+
+## (9/4/2026)Run — (14:56)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 4 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (681 words, 4090 chars, 4834 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2024-12-15T11:06:00) ---
+Available units for *rent*  in *CFC*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code : CFCr24
+Studio ground floor with garden for rent in CFC 
+Area : 90 SQM 
+1 bedrooms 
+1 bathrooms 
+Fully furnished 
+Kitchen 
+Price : 1000$
+Available now
+✨✨✨✨✨✨✨✨✨
+Code CFCr96
+Apartment for rent in CFC
+Area 204 SQM
+4th floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Kitchen with appliances 
+ACs
+View garden 
+*Price 65k*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code CFCr67
+Apartment for rent in CFC- Aura
+Area 165 SQM
+4th floor 
+2 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+Ac's 
+Price 1800$
+✨✨✨✨✨✨✨✨✨
+Update price 
+Code CFCr62
+Apartment for rent in CFC
+Area 140 SQM
+4rd f
+[truncated — 4,087 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (883 words, 7010 chars, 2503 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "studio",
+    "transaction_type": "rent",
+    "price": 1000,
+    "currency": "USD",
+    "bedrooms": 1,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Studio ground floor with garden for rent in CFC Area : 90 SQM 1 bedrooms 1 bathrooms Fully furnished Kitchen Price : 1000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 65000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Apartment for rent in CFC Area 204 SQM 4th floor 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Kitchen 
+[truncated — 7,010 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (1120 words, 6986 chars, 6449 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 76253405, date: 2025-01-17T12:52:00) ---
+📣📣مكتب اداري لقطه لقطه لقطه
+🚨🚨ارخص ارخص مكتب اداري في اشيك مشروع  باقوي اداره اداره 🛑🛑J.w .marriout
+🛑 بالتجمع الخامس 
+المكتب اداري مساحه ٧٣ متر دور اول  🛑اسم  مشروع الجازي ( تشيس فيلد)
+(Chess field )
+⛔ال مطور العقاري الجازي القطري باداره  j.w marriout
+  تشطيب المحل  نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه
+استلام يونيه ٢٠٢٥ 
+كل المبني متشطب رخام والوميتال و٢ اسانسير  وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب وفرش jw  marriout
+اجمالي سعره 
+٩.٠٩٠.٨٤٢
+مطلوب كاش ٦.٧٥٠.٠٠٠ 
+متبقي اجمالي ٢.٣٤٠.٨٤٢
+عباره عن ١٤ قسط اقساط ربع سنوي 
+قيمه االقسط ١٦٧.٢٠٣
+اول قسط مستحق 
+القسط رقم ١٠ 
+مستحق في ٣٠ ابريل ٢٠٢٥ 
+واخ
+[truncated — 6,983 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1318 words, 10047 chars, 3893 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "office",
+    "transaction_type": "sale",
+    "price": 9090842,
+    "down_payment": 6750000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Chess Field",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "مكتب اداري لقطه لقطه لقطه ارخص ارخص مكتب اداري في اشيك مشروع باقوي اداره اداره J.w .marriout بالتجمع الخامس المكتب اداري مساحه ٧٣ متر دور اول اسم مشروع الجازي ( تشيس فيلد) (Chess field ) المطور العقاري الجازي القطري باداره j.w marriout تشطيب المحل نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه استلام يونيه ٢٠٢٥ كل المبني متشطب رخام والوميتال و٢ اسانسير وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب
+[truncated — 10,047 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (603 words, 3775 chars, 5082 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 00060244, date: 2024-12-15T14:00:00) ---
+*Palm Hills New Cairo*
+Family House Ground for sale
+
+
+كمبوند بالم هيلز نيو كايرو 
+فاميلي هاوس استلام فوري 
+موقع مميز جاهز للمعاينه اي وقت
+
+
+BUA: 203m²
+Garden: 237m²
+Core & Shell. Ready to move
+Palm Hills Club included
+Maintenance included
+Asking for 22 million
+
+--- AD 2 (from: +20 10 08378787, date: 2024-12-15T14:13:00) ---
+للايجار بالرحاب ٢
+شقة مفروشة مودرن
+٣ غرف نوم
+٢ حمام
+مطبخ بالاجهزة
+Wifi
+٢ تليفزيون lcd
+
+
+
+
+للاستفسار 
+٠١٠٠٨٣٧٨٧٨٧
+
+
+For rent rehab 2
+Apartement modern
+Amazing wide garden view 
+3 bedrooms
+2 bathrooms
+Lcd televisions
+Wifi
+
+
+Contact me if interested
+01008378787
+
+--- AD 3 (from: +20 10 97400423, date: 2024-12-15T
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (778 words, 6671 chars, 2484 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "sale",
+    "price": 22000000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Palm Hills New Cairo",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Palm Hills New Cairo Family House Ground for sale BUA: 203m² Garden: 237m² Core & Shell. Ready to move Palm Hills Club included Maintenance included Asking for 22 million",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 35000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Rehab City",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "
+[truncated — 6,671 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 4/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (29 words, 164 chars, 3291 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 99712389, date: 2024-12-15T13:28:00) ---
+فيلا للايجار في ميفيدا
+500 ارض 
+350 مباني 
+5 غرف نوم 
+غرف ناني 
+مطبخ وتكيفات بس 
+مطلوب 2.200  دولار
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (44 words, 357 chars, 149 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "rent",
+    "price": 2200,
+    "currency": "USD",
+    "bedrooms": 5,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "فيلا للايجار في ميفيدا 500 ارض 350 مباني 5 غرف نوم غرف ناني مطبخ وتكيفات بس مطلوب 2.200 دولار",
+    "ad_index": 1
+  }
+]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 16 | 4834 | 2503 | 0 | 0 | $0.00148 | 4.62 | 4.62 |
+| 2 | 15 | 15 | 17 | 6449 | 3893 | 0 | 0 | $0.00220 | 8.39 | 8.39 |
+| 3 | 15 | 15 | 17 | 5082 | 2484 | 0 | 0 | $0.00150 | 6.77 | 6.77 |
+| 4 | 1 | 1 | 1 | 3291 | 149 | 0 | 0 | $0.00039 | 1.01 | 1.01 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 34 | 46 | 51 | 20.79 | 4 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 5.20 | 5.20 | 4914 | 2257 | 608 | 756 | 12.8 | 2.45 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 19656 | $0.00197 | 4914 |
+| output | 9029 | $0.00361 | 2257 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.005577**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0434 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 2 | 6 | 0 | 34 |
+
+**Listings inserted:** 51
+
+
+============================================================
+
+## (9/4/2026)Run — (14:58)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 3 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (904 words, 5575 chars, 5660 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2025-02-24T16:31:00) ---
+🚨rent in Mivida🚨
+
+Code MIVr232
+Twin house for rent in Mivida
+Land area 340 
+Bua 330 SQM
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Living room 
+Kitchen with appliances 
+AC's
+Price 3000$ 
+او ما يعادله
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr19
+Apartment for rent in mivida Boulevard 
+Area 220 SQM
+2nd floor 
+3 bedrooms
+3 bathrooms
+Maids room with bathroom
+Fully furnished
+Kitchen
+AC'S 
+Price 100k
+☀️☀️☀️☀️☀️☀️☀️☀️ 
+Code MIVr167
+Townhouse for rent in Mivida - parcel 2
+Area 216 SQM 
+Garden 90 SQM 
+3 bedrooms 
+4 bathrooms 
+Nany room 
+Fully furnished 
+Kitchen 
+ACs 
+Price 120k
+Day 10k
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr4
+Apartment ground f
+[truncated — 5,573 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1064 words, 8211 chars, 3084 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 3000,
+    "currency": "USD",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Twin house for rent in Mivida Land area 340 Bua 330 SQM 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Living room Kitchen with appliances AC's Price 3000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 100000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in 
+[truncated — 8,211 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (938 words, 5296 chars, 5783 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 88084056, date: 2025-02-24T19:02:00) ---
+◾Unit type : Twin house for Rent in mivida
+▫️Area : 310m
+▫️3  Bedrooms
+▫️4 Bathrooms 
+▫️Fully Super lux Furnished
+Asking price 150k
+➖➖➖➖➖➖➖➖➖
+Sodic Eastown 
+3 bedroom 
+3 bathroom 
+Nanny + bathroom
+210 m
+4th floor 
+Furnished 
+تطل علي القطاميه ديونز 
+اقل مده سنه 
+شهرين تأمين 
+عائلات بس 
+Price:80k
+➖➖➖➖➖➖➖➖➖
+Cfc
+Apartment 
+150 m 
+2Bedroom 
+2 bathroom 
+4th floor 
+Fully furnished 
+Price:80k
+
+
+--- AD 2 (from: +20 12 22262103, date: 2025-02-24T11:14:00) ---
+للبيع عماره الأندلس ٢
+حي الاندلس ( عمارات الاندلس )
+
+٨ شقق + ٢ استديو 
+الدور الارضي :٢ شقه ٣ غرف نوم ( مساحه :١٥٠ متر )
+الأدوار المتكررة : ٦ شقق غرفتين (مساحه: ١٣٥متر )
+الروف : ٢٢٠ م
+[truncated — 5,294 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1122 words, 8389 chars, 3167 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 150000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Unit type : Twin house for Rent in mivida Area : 310m 3 Bedrooms 4 Bathrooms Fully Super lux Furnished Asking price 150k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Sodic Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Sodic Eastown 3 bedroom 3 bathroom Nanny + bathroom 210 m 4th
+[truncated — 8,389 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (383 words, 2323 chars, 4415 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 11885910, date: 2025-02-24T23:50:00) ---
+*Update price*
+Code ESr212
+Apartment for rent in Eastown 
+Area 180 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price :
+For year 85k
+For month 80k
+For day 8k
+
+
+--- AD 2 (from: +20 11 11885910, date: 2025-02-24T02:55:00) ---
+Code ESr234
+Apartment for rent in Eastown 
+Area 205 SQM
+2nd floor 
+3 bedrooms ( 1 master & dressing)
+3 bathrooms 
+Fully furnished 
+Kitchen with appliances 
+ACs
+Price 95k
+
+
+--- AD 3 (from: +20 11 11885910, date: 2025-02-24T02:57:00) ---
+Update price
+Code ESr208
+Apartment for rent in Eastown 
+Area 205 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price 95k ( negotiable)
+
+
+--- AD 4 (fr
+[truncated — 2,321 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (520 words, 4580 chars, 1735 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 180 SQM 3 bedrooms 3 bathrooms Fully furnished Kitchen ACs Price : For month 80k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 95000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 205 SQM 2nd floor 3 bedrooms ( 1 maste
+[truncated — 4,580 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 8 | 15 | 16 | 5660 | 3084 | 0 | 0 | $0.00180 | 10.33 | 10.33 |
+| 2 | 15 | 15 | 17 | 5783 | 3167 | 0 | 0 | $0.00185 | 9.86 | 9.86 |
+| 3 | 12 | 12 | 12 | 4415 | 1735 | 0 | 0 | $0.00114 | 5.00 | 5.00 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 35 | 42 | 45 | 25.19 | 3 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 8.40 | 8.40 | 5286 | 2662 | 742 | 902 | 15.0 | 1.79 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 15858 | $0.00159 | 5286 |
+| output | 7986 | $0.00319 | 2662 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.004780**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0482 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 11 | 0 | 4 | 0 | 35 |
+
+**Listings inserted:** 45
+
+
+============================================================
+
+## (9/4/2026)Run — (16:35)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 4 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (681 words, 4090 chars, 4834 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2024-12-15T11:06:00) ---
+Available units for *rent*  in *CFC*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code : CFCr24
+Studio ground floor with garden for rent in CFC 
+Area : 90 SQM 
+1 bedrooms 
+1 bathrooms 
+Fully furnished 
+Kitchen 
+Price : 1000$
+Available now
+✨✨✨✨✨✨✨✨✨
+Code CFCr96
+Apartment for rent in CFC
+Area 204 SQM
+4th floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Kitchen with appliances 
+ACs
+View garden 
+*Price 65k*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code CFCr67
+Apartment for rent in CFC- Aura
+Area 165 SQM
+4th floor 
+2 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+Ac's 
+Price 1800$
+✨✨✨✨✨✨✨✨✨
+Update price 
+Code CFCr62
+Apartment for rent in CFC
+Area 140 SQM
+4rd f
+[truncated — 4,087 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (883 words, 7010 chars, 2503 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "studio",
+    "transaction_type": "rent",
+    "price": 1000,
+    "currency": "USD",
+    "bedrooms": 1,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Studio ground floor with garden for rent in CFC Area : 90 SQM 1 bedrooms 1 bathrooms Fully furnished Kitchen Price : 1000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 65000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Apartment for rent in CFC Area 204 SQM 4th floor 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Kitchen 
+[truncated — 7,010 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (1120 words, 6986 chars, 6449 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 76253405, date: 2025-01-17T12:52:00) ---
+📣📣مكتب اداري لقطه لقطه لقطه
+🚨🚨ارخص ارخص مكتب اداري في اشيك مشروع  باقوي اداره اداره 🛑🛑J.w .marriout
+🛑 بالتجمع الخامس 
+المكتب اداري مساحه ٧٣ متر دور اول  🛑اسم  مشروع الجازي ( تشيس فيلد)
+(Chess field )
+⛔ال مطور العقاري الجازي القطري باداره  j.w marriout
+  تشطيب المحل  نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه
+استلام يونيه ٢٠٢٥ 
+كل المبني متشطب رخام والوميتال و٢ اسانسير  وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب وفرش jw  marriout
+اجمالي سعره 
+٩.٠٩٠.٨٤٢
+مطلوب كاش ٦.٧٥٠.٠٠٠ 
+متبقي اجمالي ٢.٣٤٠.٨٤٢
+عباره عن ١٤ قسط اقساط ربع سنوي 
+قيمه االقسط ١٦٧.٢٠٣
+اول قسط مستحق 
+القسط رقم ١٠ 
+مستحق في ٣٠ ابريل ٢٠٢٥ 
+واخ
+[truncated — 6,983 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1278 words, 9623 chars, 3759 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "office",
+    "transaction_type": "sale",
+    "price": 9090842,
+    "down_payment": 6750000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Chess Field",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "مكتب اداري لقطه لقطه لقطه ارخص ارخص مكتب اداري في اشيك مشروع باقوي اداره اداره J.w .marriout بالتجمع الخامس المكتب اداري مساحه ٧٣ متر دور اول اسم مشروع الجازي ( تشيس فيلد) (Chess field ) المطور العقاري الجازي القطري باداره j.w marriout تشطيب المحل نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه استلام يونيه ٢٠٢٥ كل المبني متشطب رخام والوميتال و٢ اسانسير وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب
+[truncated — 9,623 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (603 words, 3775 chars, 5082 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 00060244, date: 2024-12-15T14:00:00) ---
+*Palm Hills New Cairo*
+Family House Ground for sale
+
+
+كمبوند بالم هيلز نيو كايرو 
+فاميلي هاوس استلام فوري 
+موقع مميز جاهز للمعاينه اي وقت
+
+
+BUA: 203m²
+Garden: 237m²
+Core & Shell. Ready to move
+Palm Hills Club included
+Maintenance included
+Asking for 22 million
+
+--- AD 2 (from: +20 10 08378787, date: 2024-12-15T14:13:00) ---
+للايجار بالرحاب ٢
+شقة مفروشة مودرن
+٣ غرف نوم
+٢ حمام
+مطبخ بالاجهزة
+Wifi
+٢ تليفزيون lcd
+
+
+
+
+للاستفسار 
+٠١٠٠٨٣٧٨٧٨٧
+
+
+For rent rehab 2
+Apartement modern
+Amazing wide garden view 
+3 bedrooms
+2 bathrooms
+Lcd televisions
+Wifi
+
+
+Contact me if interested
+01008378787
+
+--- AD 3 (from: +20 10 97400423, date: 2024-12-15T
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (814 words, 6851 chars, 2550 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "sale",
+    "price": 22000000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Palm Hills New Cairo",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Palm Hills New Cairo Family House Ground for sale BUA: 203m² Garden: 237m² Core & Shell. Ready to move Palm Hills Club included Maintenance included Asking for 22 million",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": null,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Rehab City",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "ل
+[truncated — 6,851 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 4/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (29 words, 164 chars, 3291 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 99712389, date: 2024-12-15T13:28:00) ---
+فيلا للايجار في ميفيدا
+500 ارض 
+350 مباني 
+5 غرف نوم 
+غرف ناني 
+مطبخ وتكيفات بس 
+مطلوب 2.200  دولار
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (44 words, 357 chars, 149 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "rent",
+    "price": 2200,
+    "currency": "USD",
+    "bedrooms": 5,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "فيلا للايجار في ميفيدا 500 ارض 350 مباني 5 غرف نوم غرف ناني مطبخ وتكيفات بس مطلوب 2.200 دولار",
+    "ad_index": 1
+  }
+]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 16 | 4834 | 2503 | 0 | 0 | $0.00148 | 8.17 | 8.17 |
+| 2 | 15 | 15 | 17 | 6449 | 3759 | 0 | 0 | $0.00215 | 12.71 | 12.71 |
+| 3 | 15 | 15 | 17 | 5082 | 2550 | 0 | 0 | $0.00153 | 7.49 | 7.49 |
+| 4 | 1 | 1 | 1 | 3291 | 149 | 0 | 0 | $0.00039 | 1.60 | 1.60 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 34 | 46 | 51 | 29.97 | 4 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 7.49 | 7.49 | 4914 | 2240 | 608 | 755 | 12.8 | 1.70 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 19656 | $0.00197 | 4914 |
+| output | 8961 | $0.00358 | 2240 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.005550**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0538 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 2 | 6 | 0 | 34 |
+
+**Listings inserted:** 51
+
+
+============================================================
+
+## (9/4/2026)Run — (16:40)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 3 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (904 words, 5575 chars, 5660 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2025-02-24T16:31:00) ---
+🚨rent in Mivida🚨
+
+Code MIVr232
+Twin house for rent in Mivida
+Land area 340 
+Bua 330 SQM
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Living room 
+Kitchen with appliances 
+AC's
+Price 3000$ 
+او ما يعادله
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr19
+Apartment for rent in mivida Boulevard 
+Area 220 SQM
+2nd floor 
+3 bedrooms
+3 bathrooms
+Maids room with bathroom
+Fully furnished
+Kitchen
+AC'S 
+Price 100k
+☀️☀️☀️☀️☀️☀️☀️☀️ 
+Code MIVr167
+Townhouse for rent in Mivida - parcel 2
+Area 216 SQM 
+Garden 90 SQM 
+3 bedrooms 
+4 bathrooms 
+Nany room 
+Fully furnished 
+Kitchen 
+ACs 
+Price 120k
+Day 10k
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr4
+Apartment ground f
+[truncated — 5,573 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1075 words, 8294 chars, 3100 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 3000,
+    "currency": "USD",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Twin house for rent in Mivida Land area 340 Bua 330 SQM 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Living room Kitchen with appliances AC's Price 3000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 100000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in 
+[truncated — 8,294 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (938 words, 5296 chars, 5783 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 88084056, date: 2025-02-24T19:02:00) ---
+◾Unit type : Twin house for Rent in mivida
+▫️Area : 310m
+▫️3  Bedrooms
+▫️4 Bathrooms 
+▫️Fully Super lux Furnished
+Asking price 150k
+➖➖➖➖➖➖➖➖➖
+Sodic Eastown 
+3 bedroom 
+3 bathroom 
+Nanny + bathroom
+210 m
+4th floor 
+Furnished 
+تطل علي القطاميه ديونز 
+اقل مده سنه 
+شهرين تأمين 
+عائلات بس 
+Price:80k
+➖➖➖➖➖➖➖➖➖
+Cfc
+Apartment 
+150 m 
+2Bedroom 
+2 bathroom 
+4th floor 
+Fully furnished 
+Price:80k
+
+
+--- AD 2 (from: +20 12 22262103, date: 2025-02-24T11:14:00) ---
+للبيع عماره الأندلس ٢
+حي الاندلس ( عمارات الاندلس )
+
+٨ شقق + ٢ استديو 
+الدور الارضي :٢ شقه ٣ غرف نوم ( مساحه :١٥٠ متر )
+الأدوار المتكررة : ٦ شقق غرفتين (مساحه: ١٣٥متر )
+الروف : ٢٢٠ م
+[truncated — 5,294 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1120 words, 8340 chars, 3153 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 150000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Unit type : Twin house for Rent in mivida Area : 310m 3 Bedrooms 4 Bathrooms Fully Super lux Furnished Asking price 150k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Sodic Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Sodic Eastown 3 bedroom 3 bathroom Nanny + bathroom 210 m 4th
+[truncated — 8,340 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (383 words, 2323 chars, 4415 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 11885910, date: 2025-02-24T23:50:00) ---
+*Update price*
+Code ESr212
+Apartment for rent in Eastown 
+Area 180 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price :
+For year 85k
+For month 80k
+For day 8k
+
+
+--- AD 2 (from: +20 11 11885910, date: 2025-02-24T02:55:00) ---
+Code ESr234
+Apartment for rent in Eastown 
+Area 205 SQM
+2nd floor 
+3 bedrooms ( 1 master & dressing)
+3 bathrooms 
+Fully furnished 
+Kitchen with appliances 
+ACs
+Price 95k
+
+
+--- AD 3 (from: +20 11 11885910, date: 2025-02-24T02:57:00) ---
+Update price
+Code ESr208
+Apartment for rent in Eastown 
+Area 205 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price 95k ( negotiable)
+
+
+--- AD 4 (fr
+[truncated — 2,321 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (519 words, 4578 chars, 1734 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 180 SQM 3 bedrooms 3 bathrooms Fully furnished Kitchen ACs Price For month 80k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 95000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 205 SQM 2nd floor 3 bedrooms ( 1 master 
+[truncated — 4,578 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 8 | 15 | 16 | 5660 | 3100 | 0 | 0 | $0.00181 | 8.79 | 8.79 |
+| 2 | 15 | 15 | 17 | 5783 | 3153 | 0 | 0 | $0.00184 | 9.44 | 9.44 |
+| 3 | 12 | 12 | 12 | 4415 | 1734 | 0 | 0 | $0.00114 | 3.78 | 3.78 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 35 | 42 | 45 | 22.00 | 3 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 7.33 | 7.33 | 5286 | 2662 | 742 | 905 | 15.0 | 2.05 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 15858 | $0.00159 | 5286 |
+| output | 7987 | $0.00319 | 2662 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.004781**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0586 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 11 | 0 | 4 | 0 | 35 |
+
+**Listings inserted:** 45
+
+
+============================================================
+
+## (9/4/2026)Run — (17:23)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 4 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (681 words, 4090 chars, 4834 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2024-12-15T11:06:00) ---
+Available units for *rent*  in *CFC*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code : CFCr24
+Studio ground floor with garden for rent in CFC 
+Area : 90 SQM 
+1 bedrooms 
+1 bathrooms 
+Fully furnished 
+Kitchen 
+Price : 1000$
+Available now
+✨✨✨✨✨✨✨✨✨
+Code CFCr96
+Apartment for rent in CFC
+Area 204 SQM
+4th floor 
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Kitchen with appliances 
+ACs
+View garden 
+*Price 65k*
+✨✨✨✨✨✨✨✨✨
+*Update*
+Code CFCr67
+Apartment for rent in CFC- Aura
+Area 165 SQM
+4th floor 
+2 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+Ac's 
+Price 1800$
+✨✨✨✨✨✨✨✨✨
+Update price 
+Code CFCr62
+Apartment for rent in CFC
+Area 140 SQM
+4rd f
+[truncated — 4,087 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (883 words, 7010 chars, 2503 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "studio",
+    "transaction_type": "rent",
+    "price": 1000,
+    "currency": "USD",
+    "bedrooms": 1,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Studio ground floor with garden for rent in CFC Area : 90 SQM 1 bedrooms 1 bathrooms Fully furnished Kitchen Price : 1000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 65000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "CFC",
+    "city": null,
+    "district": null,
+    "ad_snippet": "Apartment for rent in CFC Area 204 SQM 4th floor 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Kitchen 
+[truncated — 7,010 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (1120 words, 6986 chars, 6449 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 76253405, date: 2025-01-17T12:52:00) ---
+📣📣مكتب اداري لقطه لقطه لقطه
+🚨🚨ارخص ارخص مكتب اداري في اشيك مشروع  باقوي اداره اداره 🛑🛑J.w .marriout
+🛑 بالتجمع الخامس 
+المكتب اداري مساحه ٧٣ متر دور اول  🛑اسم  مشروع الجازي ( تشيس فيلد)
+(Chess field )
+⛔ال مطور العقاري الجازي القطري باداره  j.w marriout
+  تشطيب المحل  نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه
+استلام يونيه ٢٠٢٥ 
+كل المبني متشطب رخام والوميتال و٢ اسانسير  وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب وفرش jw  marriout
+اجمالي سعره 
+٩.٠٩٠.٨٤٢
+مطلوب كاش ٦.٧٥٠.٠٠٠ 
+متبقي اجمالي ٢.٣٤٠.٨٤٢
+عباره عن ١٤ قسط اقساط ربع سنوي 
+قيمه االقسط ١٦٧.٢٠٣
+اول قسط مستحق 
+القسط رقم ١٠ 
+مستحق في ٣٠ ابريل ٢٠٢٥ 
+واخ
+[truncated — 6,983 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1325 words, 10059 chars, 3879 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "office",
+    "transaction_type": "sale",
+    "price": 9090842,
+    "down_payment": 6750000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Chess Field",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "مكتب اداري لقطه لقطه لقطه ارخص ارخص مكتب اداري في اشيك مشروع باقوي اداره اداره J.w .marriout بالتجمع الخامس المكتب اداري مساحه ٧٣ متر دور اول اسم مشروع الجازي ( تشيس فيلد) (Chess field ) المطور العقاري الجازي القطري باداره j.w marriout تشطيب المحل نص تشطيب موجود الفاير الارم سباكه كهربه ال ٧٢ متر مساحه مفتوحه استلام يونيه ٢٠٢٥ كل المبني متشطب رخام والوميتال و٢ اسانسير وله مكان في الباركينج تشطيب المبني وفرشه نفس تشطيب
+[truncated — 10,059 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (603 words, 3775 chars, 5082 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 00060244, date: 2024-12-15T14:00:00) ---
+*Palm Hills New Cairo*
+Family House Ground for sale
+
+
+كمبوند بالم هيلز نيو كايرو 
+فاميلي هاوس استلام فوري 
+موقع مميز جاهز للمعاينه اي وقت
+
+
+BUA: 203m²
+Garden: 237m²
+Core & Shell. Ready to move
+Palm Hills Club included
+Maintenance included
+Asking for 22 million
+
+--- AD 2 (from: +20 10 08378787, date: 2024-12-15T14:13:00) ---
+للايجار بالرحاب ٢
+شقة مفروشة مودرن
+٣ غرف نوم
+٢ حمام
+مطبخ بالاجهزة
+Wifi
+٢ تليفزيون lcd
+
+
+
+
+للاستفسار 
+٠١٠٠٨٣٧٨٧٨٧
+
+
+For rent rehab 2
+Apartement modern
+Amazing wide garden view 
+3 bedrooms
+2 bathrooms
+Lcd televisions
+Wifi
+
+
+Contact me if interested
+01008378787
+
+--- AD 3 (from: +20 10 97400423, date: 2024-12-15T
+[truncated — 3,774 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (810 words, 6822 chars, 2545 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "sale",
+    "price": 22000000,
+    "currency": "EGP",
+    "bedrooms": null,
+    "compound_name": "Palm Hills New Cairo",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Palm Hills New Cairo Family House Ground for sale BUA: 203m² Garden: 237m² Core & Shell. Ready to move Palm Hills Club included Maintenance included Asking for 22 million",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": null,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Rehab City",
+    "city": "New Cairo",
+    "district": "Rehab City",
+    "ad_snippet": "للايج
+[truncated — 6,822 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 4/4
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (29 words, 164 chars, 3291 tokens)</summary>
+
+```
+--- AD 1 (from: +20 10 99712389, date: 2024-12-15T13:28:00) ---
+فيلا للايجار في ميفيدا
+500 ارض 
+350 مباني 
+5 غرف نوم 
+غرف ناني 
+مطبخ وتكيفات بس 
+مطلوب 2.200  دولار
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (44 words, 357 chars, 149 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "villa",
+    "transaction_type": "rent",
+    "price": 2200,
+    "currency": "USD",
+    "bedrooms": 5,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "فيلا للايجار في ميفيدا 500 ارض 350 مباني 5 غرف نوم غرف ناني مطبخ وتكيفات بس مطلوب 2.200 دولار",
+    "ad_index": 1
+  }
+]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 3 | 15 | 16 | 4834 | 2503 | 0 | 0 | $0.00148 | 6.61 | 6.61 |
+| 2 | 15 | 15 | 17 | 6449 | 3879 | 0 | 0 | $0.00220 | 14.66 | 14.66 |
+| 3 | 15 | 15 | 17 | 5082 | 2545 | 0 | 0 | $0.00153 | 7.26 | 7.26 |
+| 4 | 1 | 1 | 1 | 3291 | 149 | 0 | 0 | $0.00039 | 1.28 | 1.28 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 34 | 46 | 51 | 29.81 | 4 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 7.45 | 7.45 | 4914 | 2269 | 608 | 766 | 12.8 | 1.71 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 19656 | $0.00197 | 4914 |
+| output | 9076 | $0.00363 | 2269 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.005596**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0641 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 7 | 2 | 6 | 0 | 34 |
+
+**Listings inserted:** 51
+
+
+============================================================
+
+## (9/4/2026)Run — (17:25)
+
+| model | total_batches | days | file |
+| --- | --- | --- | --- |
+| gemini-2.5-flash-lite | 3 | 2 | uploaded_chat_file.txt |
+
+### Batch 1/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (904 words, 5575 chars, 5660 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 02043283, date: 2025-02-24T16:31:00) ---
+🚨rent in Mivida🚨
+
+Code MIVr232
+Twin house for rent in Mivida
+Land area 340 
+Bua 330 SQM
+3 bedrooms (1 master)
+3 bathrooms 
+Nanny room with bathroom 
+Living room 
+Kitchen with appliances 
+AC's
+Price 3000$ 
+او ما يعادله
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr19
+Apartment for rent in mivida Boulevard 
+Area 220 SQM
+2nd floor 
+3 bedrooms
+3 bathrooms
+Maids room with bathroom
+Fully furnished
+Kitchen
+AC'S 
+Price 100k
+☀️☀️☀️☀️☀️☀️☀️☀️ 
+Code MIVr167
+Townhouse for rent in Mivida - parcel 2
+Area 216 SQM 
+Garden 90 SQM 
+3 bedrooms 
+4 bathrooms 
+Nany room 
+Fully furnished 
+Kitchen 
+ACs 
+Price 120k
+Day 10k
+☀️☀️☀️☀️☀️☀️☀️☀️☀️
+Code MIVr4
+Apartment ground f
+[truncated — 5,573 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (950 words, 7509 chars, 2830 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 3000,
+    "currency": "USD",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Twin house for rent in Mivida Land area 340 Bua 330 SQM 3 bedrooms (1 master) 3 bathrooms Nanny room with bathroom Living room Kitchen with appliances AC's Price 3000$",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 100000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in 
+[truncated — 7,509 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 2/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (938 words, 5296 chars, 5783 tokens)</summary>
+
+```
+--- AD 1 (from: +20 12 88084056, date: 2025-02-24T19:02:00) ---
+◾Unit type : Twin house for Rent in mivida
+▫️Area : 310m
+▫️3  Bedrooms
+▫️4 Bathrooms 
+▫️Fully Super lux Furnished
+Asking price 150k
+➖➖➖➖➖➖➖➖➖
+Sodic Eastown 
+3 bedroom 
+3 bathroom 
+Nanny + bathroom
+210 m
+4th floor 
+Furnished 
+تطل علي القطاميه ديونز 
+اقل مده سنه 
+شهرين تأمين 
+عائلات بس 
+Price:80k
+➖➖➖➖➖➖➖➖➖
+Cfc
+Apartment 
+150 m 
+2Bedroom 
+2 bathroom 
+4th floor 
+Fully furnished 
+Price:80k
+
+
+--- AD 2 (from: +20 12 22262103, date: 2025-02-24T11:14:00) ---
+للبيع عماره الأندلس ٢
+حي الاندلس ( عمارات الاندلس )
+
+٨ شقق + ٢ استديو 
+الدور الارضي :٢ شقه ٣ غرف نوم ( مساحه :١٥٠ متر )
+الأدوار المتكررة : ٦ شقق غرفتين (مساحه: ١٣٥متر )
+الروف : ٢٢٠ م
+[truncated — 5,294 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (1112 words, 8304 chars, 3138 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "twin_house",
+    "transaction_type": "rent",
+    "price": 150000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Mivida",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Unit type : Twin house for Rent in mivida Area : 310m 3 Bedrooms 4 Bathrooms Fully Super lux Furnished Asking price 150k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Sodic Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Sodic Eastown 3 bedroom 3 bathroom Nanny + bathroom 210 m 4th
+[truncated — 8,304 chars total]
+```
+
+</details>
+
+
+---
+
+### Batch 3/3
+
+
+**Input**
+
+<details>
+<summary>▶ Show input text (383 words, 2323 chars, 4415 tokens)</summary>
+
+```
+--- AD 1 (from: +20 11 11885910, date: 2025-02-24T23:50:00) ---
+*Update price*
+Code ESr212
+Apartment for rent in Eastown 
+Area 180 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price :
+For year 85k
+For month 80k
+For day 8k
+
+
+--- AD 2 (from: +20 11 11885910, date: 2025-02-24T02:55:00) ---
+Code ESr234
+Apartment for rent in Eastown 
+Area 205 SQM
+2nd floor 
+3 bedrooms ( 1 master & dressing)
+3 bathrooms 
+Fully furnished 
+Kitchen with appliances 
+ACs
+Price 95k
+
+
+--- AD 3 (from: +20 11 11885910, date: 2025-02-24T02:57:00) ---
+Update price
+Code ESr208
+Apartment for rent in Eastown 
+Area 205 SQM
+3 bedrooms 
+3 bathrooms 
+Fully furnished 
+Kitchen 
+ACs
+Price 95k ( negotiable)
+
+
+--- AD 4 (fr
+[truncated — 2,321 chars total]
+```
+
+</details>
+
+
+**Output**
+
+<details>
+<summary>▶ Show output text (520 words, 4580 chars, 1735 tokens)</summary>
+
+```
+[
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 80000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 180 SQM 3 bedrooms 3 bathrooms Fully furnished Kitchen ACs Price : For month 80k",
+    "ad_index": 1
+  },
+  {
+    "property_type": "apartment",
+    "transaction_type": "rent",
+    "price": 95000,
+    "currency": "EGP",
+    "bedrooms": 3,
+    "compound_name": "Eastown",
+    "city": "New Cairo",
+    "district": "5th Settlement",
+    "ad_snippet": "Apartment for rent in Eastown Area 205 SQM 2nd floor 3 bedrooms ( 1 maste
+[truncated — 4,580 chars total]
+```
+
+</details>
+
+
+---
+
+### Run Summary
+
+
+**Per-Batch Overview**
+
+| batch | msgs | est_ads | extracted | in_tok | out_tok | th_tok | ca_tok | cost | latency_s | api_s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 8 | 15 | 16 | 5660 | 2830 | 0 | 0 | $0.00170 | 7.91 | 7.91 |
+| 2 | 15 | 15 | 17 | 5783 | 3138 | 0 | 0 | $0.00183 | 9.75 | 9.75 |
+| 3 | 12 | 12 | 12 | 4415 | 1735 | 0 | 0 | $0.00114 | 4.93 | 4.93 |
+
+**Totals**
+
+| msgs_in | est_ads | extracted | total_s | batches |
+| --- | --- | --- | --- | --- |
+| 35 | 42 | 45 | 22.58 | 3 |
+
+**Averages per Batch**
+
+| avg_latency_s | avg_api_s | avg_in_tok | avg_out_tok | avg_in_words | avg_out_words | avg_extracted | ads/s |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 7.53 | 7.53 | 5286 | 2568 | 742 | 861 | 15.0 | 1.99 |
+
+**Token Breakdown**
+
+| type | total_tokens | total_cost | avg_per_batch |
+| --- | --- | --- | --- |
+| input | 15858 | $0.00159 | 5286 |
+| output | 7703 | $0.00308 | 2568 |
+| thinking | 0 | $0.00000 | 0 |
+| cache_read | 0 | $0.00000 | 0 |
+
+**Total run cost: $0.004667**
+
+
+**Daily Cost Status**
+
+| date | spent | limit |
+| --- | --- | --- |
+| 2026-04-09 | 0.0688 | 2.0 |
+
+**Filter Stats**
+
+| system | too_short | blocklist | no_keywords | passed |
+| --- | --- | --- | --- | --- |
+| 11 | 0 | 4 | 0 | 35 |
+
+**Listings inserted:** 45
+
+
+============================================================

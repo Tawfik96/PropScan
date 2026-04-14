@@ -408,5 +408,5 @@ def main(filepath: str):
 
 
 if __name__ == "__main__":
-    file_path = "backend/v2New50DayGTSample.txt"
+    file_path = "Backupz/GT_Text_files/2DayAdsGT.txt"
     main(file_path)

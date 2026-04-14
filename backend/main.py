@@ -57,7 +57,7 @@ def get_listings(
     city: Optional[str] = Query(None),
     transaction_type: Optional[str] = Query(None),
     property_type: Optional[str] = Query(None),
-    limit: int = Query(100),
+    limit: int = Query(20000),
     offset: int = Query(0),
 ):
     if not dbControl.has_listings_table():

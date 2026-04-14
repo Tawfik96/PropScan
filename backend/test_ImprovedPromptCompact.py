@@ -28,7 +28,7 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field, field_validator
 from analysis import open_analysis_log
 
-DB_PATH = "DBwithSenderadDate_Taw_Generated2.db"
+DB_PATH = "Taw_Generated_DB.db"
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  IMPROVED PYDANTIC SCHEMA
