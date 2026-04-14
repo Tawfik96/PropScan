@@ -1,8 +1,7 @@
 import json
 import os
 from datetime import datetime
-
-COST_FILE = "costs.json"
+from config import COST_FILE, MAX_DAILY_LIMIT
 
 
 def load_cost_state():
@@ -10,7 +9,7 @@ def load_cost_state():
         return {
             "date": datetime.now().date().isoformat(),
             "daily_cost": 0.0,
-            "max_daily_limit": 2.0
+            "max_daily_limit": MAX_DAILY_LIMIT,
         }
 
     with open(COST_FILE, "r") as f:
@@ -46,5 +45,3 @@ def check_and_update_cost(new_cost: float, raise_on_limit=False):
     save_cost_state(state)
 
     return state
-
-print()

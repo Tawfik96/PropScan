@@ -15,6 +15,7 @@ Also importable by the pipeline:
 import re
 import os
 from datetime import datetime
+from config import MIN_BODY_LEN
 
 # import batch_messages
 
@@ -218,8 +219,6 @@ _kw_all = sorted(set([
 ]), key=len, reverse=True)
 
 ALLOWLIST_RE = re.compile("|".join(re.escape(kw) for kw in _kw_all), re.IGNORECASE)
-
-MIN_BODY_LEN = 20
 
 # Updated to include "code" in multiple languages/formats
 AD_DIVIDER_MARKERS = [

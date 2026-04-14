@@ -24,16 +24,19 @@ import os
 from datetime import datetime
 from typing import Optional
 import cost_manager
-# ── Constants ─────────────────────────────────────────────────────────────────
+from config import (
+    ANALYSIS_PATH,
+    TRUNCATE_CHARS,
+    PRICE_INPUT,
+    PRICE_OUTPUT,
+    PRICE_CACHED_READ,
+)
 
-ANALYSIS_PATH           = os.path.join(os.path.dirname(__file__), "Big_Analysis.md")
-TRUNCATE_CHARS          = 10000
-
-# Gemini Flash Lite pricing (USD per token)
-COST_INPUT_PER_TOKEN    = 0.10  / 1_000_000   # $0.10  / 1M
-COST_OUTPUT_PER_TOKEN   = 0.40  / 1_000_000   # $0.40  / 1M
-COST_THINKING_PER_TOKEN = 0.40  / 1_000_000   # $0.40  / 1M (same as output)
-COST_CACHE_PER_TOKEN    = 0.025 / 1_000_000   # $0.025 / 1M (cache read)
+# Pricing per token (derived from config $/1M values)
+COST_INPUT_PER_TOKEN    = PRICE_INPUT       / 1_000_000
+COST_OUTPUT_PER_TOKEN   = PRICE_OUTPUT      / 1_000_000
+COST_THINKING_PER_TOKEN = PRICE_OUTPUT      / 1_000_000
+COST_CACHE_PER_TOKEN    = PRICE_CACHED_READ / 1_000_000
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -227,7 +230,7 @@ class RunLogger:
         """Build and append one batch block to analysis.md."""
 
         # ── Build full prompt text ────────────────────────────────────────────
-        from pipeline_compact import build_extraction_prompt
+        from extractor import build_extraction_prompt
         input_text    = build_extraction_prompt(batch)
         output_text   = _extract_output_text(api_response)
         thinking_text = _extract_thinking_text(api_response)

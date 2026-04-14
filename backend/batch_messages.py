@@ -29,14 +29,7 @@ from filter_chat import (
     classify,
     get_size_and_count,
 )
-
-# ─── Config ───────────────────────────────────────────────────────────────────
-
-MAX_CHARS_PER_BATCH: int = 8_000
-MAX_ADS_PER_BATCH:   int = 10
-
-# Mixed Arabic / Franco / English heuristic: ~3 chars per token
-CHARS_PER_TOKEN: float = 3.0
+from config import MAX_CHARS_PER_BATCH, MAX_ADS_PER_BATCH, CHARS_PER_TOKEN
 
 
 # ─── Data structures ──────────────────────────────────────────────────────────
