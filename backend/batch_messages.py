@@ -24,11 +24,18 @@ import os
 from dataclasses import dataclass, field
 from typing import List
 
-from filter_chat import (
-    parse_whatsapp_export,
-    classify,
-    get_size_and_count,
-)
+try:
+    from .filter_chat import (
+        parse_whatsapp_export,
+        classify,
+        get_size_and_count,
+    )
+except ImportError:
+    from filter_chat import (
+        parse_whatsapp_export,
+        classify,
+        get_size_and_count,
+    )
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 

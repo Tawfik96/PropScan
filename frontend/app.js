@@ -104,7 +104,7 @@ function getOrganizedDetailsRows(listing) {
       : []
     ),
     ...(listing.compound_name !== undefined && listing.compound_name !== null && listing.compound_name !== ''&& listing.compound_name !=listing.district
-      ? [{ label: 'Compund', value: formatValue(listing.compound_name) }]
+      ? [{ label: 'Compound', value: formatValue(listing.compound_name) }]
       : []
     ),
 
@@ -289,11 +289,16 @@ async function loadCities() {
     const res = await fetch(API + '/cities');
     const data = await res.json();
     const sel = document.getElementById('f-city');
+    const currentValue = sel.value;
+    sel.replaceChildren(new Option('Any', ''));
+
     (data.cities || []).forEach(c => {
-      const o = document.createElement('option');
-      o.value = c; o.textContent = c;
-      sel.appendChild(o);
+      sel.appendChild(new Option(c, c));
     });
+
+    if ([...sel.options].some(o => o.value === currentValue)) {
+      sel.value = currentValue;
+    }
   } catch {}
 }
 

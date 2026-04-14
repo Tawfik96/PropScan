@@ -1,24 +1,26 @@
 import json
-import os
 from datetime import datetime
 
-COST_FILE = "costs.json"
+try:
+    from .paths import COST_FILE
+except ImportError:
+    from paths import COST_FILE
 
 
 def load_cost_state():
-    if not os.path.exists(COST_FILE):
+    if not COST_FILE.exists():
         return {
             "date": datetime.now().date().isoformat(),
             "daily_cost": 0.0,
             "max_daily_limit": 2.0
         }
 
-    with open(COST_FILE, "r") as f:
+    with COST_FILE.open("r") as f:
         return json.load(f)
 
 
 def save_cost_state(state):
-    with open(COST_FILE, "w") as f:
+    with COST_FILE.open("w") as f:
         json.dump(state, f, indent=2)
 
 

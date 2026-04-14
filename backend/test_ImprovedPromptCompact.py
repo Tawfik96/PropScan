@@ -26,9 +26,15 @@ import time
 from datetime import datetime
 from typing import Literal, Optional
 from pydantic import BaseModel, Field, field_validator
-from analysis import open_analysis_log
 
-DB_PATH = "Taw_Generated_DB.db"
+try:
+    from . import paths
+    from .analysis import open_analysis_log
+except ImportError:
+    import paths
+    from analysis import open_analysis_log
+
+DB_PATH = str(paths.DB_PATH)
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  IMPROVED PYDANTIC SCHEMA
@@ -51,6 +57,7 @@ class ListingExtraction(BaseModel):
             "chalet",
             "townhouse",
             "twin_house",
+            "standalone",
             "i_villa",
             "land",
             "office",
@@ -339,7 +346,7 @@ def update_progress_file(current, total, status="Processing", reset=False):
             "status": status,
             "done": done
         }
-    with open("progress.json", "w") as f:
+    with paths.PROGRESS_FILE.open("w") as f:
         json.dump(progress_data, f)
 
 
@@ -475,8 +482,11 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
         run_pipeline_improved("a_custom_test1message_.txt", 8)
     """
     from google import genai
-    from filter_chat import parse_whatsapp_export, classify
     from dotenv import load_dotenv
+    try:
+        from .filter_chat import parse_whatsapp_export
+    except ImportError:
+        from filter_chat import parse_whatsapp_export
 
     load_dotenv()
 
@@ -522,7 +532,10 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
 
     # ── Build batches ──────────────────────────────────────────
     try:
-        from batch_messages import build_batches, compute_ads_avg
+        try:
+            from .batch_messages import build_batches, compute_ads_avg
+        except ImportError:
+            from batch_messages import build_batches, compute_ads_avg
 
         ads_avg = compute_ads_avg(ads)
         batches = build_batches(ads, ads_avg)
@@ -620,7 +633,7 @@ def run_pipeline_improved(chat_file: str, days: int = 2):
         batch_total_s=batch_total,
         api_response=api_response,
         api_s=info["api_call_s"] or 0.0, 
-        estimated_ads=batch_obj.estimated_ads  
+        estimated_ads=getattr(batch_obj, "estimated_ads", len(batch))
         )
 
     conn.close()
@@ -760,7 +773,10 @@ def _get_recent_days(messages, days):
 
 
 def _filter_ads(messages):
-    from filter_chat import classify
+    try:
+        from .filter_chat import classify
+    except ImportError:
+        from filter_chat import classify
 
     stats = {"system": 0, "too_short": 0, "blocklist": 0, "no_keywords": 0, "passed": 0}
     ads = []
@@ -777,6 +793,7 @@ def _filter_ads(messages):
 class _SimpleBatch:
     def __init__(self, msgs):
         self.messages = msgs
+        self.estimated_ads = len(msgs)
 
 
 def _simple_batches(ads, size):
@@ -791,6 +808,6 @@ def _simple_batches(ads, size):
 if __name__ == "__main__":
 
     run_pipeline_improved(
-        "SampleTextFiles/New50DayGTSample.txt",
+        str(paths.BASE_DIR / "SampleTextFiles" / "New50DayGTSample.txt"),
         8,
     )

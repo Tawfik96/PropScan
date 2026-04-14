@@ -1,0 +1,550 @@
+PropScan - Changes And Refactor Notes
+=====================================
+
+Date: 2026-04-14
+
+
+1. What I Changed
+-----------------
+
+1. Added backend/paths.py
+
+   What changed:
+   - Created one shared place for backend file paths:
+     - DB_PATH
+     - PROGRESS_FILE
+     - UPLOADED_CHAT_FILE
+     - COST_FILE
+
+   Why:
+   - Before, files used plain relative paths like "progress.json" or
+     "Taw_Generated_DB.db".
+   - Plain relative paths depend on the folder you run the command from.
+   - That can make the API read one database while the pipeline writes another.
+   - Centralized paths make the app more predictable.
+
+
+2. Added backend/__init__.py
+
+   What changed:
+   - Added a small package marker file.
+
+   Why:
+   - This lets Python treat backend as a package.
+   - It allows safer imports like "from .paths import DB_PATH".
+
+
+3. Updated backend/main.py
+
+   What changed:
+   - Switched progress/upload paths to use backend/paths.py.
+   - Added imports that work both as package imports and local script imports.
+   - Changed the /progress error handling to catch only:
+     - FileNotFoundError
+     - JSONDecodeError
+   - Added validation for listing pagination:
+     - limit must be between 1 and 20000
+     - offset must be 0 or greater
+
+   Why:
+   - The backend should always read the same progress file the pipeline writes.
+   - Bare "except:" can hide real bugs.
+   - Validating limit and offset prevents invalid or very large requests.
+
+
+4. Updated backend/dbControl.py
+
+   What changed:
+   - Removed unused imports.
+   - Stopped importing the database path from the pipeline file.
+   - Now imports DB_PATH from backend/paths.py.
+   - Wrapped database usage in try/finally so connections close reliably.
+
+   Why:
+   - The database layer should not depend on the extraction pipeline.
+   - If a query fails, the connection should still close.
+   - Closing connections properly helps avoid SQLite lock problems.
+
+
+5. Updated backend/test_ImprovedPromptCompact.py
+
+   What changed:
+   - Uses the shared DB_PATH from backend/paths.py.
+   - Writes progress to the shared PROGRESS_FILE.
+   - Added "standalone" to the allowed property_type enum.
+   - Made fallback batch logging safer with getattr().
+   - Made imports work both as package imports and local script imports.
+
+   Why:
+   - The pipeline now writes to the same database and progress file used by the API.
+   - The prompt examples already output "standalone", but the schema did not allow it.
+     That mismatch could cause valid-looking model output to fail validation.
+   - Safer fallback logic avoids errors if simple batching is used.
+
+
+6. Updated backend/analysis.py
+
+   What changed:
+   - Made cost_manager import work in both package mode and script mode.
+
+   Why:
+   - Keeps imports stable when running the backend in different ways.
+
+
+7. Updated backend/cost_manager.py
+
+   What changed:
+   - Uses COST_FILE from backend/paths.py.
+
+   Why:
+   - Cost tracking should write to one predictable file location.
+
+
+8. Updated backend/batch_messages.py
+
+   What changed:
+   - Made filter_chat imports work in both package mode and script mode.
+
+   Why:
+   - Makes batching reusable from the API pipeline and from direct scripts.
+
+
+9. Updated frontend/app.js
+
+   What changed:
+   - Fixed the visible typo "Compund" to "Compound".
+   - Changed loadCities() so it rebuilds the city dropdown instead of appending
+     duplicate options.
+   - Preserves the selected city after refreshing the options when possible.
+
+   Why:
+   - Importing a new chat calls loadCities() again, so the old code could duplicate
+     cities in the dropdown.
+   - Preserving the selected city avoids annoying UI resets.
+
+
+10. Added CODE_WALKTHROUGH.md
+
+   What changed:
+   - Added a readable walkthrough explaining the main app flow and key files.
+
+   Why:
+   - You asked for a line-by-line explanation.
+   - Keeping the explanation in the repo makes it easier to revisit while learning.
+
+
+2. Verification I Ran
+---------------------
+
+1. JavaScript syntax check:
+
+   node --check frontend/app.js
+
+   Result:
+   - Passed.
+
+
+2. Python syntax check:
+
+   PYTHONPYCACHEPREFIX=/tmp/propscan-pycache /usr/bin/python3 -m py_compile ...
+
+   Result:
+   - Passed for the edited backend Python files.
+
+   Note:
+   - The first Python compile attempt tried to write bytecode into a macOS cache
+     folder outside the sandbox. Redirecting the bytecode cache to /tmp fixed that.
+
+
+3. Full pipeline not run
+
+   Why:
+   - Running the Gemini extraction pipeline can require:
+     - GEMINI_API_KEY
+     - network access
+     - API cost
+
+
+3. Notes On Current Code Structure
+----------------------------------
+
+The app works as a prototype, but the backend has several large files that repeat
+the same ideas. The next good refactor is to separate reusable pieces from old
+experiments and script versions.
+
+
+4. Files That Should Probably Be Separated Or Renamed
+-----------------------------------------------------
+
+1. backend/test_ImprovedPromptCompact.py
+
+   Current role:
+   - This is the active extraction pipeline used by FastAPI.
+
+   Problem:
+   - The name starts with "test_", but it is production/runtime code.
+   - It is large, around 800+ lines.
+   - It contains schema, prompt, Gemini API calls, database writes, progress
+     tracking, logging, and orchestration all in one file.
+
+   Suggested rename:
+   - backend/extraction_pipeline.py
+
+   Suggested split:
+   - backend/schema.py
+     - ListingExtraction
+   - backend/prompts.py
+     - SYSTEM_PROMPT
+     - build_extraction_prompt()
+   - backend/gemini_client.py
+     - call_gemini()
+     - token/cost tracking related to Gemini responses
+   - backend/pipeline.py
+     - run_pipeline_improved()
+     - _get_recent_days()
+     - _filter_ads()
+   - backend/listings_repository.py
+     - _init_db()
+     - _insert_listing()
+     - maybe get_listings() and get_distinct_cities() too
+
+
+2. backend/dbControl.py
+
+   Current role:
+   - API-facing database reads.
+
+   Problem:
+   - Naming style is inconsistent with Python style.
+   - It only reads listings, while pipeline code separately creates/inserts listings.
+
+   Suggested rename:
+   - backend/listings_repository.py
+
+   Suggested change:
+   - Move all listing database operations into one file:
+     - create listings table
+     - insert listing
+     - query listings
+     - query distinct cities
+
+   Why:
+   - Right now database logic is split between dbControl.py and the pipeline file.
+
+
+3. backend/main.py
+
+   Current role:
+   - FastAPI app and route definitions.
+
+   Problem:
+   - It is still fine at this size, but routes can grow quickly.
+
+   Suggested future split:
+   - backend/api/progress_routes.py
+   - backend/api/upload_routes.py
+   - backend/api/listing_routes.py
+
+   Why:
+   - Useful if the API grows beyond the current few endpoints.
+
+
+4. frontend/app.js
+
+   Current role:
+   - All frontend behavior in one file.
+
+   Problem:
+   - It contains UI helpers, API calls, rendering, filtering, progress polling,
+     upload handling, and startup logic all together.
+
+   Suggested split:
+   - frontend/api.js
+     - fetchListings()
+     - loadCities()
+     - uploadChat()
+     - resetProgress()
+     - getProgress()
+   - frontend/render.js
+     - renderCards()
+     - buildOrganizedDetailsTable()
+     - buildOrganizedDetailsText()
+   - frontend/ui.js
+     - showToast()
+     - copyText()
+     - resetProgressUI()
+     - pollProgress()
+   - frontend/app.js
+     - event listeners
+     - init flow
+
+   Why:
+   - The current app.js is still manageable, but it is already 400+ lines.
+   - Splitting it will make future features easier, especially natural-language
+     inquiry parsing.
+
+
+5. frontend/style.css
+
+   Current role:
+   - All styling in one 600+ line file.
+
+   Suggested split if it keeps growing:
+   - base.css
+   - layout.css
+   - filters.css
+   - cards.css
+   - upload-progress.css
+   - toast.css
+
+   Why:
+   - Only needed if styling grows more.
+   - For now, leaving it as one file is acceptable.
+
+
+5. Repeated Or Duplicated Code Across Files
+-------------------------------------------
+
+1. Pipeline code repeated across multiple files
+
+   Files:
+   - backend/test_ImprovedPromptCompact.py
+   - backend/pipeline_compact.py
+   - backend/extractFromChatExport.py
+
+   Repeated ideas/functions:
+   - DB_PATH
+   - GEMINI_MODEL
+   - ListingExtraction
+   - SYSTEM_PROMPT
+   - build_extraction_prompt()
+   - call_gemini()
+   - init_db() / _init_db()
+   - insert_listing() / _insert_listing()
+   - get_recent_days() / _get_recent_days()
+   - filter_ads() / _filter_ads()
+   - run_pipeline() / run_pipeline_improved()
+   - crop_chat_by_date()
+   - timing helpers like _ts(), _elapsed(), _fmt()
+   - logging helpers like _log()
+
+   Recommendation:
+   - Decide which pipeline is the real current pipeline.
+   - Keep that one.
+   - Move shared pieces into reusable modules.
+   - Move old experiments into an archive folder or delete them after confirming
+     they are not used.
+
+
+2. Verification app helpers repeated
+
+   Files:
+   - backend/adVerificationApp.py
+   - backend/compact_adVerificationApp.py
+
+   Repeated functions:
+   - parse_date()
+   - fmt_date_header()
+   - verified_path()
+   - load_verified()
+   - save_verified()
+   - App class structure is likely similar too
+
+   Recommendation:
+   - Extract shared helpers into:
+     - backend/verification_storage.py
+     - backend/verification_formatting.py
+   - Keep only UI-specific differences inside each app.
+   - Or keep only one verification app if compact_adVerificationApp.py replaced
+     adVerificationApp.py.
+
+
+3. Database logic repeated/split
+
+   Files:
+   - backend/dbControl.py
+   - backend/test_ImprovedPromptCompact.py
+   - backend/pipeline_compact.py
+   - backend/extractFromChatExport.py
+
+   Repeated ideas:
+   - create listings table
+   - insert listing
+   - read listing rows
+   - manage DB path
+
+   Recommendation:
+   - Put all listings database work into one repository module.
+   - Example:
+     - backend/listings_repository.py
+
+
+4. Gemini config and cost constants repeated
+
+   Files:
+   - backend/test_ImprovedPromptCompact.py
+   - backend/pipeline_compact.py
+   - backend/extractFromChatExport.py
+   - backend/analysis.py
+   - backend/cost_manager.py
+
+   Repeated ideas:
+   - model name
+   - token price values
+   - cost calculation
+   - usage metadata extraction
+
+   Recommendation:
+   - Move shared constants into:
+     - backend/config.py
+   - Move cost calculation into:
+     - backend/costs.py
+
+
+5. Prompt/schema mismatch risk
+
+   Example:
+   - The prompt returned property_type "standalone".
+   - The schema did not originally allow "standalone".
+
+   Recommendation:
+   - Keep prompt examples and Pydantic schema in nearby files or the same module.
+   - Add a small test that validates all prompt example outputs against the schema.
+
+
+6. Progress state is file-based
+
+   Files:
+   - backend/main.py
+   - backend/test_ImprovedPromptCompact.py
+
+   Current behavior:
+   - Pipeline writes progress to progress.json.
+   - Frontend polls /progress.
+   - FastAPI reads progress.json.
+
+   Risk:
+   - If two uploads run at the same time, they will overwrite the same progress file.
+
+   Recommendation:
+   - For one local user, this is okay.
+   - For multiple users, store progress by job ID:
+     - POST /upload returns job_id
+     - GET /progress/{job_id}
+
+
+7. Frontend repeated DOM access
+
+   File:
+   - frontend/app.js
+
+   Repeated idea:
+   - document.getElementById(...) is called many times.
+
+   Recommendation:
+   - Create an elements object:
+     - const els = { cardsGrid: ..., resetBtn: ..., cityFilter: ... }
+   - This makes event binding and UI updates easier to read.
+
+
+6. Things I Would Refactor Next
+-------------------------------
+
+Priority 1:
+Rename and split the active pipeline.
+
+Why:
+The active file is called test_ImprovedPromptCompact.py, but it is not a test.
+It is the core production pipeline.
+
+
+Priority 2:
+Create one listings repository module.
+
+Why:
+Database creation, insertion, and reading should live together.
+
+
+Priority 3:
+Create a config module.
+
+Suggested config values:
+ - API host/port
+ - Gemini model
+ - selected days to process
+ - database path
+ - progress path
+ - cost limits
+ - CORS origins
+
+
+Priority 4:
+Add tests for important behavior.
+
+Suggested tests:
+ - parse WhatsApp export
+ - classify ad vs non-ad
+ - build extraction prompt
+ - validate prompt example outputs against ListingExtraction
+ - query listings with filters
+ - /progress returns safe defaults when progress file is missing
+
+
+Priority 5:
+Add job IDs for uploads if this becomes multi-user.
+
+Why:
+Right now progress.json assumes only one upload is running.
+
+
+7. Files I Would Not Split Yet
+------------------------------
+
+1. backend/main.py
+
+   Reason:
+   - It is still around 100 lines.
+   - It is readable.
+   - Split it only when more endpoints are added.
+
+
+2. frontend/index.html
+
+   Reason:
+   - It is only around 120 lines.
+   - It is still easy to scan.
+
+
+3. frontend/style.css
+
+   Reason:
+   - It is longer, but CSS is often okay in one file for a small frontend.
+   - Split it only if UI work continues and sections become hard to find.
+
+
+8. Important Caution
+--------------------
+
+Do not delete old pipeline files yet unless you confirm which scripts are still
+used by the team.
+
+Likely active runtime path:
+ - frontend/app.js
+ - backend/main.py
+ - backend/test_ImprovedPromptCompact.py
+ - backend/dbControl.py
+ - backend/filter_chat.py
+ - backend/batch_messages.py
+ - backend/analysis.py
+ - backend/cost_manager.py
+ - backend/paths.py
+
+Likely experiment/older files, based on naming and duplication:
+ - backend/pipeline_compact.py
+ - backend/extractFromChatExport.py
+ - backend/adVerificationApp.py
+ - backend/compact_adVerificationApp.py
+
+These may still be useful, but they should be clearly marked as active,
+experimental, archived, or replaced.
+

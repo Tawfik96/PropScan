@@ -23,7 +23,11 @@ from __future__ import annotations
 import os
 from datetime import datetime
 from typing import Optional
-import cost_manager
+
+try:
+    from . import cost_manager
+except ImportError:
+    import cost_manager
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 ANALYSIS_PATH           = os.path.join(os.path.dirname(__file__), "Big_Analysis.md")

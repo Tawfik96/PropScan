@@ -2,13 +2,18 @@ from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Optional
-import dbControl
-import test_ImprovedPromptCompact
-import os, json
+import json
+from json import JSONDecodeError
 from fastapi.concurrency import run_in_threadpool
 
-PROGRESS_FILE = "progress.json"
-UPLOADED_CHAT_FILE="uploaded_chat_file.txt"
+try:
+    from . import dbControl, test_ImprovedPromptCompact
+    from .paths import PROGRESS_FILE, UPLOADED_CHAT_FILE
+except ImportError:
+    import dbControl
+    import test_ImprovedPromptCompact
+    from paths import PROGRESS_FILE, UPLOADED_CHAT_FILE
+
 app = FastAPI(title="WhatsApp Real Estate Parser")
 
 app.add_middleware(
@@ -25,9 +30,9 @@ dbControl.init_db()
 @app.get("/progress")
 def get_progress():
     try:
-        with open(PROGRESS_FILE) as f:
+        with PROGRESS_FILE.open() as f:
             return json.load(f)
-    except:
+    except (FileNotFoundError, JSONDecodeError):
         return {"current": 0, "total": 0, "message": ""}
 
 @app.post("/reset-progress")
@@ -38,12 +43,12 @@ def reset_progress():
 @app.post("/upload")
 async def upload_chat(file: UploadFile = File(...)):
     try:
-        file_path = os.path.join(os.path.dirname(__file__), UPLOADED_CHAT_FILE)
+        file_path = UPLOADED_CHAT_FILE
 
         with open(file_path, "wb") as f:
             f.write(await file.read())
         # Run blocking code safely
-        await run_in_threadpool(test_ImprovedPromptCompact.run_pipeline_improved, file_path, 2)
+        await run_in_threadpool(test_ImprovedPromptCompact.run_pipeline_improved, str(file_path), 2)
         return {"status": "ok", "message": "Chat processed successfully"}
 
     except Exception as e:
@@ -57,8 +62,8 @@ def get_listings(
     city: Optional[str] = Query(None),
     transaction_type: Optional[str] = Query(None),
     property_type: Optional[str] = Query(None),
-    limit: int = Query(20000),
-    offset: int = Query(0),
+    limit: int = Query(20000, ge=1, le=20000),
+    offset: int = Query(0, ge=0),
 ):
     if not dbControl.has_listings_table():
         return {

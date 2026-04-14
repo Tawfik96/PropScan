@@ -1,19 +1,21 @@
 import sqlite3
-import json
-import os
-import test_ImprovedPromptCompact
 
-DB_PATH = os.path.join(os.path.dirname(__file__), test_ImprovedPromptCompact.DB_PATH)
+try:
+    from .paths import DB_PATH
+except ImportError:
+    from paths import DB_PATH
+
+DEFAULT_LIMIT = 100
 
 
 def get_conn():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     return conn
 
 
 def init_db():
-    has_listings_table()
+    return has_listings_table()
 
 
 def has_listings_table():
@@ -31,42 +33,42 @@ def has_listings_table():
 def get_listings(
     price_min=None, price_max=None, bedrooms=None,
     city=None, transaction_type=None, property_type=None,
-    limit=100, offset=0
+    limit=DEFAULT_LIMIT, offset=0
 ):
     if not has_listings_table():
         return []
 
     conn = get_conn()
-    query = "SELECT * FROM listings WHERE 1=1"
-    params = []
+    try:
+        query = "SELECT * FROM listings WHERE 1=1"
+        params = []
 
-    if price_min is not None:
-        query += " AND price >= ?"
-        params.append(price_min)
-    if price_max is not None:
-        query += " AND price <= ?"
-        params.append(price_max)
-    if bedrooms is not None:
-        query += " AND bedrooms = ?"
-        params.append(bedrooms)
-    if city:
-        query += " AND LOWER(city) = LOWER(?)"
-        params.append(city)
-    if transaction_type:
-        query += " AND transaction_type = ?"
-        params.append(transaction_type)
-    if property_type:
-        query += " AND property_type = ?"
-        params.append(property_type)
+        if price_min is not None:
+            query += " AND price >= ?"
+            params.append(price_min)
+        if price_max is not None:
+            query += " AND price <= ?"
+            params.append(price_max)
+        if bedrooms is not None:
+            query += " AND bedrooms = ?"
+            params.append(bedrooms)
+        if city:
+            query += " AND LOWER(city) = LOWER(?)"
+            params.append(city)
+        if transaction_type:
+            query += " AND transaction_type = ?"
+            params.append(transaction_type)
+        if property_type:
+            query += " AND property_type = ?"
+            params.append(property_type)
 
-    query += " ORDER BY date DESC LIMIT ? OFFSET ?"
-    params.extend([limit, offset])
+        query += " ORDER BY date DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
 
-    rows = conn.execute(query, params).fetchall()
-    conn.close()
-
-    result = [dict(row) for row in rows]
-    return result
+        rows = conn.execute(query, params).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
 
 
 def get_distinct_cities():
@@ -74,8 +76,10 @@ def get_distinct_cities():
         return []
 
     conn = get_conn()
-    rows = conn.execute(
-        "SELECT DISTINCT city FROM listings WHERE city IS NOT NULL AND city != '' ORDER BY city"
-    ).fetchall()
-    conn.close()
-    return [r["city"] for r in rows]
+    try:
+        rows = conn.execute(
+            "SELECT DISTINCT city FROM listings WHERE city IS NOT NULL AND city != '' ORDER BY city"
+        ).fetchall()
+        return [r["city"] for r in rows]
+    finally:
+        conn.close()
