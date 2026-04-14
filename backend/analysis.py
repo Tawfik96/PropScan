@@ -27,7 +27,7 @@ import cost_manager
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 ANALYSIS_PATH           = os.path.join(os.path.dirname(__file__), "Big_Analysis.md")
-TRUNCATE_CHARS          = 700
+TRUNCATE_CHARS          = 10000
 
 # Gemini Flash Lite pricing (USD per token)
 COST_INPUT_PER_TOKEN    = 0.10  / 1_000_000   # $0.10  / 1M

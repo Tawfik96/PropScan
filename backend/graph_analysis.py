@@ -87,5 +87,5 @@ def plot_performance(df):
     plt.show()
 
 if __name__ == "__main__":
-    df = parse_combined_logs("backend/Big_Analysis.md")
+    df = parse_combined_logs("Big_Analysis.md")
     plot_performance(df)

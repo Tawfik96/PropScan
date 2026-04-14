@@ -113,8 +113,6 @@ class ListingExtraction(BaseModel):
     @classmethod
     def _coerce_currency(cls, v):
         return v if v is not None else "EGP"
-
-
     bedrooms: Optional[int] = Field(
         default=None,
         description=(
